@@ -13,6 +13,9 @@ RUN npm install
 # Copia el resto del código de la aplicación al contenedor
 COPY . .
 
+# Construye la aplicación para producción (Tailwind se compilará aquí)
+RUN npm run build
+
 # Expone el puerto en el que tu aplicación correrá
 EXPOSE 3000
 

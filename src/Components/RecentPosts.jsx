@@ -12,7 +12,7 @@ const RecentPosts = () => {
     }
 
     loadEventos();
-  }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+  }, []); 
 
   return (
     <div className="my-8">

@@ -6,13 +6,13 @@ export const getallEventos = () => {
 }
 
 export const getallMadres = () => {
-  return axios.get('http://localhost:8000/madres/api/v1/madre/')
+  return axios.get('http://localhost:8000/madre/api/v1/madre/')
 }
 
 export const getallHijo = () => {  
-  return axios.get('http://localhost:8000/ninos/api/v1/hijo/')
+  return axios.get('http://localhost:8000/hijo/api/v1/hijo/')
 }
 
 export const getallSector = () => {
-    return axios.get('http://localhost:8000/sectores/api/v1/sector/')
+    return axios.get('http://localhost:8000/sector/api/v1/sector/')
     }

@@ -1,4 +1,4 @@
-import { getallEventos } from '../api/api.js';
+import { getallEventos } from '../../api/api.js';
 import { useEffect, useState } from 'react';
 
 const RecentPosts = () => {

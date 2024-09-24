@@ -6,7 +6,6 @@ import JoinSection from './JoinSection/JoinSection.jsx';
 import Footer from './Footer/Footer.jsx';
 import SignIn from './SignIn/SignIn.jsx';
 
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showLogin, setShowLogin] = useState(false);

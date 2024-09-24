@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import './App.css';
 import Navbar from './Navbar/Navbar.jsx';
-import Carousel from './Carousel/Carousel.jsx';
 import RecentPosts from './RecentPost/RecentPosts.jsx';
 import JoinSection from './JoinSection/JoinSection.jsx';
 import Footer from './Footer/Footer.jsx';
-import SignIn from './SignIn/signIn.jsx';
+import SignIn from './SignIn/SignIn.jsx';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -28,7 +28,6 @@ function App() {
           <SignIn onLogin={handleLogin} />
         ) : (
           <>
-            <Carousel />
             <RecentPosts />
             <JoinSection />
             <Footer />

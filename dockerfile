@@ -12,7 +12,6 @@ RUN npm install
 
 # Copia el resto del código de la aplicación al contenedor
 COPY . .
-
 # Construye la aplicación para producción (Tailwind se compilará aquí)
 RUN npm run build
 

@@ -27,7 +27,7 @@ export default function StickyNavbar() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-          Pages
+          Nuestra Historia
         </a>
       </Typography>
       <Typography
@@ -37,7 +37,7 @@ export default function StickyNavbar() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-          Account
+          La Tribu
         </a>
       </Typography>
       <Typography
@@ -47,7 +47,7 @@ export default function StickyNavbar() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-          Blocks
+          Nosotras
         </a>
       </Typography>
       <Typography
@@ -57,7 +57,17 @@ export default function StickyNavbar() {
         className="p-1 font-normal"
       >
         <a href="#" className="flex items-center">
-          Docs
+          Alianzas
+        </a>
+      </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="p-1 font-normal"
+      >
+        <a href="#" className="flex items-center">
+          Eventos
         </a>
       </Typography>
     </ul>
@@ -69,7 +79,7 @@ export default function StickyNavbar() {
         <div className="flex items-center justify-between text-blue-gray-900">
           <Typography
             as="a"
-            href="#"
+            href="/"
             className="mr-4 cursor-pointer py-1.5 font-medium"
           >
             Tribu de Mamás
@@ -83,6 +93,12 @@ export default function StickyNavbar() {
                   <span>Sign in</span>
                 </Link>
               </Button>
+              <Button variant="gradient" size="sm" className="hidden lg:inline-block">
+                {/* Usamos Link para la navegación */}
+                <Link to="/joinus">
+                  <span>Registráte</span>
+                </Link>
+              </Button>
             </div>
             <IconButton
               variant="text"
@@ -90,6 +106,7 @@ export default function StickyNavbar() {
               ripple={false}
               onClick={() => setOpenNav(!openNav)}
             >
+            
               {openNav ? (
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" className="h-6 w-6" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -108,6 +125,12 @@ export default function StickyNavbar() {
             <Button fullWidth variant="gradient" size="sm" className="">
               <Link to="/signin">
                 <span>Sign in</span>
+              </Link>
+            </Button>
+          </div><div className="flex items-center gap-x-1">
+            <Button fullWidth variant="gradient" size="sm" className="">
+              <Link to="/joinus">
+                <span>Regístrate</span>
               </Link>
             </Button>
           </div>

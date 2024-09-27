@@ -6,6 +6,7 @@ import JoinSection from "./JoinSection/JoinSection.jsx";
 import Footer from "./Footer/Footer.jsx";
 import SignIn from "./SignIn/SignIn.jsx";
 import Joinus from "./JoinUs/Joinus.jsx";
+import Unete from "./Unete/Unete.jsx";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           {/* Otras rutas, como el SignIn */}
           <Route path="/SignIn" element={<SignIn />} /> {/* Página de SignIn */}
           <Route path="/Joinus" element={<Joinus />} /> {/* Página de JoinUs */}
+          <Route path="/Unete" element={<Unete />} /> {/* Página de Unete */}
         </Routes>
       </div>
     </Router>

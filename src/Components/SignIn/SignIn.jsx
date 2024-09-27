@@ -1,19 +1,5 @@
-import React from 'react';
-
-const SignIn = () => {
-  return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <h1 className="text-3xl font-bold">Sign In to your account</h1>
-      {/* Aquí podrías agregar el formulario de inicio de sesión */}
-    </div>
-  );
-};
-
-export default SignIn;
-
-
-/*
 import React, { useState } from 'react';
+
 
 const SignIn = ({ onLogin }) => {
   const [username, setUsername] = useState('');
@@ -90,4 +76,3 @@ const SignIn = ({ onLogin }) => {
 
 export default SignIn;
 
-*/

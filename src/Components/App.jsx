@@ -33,6 +33,7 @@ function App() {
           <Route path="/Nosotras" element={<Nosotras />} /> {/* Página de Nosotras */}
           <Route path="/SignIn" element={<SignIn />} /> {/* Página de SignIn */}
           <Route path="/Joinus" element={<Joinus />} /> {/* Página de JoinUs */}
+
         </Routes>
       </div>
     </Router>

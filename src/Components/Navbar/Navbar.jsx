@@ -26,7 +26,7 @@ export default function StickyNavbar() {
         color="blue-gray"
         className="p-1 font-normal"
       >
-        <a href="#" className="flex items-center">
+        <a href="Historia" className="flex items-center">
           Nuestra Historia
         </a>
       </Typography>
@@ -46,7 +46,7 @@ export default function StickyNavbar() {
         color="blue-gray"
         className="p-1 font-normal"
       >
-        <a href="#" className="flex items-center">
+        <a href="Nosotras" className="flex items-center">
           Nosotras
         </a>
       </Typography>

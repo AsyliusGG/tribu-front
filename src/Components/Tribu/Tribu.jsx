@@ -3,12 +3,9 @@ import './Tribu.css'; // Importa el archivo CSS
 
 const Tribu = () => {
   return (
-    //no me funciona el colocar imagene de fondo capa 8
-    <div className="relative h-screen overflow-hidden"> 
+    <div className="relative h-screen overflow-hidden">
       <div className="background-carousel">
         <div className="background-image bg1"></div>
-        <div className="background-image bg2"></div>
-        <div className="background-image bg3"></div>
       </div>
       <div className="flex justify-center items-center h-full bg-gray-100 bg-opacity-75 p-4 relative z-10">
         <div className="w-full max-w-5xl mx-auto p-4" style={{ margin: '5%' }}>

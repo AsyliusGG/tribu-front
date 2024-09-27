@@ -11,6 +11,7 @@ import Historia from "./NuestraHistoria/Historia.jsx";
 import Tribu from "./Tribu/Tribu.jsx";
 import Eventos from "./Navbar/Eventos/Eventos.jsx";
 import Alianzas from "./Navbar/Alianzas/Alianzas.jsx";
+import Carousel from "./Carousel/Carousel.jsx";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
               <div>
                 {/* Aquí va el contenido de Home */}
                 {/* Otros componentes o secciones que quieras en la Página principal */}
+                <Carousel />
                 <RecentPosts />
                 <JoinSection />
                 <Footer />

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert } from "@material-tailwind/react";
+import { Alert, Checkbox, Card, Input, Button, Typography, } from "@material-tailwind/react";
 
 function Icon() {
   return (
@@ -49,60 +49,80 @@ const SignIn = ({ onLogin }) => {
       setAlertMessage('La contraseña debe ser alfanumérica y tener al menos 8 caracteres.');
       return;
     }
-
-    // Validación simple de ejemplo
-    if (username === 'admin' && password === 'password') {
-      onLogin(true);
-    } else {
-      setAlertMessage('Nombre de usuario o contraseña incorrectos');
-    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
+      <Card color="transparent" shadow={false}>
+        <Typography variant="h4" color="blue-gray">
+          Iniciar Sesión
+        </Typography>
+        <Typography color="gray" className="mt-1 font-normal">
+          ¡Encantada de verte! Ingresa tus datos para iniciar sesión.
+        </Typography>
         {alertMessage && <AlertCustomStyles message={alertMessage} />}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
-              Nombre de Usuario
-            </label>
-            <input
-              type="text"
-              id="username"
+        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
+          <div className="mb-1 flex flex-col gap-6">
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Correo Electronico
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su correo electrónico"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="Nombre de Usuario"
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
             />
-          </div>
-          <div className="mb-6">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
               Contraseña
-            </label>
-            <input
+            </Typography>
+            <Input
               type="password"
-              id="password"
+              size="lg"
+              placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              placeholder="********"
+              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
+              labelProps={{
+                className: "before:content-none after:content-none",
+              }}
             />
           </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
+          <Checkbox
+            label={
+              <Typography
+                variant="small"
+                color="gray"
+                className="flex items-center font-normal"
+              >
+                Acepto los
+                <a
+                  href="#"
+                  className="font-medium transition-colors hover:text-gray-900"
+                >
+                  &nbsp;términos y condiciones
+                </a>
+              </Typography>
+            }
+            containerProps={{ className: "-ml-2.5" }}
+          />
+          <Button className="mt-6" fullWidth type="submit">
+            Iniciar Sesión
+          </Button>
+          <Typography color="gray" className="mt-4 text-center font-normal">
+            ¿Ya tienes una cuenta?{" "}
+            <a href="#" className="font-medium text-gray-900">
               Iniciar Sesión
-            </button>
-          </div>
+            </a>
+          </Typography>
         </form>
-      </div>
+      </Card>
     </div>
   );
-};
+}
 
 export default SignIn;
 

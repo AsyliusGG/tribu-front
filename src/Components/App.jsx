@@ -5,7 +5,7 @@ import RecentPosts from "./RecentPost/RecentPosts.jsx";
 import JoinSection from "./JoinSection/JoinSection.jsx";
 import Footer from "./Footer/Footer.jsx";
 import SignIn from "./SignIn/SignIn.jsx";
-import Joinus from "./JoinUs/Joinus.jsx";
+import Joinus from "./Joinus/Joinus.jsx";
 import Nosotras from "./Nosotras/Nosotras.jsx";
 import Historia from "./NuestraHistoria/Historia.jsx";
 import Tribu from "./Tribu/Tribu.jsx";

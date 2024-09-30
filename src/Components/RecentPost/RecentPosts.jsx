@@ -12,23 +12,74 @@ const RecentPosts = () => {
     }
 
     loadEventos();
-  }, []); 
+  }, []);
 
   return (
-    <div className="my-8">
+    <div className="my-8 mx-5">
       <h2 className="text-2xl font-bold text-center mb-6">POST RECIENTES</h2>
-      <div className="grid grid-cols-2 gap-4">
+      
+      <div className="grid grid-cols-2 gap-10">
+      
+      <div className="bg-transparent text-white p-4">
         {posts.map((post) => (
-          <div key={post.id} className="bg-white shadow-md rounded-lg overflow-hidden">
-            <img src={post.foto} alt="Post" className="w-full h-48 object-cover" />
+          <div key={post.id} className="bg-white shadow-md rounded-lg overflow-hidden" style={{margin: '5%'}}>
             <div className="p-4">
-              <p>{post.descripcion}</p>
+              <img src={post.foto} alt="Post" className="w-full h-48 object-cover" style={{margin: '5%'}} />
+              {/* bg-white shadow-md rounded-lg overflow-hidden */}
             </div>
-          </div>
+            <div className="p-4">
+              <p className="text-black">{post.descripcion}</p>
+            </div>
+            </div>
         ))}
       </div>
+
+      <div className="bg-transparent text-white p-4">
+        {posts.map((post) => (
+          <div key={post.id} className="bg-white shadow-md rounded-lg overflow-hidden" style={{margin: '5%'}}>
+            <div className="p-4">
+              <img src={post.foto} alt="Post" className="w-full h-48 object-cover" style={{margin: '5%'}} />
+              {/* bg-white shadow-md rounded-lg overflow-hidden */}
+            </div>
+            <div className="p-4">
+              <p className="text-black">{post.descripcion}</p>
+            </div>
+            </div>
+        ))}
+      </div>
+
+      <div className="bg-transparent text-white p-4">
+        {posts.map((post) => (
+          <div key={post.id} className="bg-white shadow-md rounded-lg overflow-hidden" style={{margin: '5%'}}>
+            <div className="p-4">
+              <img src={post.foto} alt="Post" className="w-full h-48 object-cover" style={{margin: '5%'}} />
+              {/* bg-white shadow-md rounded-lg overflow-hidden */}
+            </div>
+            <div className="p-4">
+              <p className="text-black">{post.descripcion}</p>
+            </div>
+            </div>
+        ))}
+      </div>
+
+      <div className="bg-transparent text-white p-4">
+        {posts.map((post) => (
+          <div key={post.id} className="bg-white shadow-md rounded-lg overflow-hidden" style={{margin: '5%'}}>
+            <div className="p-4">
+              <img src={post.foto} alt="Post" className="w-full h-48 object-cover" style={{margin: '5%'}} />
+              {/* bg-white shadow-md rounded-lg overflow-hidden */}
+            </div>
+            <div className="p-4">
+              <p className="text-black">{post.descripcion}</p>
+            </div>
+            </div>
+        ))}
+      </div>
+
+      </div>   
     </div>
   );
 };
 
 export default RecentPosts;
+

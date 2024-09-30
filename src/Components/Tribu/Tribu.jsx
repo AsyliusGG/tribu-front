@@ -1,5 +1,5 @@
 import React from 'react';
-import './Tribu.css'; // Importa el archivo CSS
+import './Tribu.css';
 
 const Tribu = () => {
   return (

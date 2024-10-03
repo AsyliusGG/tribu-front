@@ -25,7 +25,7 @@ const RecentPosts = () => {
           <div key={post.id} className="bg-white shadow-md rounded-lg overflow-hidden" style={{margin: '5%'}}>
             <div className="p-4">
               <img src={post.foto} alt="Post" className="w-full h-48 object-cover" style={{margin: '5%'}} />
-              {/* bg-white shadow-md rounded-lg overflow-hidden */}
+              {/* bg-white shadow-md rounded-lg overflow-hidden --- ¿object-cover o contain?*/}
             </div>
             <div className="p-4">
               <p className="text-black">{post.descripcion}</p>

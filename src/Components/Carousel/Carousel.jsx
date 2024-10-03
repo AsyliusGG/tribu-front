@@ -22,7 +22,7 @@ const Carousel = () => {
   };
 
   return (
-    <div className="relative w-full max-w-lg mx-auto">
+    <div className="w-full max-w-lg mx-auto">
       <div className="overflow-hidden rounded-lg">
         <img
           src={images[currentIndex]}

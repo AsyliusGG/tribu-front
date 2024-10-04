@@ -1,60 +1,122 @@
-import React, { useState } from "react";
-
-const images = [
-  "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80",
-  "https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80",
-  "https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80"
-];
+import React, { useState, useEffect } from "react";
 
 const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const prevSlide = () => {
+  const images = [
+    "https://flowbite.com/docs/images/carousel/carousel-1.svg",
+    "https://flowbite.com/docs/images/carousel/carousel-2.svg",
+    "https://flowbite.com/docs/images/carousel/carousel-3.svg",
+  ];
+
+  // Avanzar al siguiente slide automáticamente cada 3 segundos
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === images.length - 1 ? 0 : prevIndex + 1
+      );
+    }, 3000); // Cada 3 segundos
+
+    return () => {
+      clearInterval(interval); // Limpiar el intervalo cuando se desmonte el componente
+    };
+  }, [images.length]);
+
+  const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === 0 ? images.length - 1 : prevIndex - 1
     );
   };
 
-  const nextSlide = () => {
+  const handleNext = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex === images.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto">
-      <div className="overflow-hidden rounded-lg">
-        <img
-          src={images[currentIndex]}
-          alt={`Slide ${currentIndex + 1}`}
-          className="w-full h-64 object-cover"
-        />
-      </div>
-      {/* Botones de navegación */}
-      <button
-        className="absolute top-1/2 left-0 transform -translate-y-1/2 bg-white/70 p-2 rounded-full text-black hover:bg-white shadow-lg"
-        onClick={prevSlide}
-      >
-        &#8592;
-      </button>
-      <button
-        className="absolute top-1/2 right-0 transform -translate-y-1/2 bg-white/70 p-2 rounded-full text-black hover:bg-white shadow-lg"
-        onClick={nextSlide}
-      >
-        &#8594;
-      </button>
+    <div className="w-screen mx-auto"> {/* Ancho completo de la pantalla */}
+      <div className="relative w-full">
+        {/* Carrusel */}
+        <div className="overflow-hidden relative h-[27rem] sm:h-[32rem] xl:h-[40rem] 2xl:h-[36rem] w-screen">
+          {images.map((src, index) => (
+            <div
+              key={index}
+              className={`${
+                currentIndex === index ? "block" : "hidden"
+              } duration-700 ease-in-out w-screen`}
+            >
+              <img
+                src={src}
+                className="block absolute top-1/2 left-1/2 w-full h-full object-cover -translate-x-1/2 -translate-y-1/2"
+                alt={`Slide ${index + 1}`}
+              />
+            </div>
+          ))}
+        </div>
 
-      {/* Indicadores */}
-      <div className="flex justify-center mt-4">
-        {images.map((_, index) => (
-          <div
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`cursor-pointer w-3 h-3 rounded-full mx-1 ${
-              index === currentIndex ? "bg-blue-500" : "bg-gray-400"
-            }`}
-          ></div>
-        ))}
+        {/* Indicadores */}
+        <div className="flex absolute bottom-5 left-1/2 z-30 space-x-3 -translate-x-1/2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              className={`w-3 h-3 rounded-full ${
+                currentIndex === index ? "bg-blue-600" : "bg-gray-400"
+              }`}
+              onClick={() => setCurrentIndex(index)}
+              aria-label={`Slide ${index + 1}`}
+            ></button>
+          ))}
+        </div>
+
+        {/* Botón Anterior */}
+        <button
+          type="button"
+          className="flex absolute top-0 left-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none"
+          onClick={handlePrev}
+        >
+          <span className="inline-flex justify-center items-center w-8 h-8 rounded-full sm:w-10 sm:h-10 bg-white/30 group-hover:bg-white/50 focus:ring-4 focus:ring-white">
+            <svg
+              className="w-5 h-5 text-white sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 19l-7-7 7-7"
+              ></path>
+            </svg>
+          </span>
+        </button>
+
+        {/* Botón Siguiente */}
+        <button
+          type="button"
+          className="flex absolute top-0 right-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none"
+          onClick={handleNext}
+        >
+          <span className="inline-flex justify-center items-center w-8 h-8 rounded-full sm:w-10 sm:h-10 bg-white/30 group-hover:bg-white/50 focus:ring-4 focus:ring-white">
+            <svg
+              className="w-5 h-5 text-white sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 5l7 7-7 7"
+              ></path>
+            </svg>
+          </span>
+        </button>
       </div>
     </div>
   );

@@ -27,9 +27,10 @@ function App() {
                 {/* Aquí va el contenido de Home */}
                 {/* Otros componentes o secciones que quieras en la Página principal */}
                 <Carousel />
+                <Eventos />
                 <RecentPosts />
                 <JoinSection />
-                <Footer />
+                
               </div>
             }
           />
@@ -43,6 +44,7 @@ function App() {
           <Route path="/Joinus" element={<Joinus />} /> {/* Página de JoinUs */}
 
         </Routes>
+        <Footer />
       </div>
     </Router>
   );

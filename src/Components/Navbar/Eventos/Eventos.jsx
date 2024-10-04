@@ -1,6 +1,14 @@
 import { getallEventos } from '../../../api/api.js';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Typography,
+  Button,
+} from "@material-tailwind/react";
 
 const Eventos = () => {
   const [posts, setPosts] = useState([]);
@@ -14,28 +22,44 @@ const Eventos = () => {
     }
 
     loadEventos();
-  }, []); 
+  }, []);
 
   const handlePostClick = (postId) => {
     navigate(`/post/${postId}`);
   };
 
   return (
-    <div className="my-8">
-      <h2 className="text-2xl font-bold text-center mb-6">Nuestros eventos</h2>
-      <div className="grid grid-cols-2 gap-4">
-        {posts.map((post) => (
-          <div 
-            key={post.id} 
-            className="bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => handlePostClick(post.id)}
-          >
-            <img src={post.foto} alt="Post" className="w-full h-48 object-cover" />
-            <div className="p-4">
-              <p>{post.descripcion}</p>
-            </div>
-          </div>
-        ))}
+    <div className="bg-gray-100 py-10">
+      <div className="container mx-auto px-4">
+        <Typography variant="h2" color="blue-gray" className="text-center mb-10">
+          Nuestros Eventos
+        </Typography>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {posts.map((post) => (
+            <Card
+              key={post.id}
+              className="w-full h-full flex flex-col justify-between cursor-pointer"
+              onClick={() => handlePostClick(post.id)}
+            >
+              <CardHeader color="blue-gray" className="relative h-56">
+                <img
+                  src={post.foto}
+                  alt={post.descripcion}
+                  className="w-full h-full object-cover"
+                />
+              </CardHeader>
+              <CardBody className="flex-grow">
+                <Typography variant="h5" color="blue-gray" className="mb-2 text-center">
+                  {post.titulo}
+                </Typography>
+                <Typography className="text-center">{post.descripcion}</Typography>
+              </CardBody>
+              <CardFooter className="flex justify-center pt-4">
+                <Button>Read More</Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
       </div>
     </div>
   );

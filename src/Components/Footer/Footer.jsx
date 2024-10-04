@@ -2,11 +2,11 @@ import { Typography } from "@material-tailwind/react";
 
 const Footer = () => {
   return (
-    <footer className="w-full bg-white p-8">
-      <div className="flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 bg-white text-center md:justify-between">
+    <footer className="w-full bg-white p-4">
+      <div className="flex justify-between items-center w-full mx-auto px-4 md:px-8">
         <img src="https://docs.material-tailwind.com/img/logo-ct-dark.png" alt="logo-ct" className="w-10" />
         
-        <ul className="flex flex-wrap items-center gap-y-2 gap-x-8">
+        <ul className="flex items-center gap-6">
           <li>
             <Typography
               as="a"
@@ -48,11 +48,11 @@ const Footer = () => {
             </Typography>
           </li>
         </ul>
+
+        <Typography color="blue-gray" className="text-sm font-normal">
+          &copy; 2024 Tribu de Mamás. Todos los derechos reservados.
+        </Typography>
       </div>
-      <hr className="my-8 border-blue-gray-50" />
-      <Typography color="blue-gray" className="text-center font-normal">
-        &copy; 2024 Tribu de Mamás. Todos los derechos reservados.
-      </Typography>
     </footer>
   );
 };

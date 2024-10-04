@@ -18,36 +18,55 @@ function Icon() {
   );
 }
 
-export function AlertCustomStyles({ message }) {
+function AlertCustomStyles({ message }) {
   return (
-    <Alert
-      icon={<Icon />}
-      className="rounded-none border-l-4 border-[#2ec946] bg-[#2ec946]/10 font-medium text-[#2ec946] text-sm"
-    >
+    <Alert color="red" className="mb-4">
       {message}
     </Alert>
   );
 }
 
-const SignIn = ({ onLogin }) => {
+export function SignIn() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Expresiones regulares para validar alfanumérico y longitud mínima de 8 caracteres
     const alphanumericRegex = /^[a-zA-Z0-9]{8,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!alphanumericRegex.test(username)) {
-      setAlertMessage('El nombre de usuario debe ser alfanumérico y tener al menos 8 caracteres.');
+    if (!emailRegex.test(username)) {
+      setAlertMessage('Por favor, ingrese un correo electrónico válido.');
       return;
     }
 
     if (!alphanumericRegex.test(password)) {
       setAlertMessage('La contraseña debe ser alfanumérica y tener al menos 8 caracteres.');
       return;
+    }
+
+    try {
+      const response = await fetch('https://localhost:8000', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAlertMessage('Inicio de sesión exitoso');
+        // Manejar el inicio de sesión exitoso (por ejemplo, redirigir al usuario)
+      } else {
+        setAlertMessage(data.message || 'Error en el inicio de sesión');
+      }
+    } catch (error) {
+      setAlertMessage('Error en el inicio de sesión');
     }
   };
 
@@ -71,10 +90,7 @@ const SignIn = ({ onLogin }) => {
               placeholder="Ingrese su correo electrónico"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
+              required
             />
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Contraseña
@@ -82,13 +98,10 @@ const SignIn = ({ onLogin }) => {
             <Input
               type="password"
               size="lg"
-              placeholder="********"
+              placeholder="Ingrese su contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-              labelProps={{
-                className: "before:content-none after:content-none",
-              }}
+              required
             />
           </div>
           <Checkbox

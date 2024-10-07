@@ -75,7 +75,7 @@ export default function StickyNavbar() {
   );
 
   return (
-    <div className="sticky top-0 w-screen shadow-md max-h-[768px] overflow-scroll">
+    <div className="sticky top-0 w-screen shadow-md max-h-[80vh]">
       <Navbar className="z-10 h-max max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
           <Typography

@@ -27,7 +27,7 @@ function AlertCustomStyles({ message }) {
 }
 
 export function SignIn() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
 
@@ -38,7 +38,7 @@ export function SignIn() {
     const alphanumericRegex = /^[a-zA-Z0-9]{8,}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailRegex.test(username)) {
+    if (!emailRegex.test(email)) {
       setAlertMessage('Por favor, ingrese un correo electrónico válido.');
       return;
     }
@@ -49,12 +49,12 @@ export function SignIn() {
     }
 
     try {
-      const response = await fetch('https://localhost:8000', {
+      const response = await fetch('http://localhost:8000/api/v1/auth/users/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
@@ -88,7 +88,7 @@ export function SignIn() {
             <Input
               size="lg"
               placeholder="Ingrese su correo electrónico"
-              value={username}
+              value={email}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
@@ -104,27 +104,16 @@ export function SignIn() {
               required
             />
           </div>
-          <Checkbox
-            label={
-              <Typography
-                variant="small"
-                color="gray"
-                className="flex items-center font-normal"
-              >
-                Acepto los
-                <a
-                  href="#"
-                  className="font-medium transition-colors hover:text-gray-900"
-                >
-                  &nbsp;términos y condiciones
-                </a>
-              </Typography>
-            }
-            containerProps={{ className: "-ml-2.5" }}
-          />
+
           <Button className="mt-6" fullWidth type="submit">
             Iniciar Sesión
           </Button>
+          <Typography color="gray" className="mt-4 text-center font-normal">
+            ¿Olvidaste tu contraseña?{" "}
+            <a href="#" className="font-medium text-blue-600">
+              Recuperar Contraseña
+            </a>
+          </Typography>
           <Typography color="gray" className="mt-4 text-center font-normal">
             ¿Ya tienes una cuenta?{" "}
             <a href="#" className="font-medium text-gray-900">

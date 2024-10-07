@@ -7,7 +7,7 @@ const Tribu = () => {
       <div className="background-carousel">
         <div className="background-image bg1"></div>
       </div>
-      <div className="flex justify-center items-center h-full bg-gray-100 bg-opacity-75 p-4 relative z-10">
+      <div className="flex justify-center items-center h-full overflow-hidden bg-gray-100 bg-opacity-75 p-4 relative z-10">
         <div className="w-full max-w-5xl mx-auto p-4" style={{ margin: '5%' }}>
           <h1 className="text-5xl font-bold mb-4">La Tribu</h1>
           <div className="bg-white p-6 rounded-lg shadow-lg mb-4">

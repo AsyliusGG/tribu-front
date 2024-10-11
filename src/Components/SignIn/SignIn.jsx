@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';  // Importamos useNavigate para la redirección
 import { Alert, Input, Button, Typography, Card } from "@material-tailwind/react";
 
 function AlertCustomStyles({ message }) {
@@ -9,10 +10,11 @@ function AlertCustomStyles({ message }) {
   );
 }
 
-export function SignIn() {
+export function SignIn({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
+  const navigate = useNavigate();  // Hook para la redirección
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,19 +31,17 @@ export function SignIn() {
       const data = await response.json();
   
       if (response.ok) {
-        setAlertMessage('Inicio de sesión exitoso');
-        console.log('Inicio de sesión exitoso');
-        // Aquí podrías almacenar el token si estás usando JWT o Token Auth
+        localStorage.setItem("auth_token", data.access);  // Guardamos el token en localStorage
+        onLogin();  // Llamamos a la función onLogin para actualizar el estado de autenticación
+        // Redirigir a la página principal con el estado del mensaje
+        navigate("/", { state: { successMessage: "Inicio de sesión exitoso" } });
       } else {
         setAlertMessage(data.message || 'Error en el inicio de sesión');
-        console.log('Error: ', data);
       }
     } catch (error) {
       setAlertMessage('Error en el inicio de sesión');
-      console.log('Error en el servidor o conexión fallida', error);
     }
   };
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -81,18 +81,6 @@ export function SignIn() {
           <Button className="mt-6" fullWidth type="submit">
             Iniciar Sesión
           </Button>
-          <Typography color="gray" className="mt-4 text-center font-normal">
-            ¿Olvidaste tu contraseña?{" "}
-            <a href="#" className="font-medium text-blue-600">
-              Recuperar Contraseña
-            </a>
-          </Typography>
-          <Typography color="gray" className="mt-4 text-center font-normal">
-            ¿Ya tienes una cuenta?{" "}
-            <a href="#" className="font-medium text-gray-900">
-              Iniciar Sesión
-            </a>
-          </Typography>
         </form>
       </Card>
     </div>

@@ -1,48 +1,68 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import StickyNavbar from "./Navbar/Navbar.jsx";
-import RecentPosts from "./RecentPost/RecentPosts.jsx";
-import JoinSection from "./JoinSection/JoinSection.jsx";
 import Footer from "./Footer/Footer.jsx";
 import SignIn from "./SignIn/SignIn.jsx";
 import Joinus from "./Joinus/Joinus.jsx";
 import Nosotras from "./Nosotras/Nosotras.jsx";
 import Historia from "./NuestraHistoria/Historia.jsx";
 import Tribu from "./Tribu/Tribu.jsx";
-import Eventos from "./Navbar/Eventos/Eventos.jsx";
 import Alianzas from "./Navbar/Alianzas/Alianzas.jsx";
-import Carousel from "./Carousel/Carousel.jsx";
+import PrivateRoute from "./PrivateRoute";
+import Eventos from "./Navbar/Eventos/Eventos.jsx";
+import Home from "./Home";  // Importamos el nuevo componente Home
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+  };
+
   return (
     <Router>
       <div>
-        <StickyNavbar /> {/* Barra de navegación */}
+        <StickyNavbar isAuthenticated={isAuthenticated} />
         <Routes>
-          {/* La ruta "/" apuntará a este mismo componente como Home */}
           <Route
             path="/"
+            element={<Home isAuthenticated={isAuthenticated} />}
+          />
+          <Route path="/Tribu" element={<Tribu />} />
+          <Route path="/Nosotras" element={<Nosotras />} />
+          <Route
+            path="/Historia"
             element={
-              <div>
-                {/* Aquí va el contenido de Home */}
-                {/* Otros componentes o secciones que quieras en la Página principal */}
-                <Carousel />
-                <Eventos />
-                <RecentPosts />
-                <JoinSection />
-                
-              </div>
+              <PrivateRoute>
+                <Historia />
+              </PrivateRoute>
             }
           />
-          {/* Otras rutas, como el SignIn */}
-          <Route path="/Historia" element={<Historia />} /> {/* Página de Nosotras */}
-          <Route path="/Tribu" element={<Tribu />} /> {/* Página de Nosotras */}
-          <Route path="/Nosotras" element={<Nosotras />} /> {/* Página de Nosotras */}
-          <Route path="/Alianzas" element={<Alianzas />} /> {/* Página de Nosotras */}
-          <Route path="/Eventos" element={<Eventos />} /> {/* Página de Nosotras */}
-          <Route path="/SignIn" element={<SignIn />} /> {/* Página de SignIn */}
-          <Route path="/Joinus" element={<Joinus />} /> {/* Página de JoinUs */}
-
+          <Route
+            path="/Alianzas"
+            element={
+              <PrivateRoute>
+                <Alianzas />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/Eventos"
+            element={
+              <PrivateRoute>
+                <Eventos />
+              </PrivateRoute>
+            }
+          />
+          <Route path="/SignIn" element={<SignIn onLogin={handleLogin} />} />
+          <Route path="/Joinus" element={<Joinus />} />
         </Routes>
         <Footer />
       </div>

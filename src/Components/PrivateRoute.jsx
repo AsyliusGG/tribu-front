@@ -6,7 +6,7 @@ const PrivateRoute = ({ children }) => {
 
   if (!token) {
     // Si no está autenticado, redirige al inicio de sesión
-    return <Navigate to="/signin" />;
+    return <Navigate to="/login" />;
   }
 
   // Si está autenticado, muestra el contenido de la ruta

@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import StickyNavbar from "./Navbar/Navbar.jsx";
 import Footer from "./Footer/Footer.jsx";
-import SignIn from "./SignIn/SignIn.jsx";
+import LogIn from "./LogIn/LogIn.jsx";
 import Joinus from "./Joinus/Joinus.jsx";
 import Nosotras from "./Nosotras/Nosotras.jsx";
 import Historia from "./NuestraHistoria/Historia.jsx";
 import Tribu from "./Tribu/Tribu.jsx";
-import Alianzas from "./Navbar/Alianzas/Alianzas.jsx";
+import Alianzas from "./Alianzas/Alianzas.jsx";
 import PrivateRoute from "./PrivateRoute";
-import Eventos from "./Navbar/Eventos/Eventos.jsx";
+import Eventos from "./Eventos/Eventos.jsx";
 import Home from "./Home";  // Importamos el nuevo componente Home
 
 function App() {
@@ -61,8 +61,8 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route path="/SignIn" element={<SignIn onLogin={handleLogin} />} />
-          <Route path="/Joinus" element={<Joinus />} />
+          <Route path="/login" element={<LogIn onLogin={handleLogin} />} />
+          <Route path="/joinus" element={<Joinus />} />
         </Routes>
         <Footer />
       </div>

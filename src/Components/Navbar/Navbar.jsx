@@ -73,7 +73,7 @@ export default function StickyNavbar({ isAuthenticated }) {  // Usamos la prop i
               {!isAuthenticated ? (
                 <>
                   <Button variant="gradient" size="sm" className="hidden lg:inline-block">
-                    <Link to="/signin">
+                    <Link to="/login">
                       <span>Iniciar Sesión</span>
                     </Link>
                   </Button>
@@ -113,7 +113,7 @@ export default function StickyNavbar({ isAuthenticated }) {  // Usamos la prop i
             {!isAuthenticated ? (
               <>
                 <Button fullWidth variant="gradient" size="sm">
-                  <Link to="/signin">
+                  <Link to="/login">
                     <span>Iniciar Sesión</span>
                   </Link>
                 </Button>

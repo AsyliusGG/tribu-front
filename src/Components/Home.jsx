@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Carousel from "./Carousel/Carousel";
-import Eventos from "./Navbar/Eventos/Eventos";
+import Eventos from "./Eventos/Eventos";
 import RecentPosts from "./RecentPost/RecentPosts";
 import JoinSection from "./JoinSection/JoinSection";
 import { Alert } from "@material-tailwind/react";

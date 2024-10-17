@@ -10,7 +10,7 @@ function AlertCustomStyles({ message }) {
   );
 }
 
-export function SignIn({ onLogin }) {
+export function LogIn({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
@@ -87,4 +87,4 @@ export function SignIn({ onLogin }) {
   );
 }
 
-export default SignIn;
+export default LogIn;

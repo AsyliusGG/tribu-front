@@ -9,43 +9,50 @@ import {
   DialogFooter,
 } from '@material-tailwind/react';
 
-// URL del endpoint de eventos (modifícalo si es necesario)
-const API_URL = 'http://localhost:8000/api/v1/evento/';
+const EVENTOS_API_URL = 'http://localhost:8000/eventos/api/v1/evento';
+const SECTOR_API_URL = 'http://localhost:8000/eventos/api/v1/sector';
 
 const EventosAdmin = () => {
   const [events, setEvents] = useState([]);
+  const [sectors, setSectors] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const navigate = useNavigate();
 
-  // Cargar eventos desde la API
+  // Cargar eventos y sectores desde la API
   useEffect(() => {
-    async function fetchEvents() {
+    async function fetchData() {
       try {
-        const response = await fetch(API_URL, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            // Agregar el token de autenticación si es necesario
-          },
-        });
+        const [eventsResponse, sectorsResponse] = await Promise.all([
+          fetch(EVENTOS_API_URL),
+          fetch(SECTOR_API_URL)
+        ]);
 
-        if (response.ok) {
-          const data = await response.json();
-          setEvents(data);
+        if (eventsResponse.ok && sectorsResponse.ok) {
+          const eventsData = await eventsResponse.json();
+          const sectorsData = await sectorsResponse.json();
+
+          setEvents(eventsData);
+          setSectors(sectorsData);
+        } else {
+          console.error('Error al obtener los eventos o sectores.');
         }
       } catch (error) {
-        console.error('Error al obtener los eventos:', error);
+        console.error('Error al obtener los eventos o sectores:', error);
       }
     }
 
-    fetchEvents();
+    fetchData();
   }, []);
 
-  // Función para confirmar la eliminación de un evento
+  const getSectorName = (sectorId) => {
+    const sector = sectors.find((sector) => sector.sector_id === sectorId);
+    return sector ? sector.sector_nombre : 'Desconocido';
+  };
+
   const handleDelete = async (eventId) => {
     try {
-      const response = await fetch(`${API_URL}${eventId}/`, {
+      const response = await fetch(`${EVENTOS_API_URL}${eventId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -63,13 +70,11 @@ const EventosAdmin = () => {
     }
   };
 
-  // Función para abrir el diálogo de confirmación de eliminación
   const openDeleteDialog = (eventId) => {
     setEventToDelete(eventId);
     setDeleteDialogOpen(true);
   };
 
-  // Función para cerrar el diálogo
   const closeDeleteDialog = () => {
     setDeleteDialogOpen(false);
     setEventToDelete(null);
@@ -81,33 +86,35 @@ const EventosAdmin = () => {
         Administrador de Eventos
       </Typography>
 
-      {/* Botón para agregar un nuevo evento */}
       <div className="flex justify-end mb-4">
         <Button
           variant="gradient"
           color="green"
-          onClick={() => navigate('/eventos/CrearEvento')}
+          onClick={() => navigate('/Eventos/CrearEvento')}
         >
           Agregar Nuevo Evento
         </Button>
       </div>
 
-      {/* Tabla de eventos */}
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b">ID</th>
-            <th className="py-2 px-4 border-b">Título</th>
-            <th className="py-2 px-4 border-b">Descripción</th>
+            <th className="py-2 px-4 border-b">Nombre</th>
+            <th className="py-2 px-4 border-b">Fecha</th>
+            <th className="py-2 px-4 border-b">Hora</th>
+            <th className="py-2 px-4 border-b">Lugar</th>
+            <th className="py-2 px-4 border-b">Sector</th>
             <th className="py-2 px-4 border-b">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {events.map((event) => (
             <tr key={event.id}>
-              <td className="py-2 px-4 border-b">{event.id}</td>
-              <td className="py-2 px-4 border-b">{event.titulo}</td>
-              <td className="py-2 px-4 border-b">{event.descripcion}</td>
+              <td className="py-2 px-4 border-b">{event.nombre}</td>
+              <td className="py-2 px-4 border-b">{event.fecha}</td>
+              <td className="py-2 px-4 border-b">{event.hora}</td>
+              <td className="py-2 px-4 border-b">{event.lugar}</td>
+              <td className="py-2 px-4 border-b">{getSectorName(event.sector)}</td>
               <td className="py-2 px-4 border-b">
                 <Button
                   color="blue"
@@ -125,7 +132,6 @@ const EventosAdmin = () => {
         </tbody>
       </table>
 
-      {/* Diálogo de confirmación de eliminación */}
       {deleteDialogOpen && (
         <Dialog open={deleteDialogOpen} handler={closeDeleteDialog}>
           <DialogHeader>Confirmar eliminación</DialogHeader>

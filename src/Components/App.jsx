@@ -11,6 +11,9 @@ import Alianzas from "./Alianzas/Alianzas.jsx";
 import PrivateRoute from "./PrivateRoute";
 import Eventos from "./Eventos/Eventos.jsx";
 import Home from "./Home";  // Importamos el nuevo componente Home
+import CrearEvento from "./Eventos/CrearEvento.jsx";
+import ModificarEvento from "./Eventos/ModificarEvento.jsx";
+import EventosAdmin from "./Eventos/EventosAdmin.jsx";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -63,6 +66,11 @@ function App() {
           />
           <Route path="/login" element={<LogIn onLogin={handleLogin} />} />
           <Route path="/joinus" element={<Joinus />} />
+          <Route path="/Eventos" element={<Eventos />} />
+          <Route path="/Eventos/EventosAdmin" element={<EventosAdmin />} />
+          <Route path="/Eventos/CrearEvento" element={<CrearEvento />} />
+          <Route path="/Components/eventos/CrearEvento" element={<CrearEvento />} />
+          <Route path="/components/eventos/ModificarEvento" element={<ModificarEvento />} />
         </Routes>
         <Footer />
       </div>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Button,
   Typography,
@@ -7,8 +7,10 @@ import {
   DialogHeader,
   DialogBody,
   DialogFooter,
+  Alert,
 } from '@material-tailwind/react';
 
+// URLs de API
 const EVENTOS_API_URL = 'http://localhost:8000/eventos/api/v1/evento';
 const SECTOR_API_URL = 'http://localhost:8000/eventos/api/v1/sector';
 
@@ -18,6 +20,15 @@ const EventosAdmin = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.success) {
+      setShowSuccessAlert(true);
+      setTimeout(() => setShowSuccessAlert(false), 3000);
+    }
+  }, [location.state]);
 
   // Cargar eventos y sectores desde la API
   useEffect(() => {
@@ -52,7 +63,7 @@ const EventosAdmin = () => {
 
   const handleDelete = async (eventId) => {
     try {
-      const response = await fetch(`${EVENTOS_API_URL}${eventId}/`, {
+      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +71,7 @@ const EventosAdmin = () => {
       });
 
       if (response.ok) {
-        setEvents(events.filter((event) => event.id !== eventId)); // Eliminar el evento de la tabla
+        setEvents(events.filter((event) => event.id !== eventId));
         setDeleteDialogOpen(false);
       } else {
         console.error('Error al eliminar el evento');
@@ -80,11 +91,53 @@ const EventosAdmin = () => {
     setEventToDelete(null);
   };
 
+  // Función para obtener cupos disponibles
+  const getCuposDisponibles = (evento) => {
+    return evento.cupo - (evento.cupos_comprados || 0); // Si cupos_comprados viene en la API
+  };
+
+  // Función para dar formato a la fecha en formato dd/mm/aa
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear()).slice(2); // Recortar los primeros dos dígitos del año
+    return `${day}/${month}/${year}`;
+  };
+
+  // Función para dar formato a la hora en formato 24 horas (hh:mm)
+  const formatTime = (timeString) => {
+    const [hour, minute] = timeString.split(':');
+    return `${hour}:${minute}`;
+  };
+
   return (
     <div className="container mx-auto py-10">
       <Typography variant="h2" color="blue-gray" className="text-center mb-10">
         Administrador de Eventos
       </Typography>
+
+      {showSuccessAlert && (
+        <Alert
+          icon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="h-6 w-6"
+            >
+              <path
+                fillRule="evenodd"
+                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                clipRule="evenodd"
+              />
+            </svg>
+          }
+          className="rounded-none border-l-4 border-[#2ec946] bg-[#2ec946]/10 font-medium text-[#2ec946]"
+        >
+          Evento creado con éxito.
+        </Alert>
+      )}
 
       <div className="flex justify-end mb-4">
         <Button
@@ -102,8 +155,10 @@ const EventosAdmin = () => {
             <th className="py-2 px-4 border-b">Nombre</th>
             <th className="py-2 px-4 border-b">Fecha</th>
             <th className="py-2 px-4 border-b">Hora</th>
-            <th className="py-2 px-4 border-b">Lugar</th>
             <th className="py-2 px-4 border-b">Sector</th>
+            <th className="py-2 px-4 border-b">Cupos Totales</th>
+            <th className="py-2 px-4 border-b">Cupos Disponibles</th>
+            <th className="py-2 px-4 border-b">Estado</th>
             <th className="py-2 px-4 border-b">Acciones</th>
           </tr>
         </thead>
@@ -111,10 +166,12 @@ const EventosAdmin = () => {
           {events.map((event) => (
             <tr key={event.id}>
               <td className="py-2 px-4 border-b">{event.nombre}</td>
-              <td className="py-2 px-4 border-b">{event.fecha}</td>
-              <td className="py-2 px-4 border-b">{event.hora}</td>
-              <td className="py-2 px-4 border-b">{event.lugar}</td>
+              <td className="py-2 px-4 border-b">{formatDate(event.fecha)}</td>
+              <td className="py-2 px-4 border-b">{formatTime(event.hora)}</td>
               <td className="py-2 px-4 border-b">{getSectorName(event.sector)}</td>
+              <td className="py-2 px-4 border-b">{event.cupo}</td>
+              <td className="py-2 px-4 border-b">{getCuposDisponibles(event)}</td>
+              <td className="py-2 px-4 border-b">{event.activo ? 'Activo' : 'Desactivado'}</td>
               <td className="py-2 px-4 border-b">
                 <Button
                   color="blue"

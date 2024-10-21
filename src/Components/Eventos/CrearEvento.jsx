@@ -8,6 +8,7 @@ import {
   Select,
   Option,
 } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom"; // Importar useNavigate
 
 const CrearEvento = () => {
   const [nombre, setNombre] = useState("");
@@ -19,6 +20,7 @@ const CrearEvento = () => {
   const [hora, setHora] = useState(""); // Campo para la hora
   const [sectorSeleccionado, setSectorSeleccionado] = useState("");
   const [sectores, setSectores] = useState([]);
+  const navigate = useNavigate(); // Hook para redirigir
 
   // Cargar los sectores desde la API
   useEffect(() => {
@@ -82,16 +84,8 @@ const CrearEvento = () => {
 
       const data = await response.json();
       if (response.ok) {
-        alert("Evento creado con éxito");
-        // Redireccionar o limpiar el formulario si es necesario
-        setNombre("");
-        setDescripcion("");
-        setCupo("");
-        setPrecio("");
-        setFoto(null);
-        setFecha("");
-        setHora("");
-        setSectorSeleccionado("");
+        // Al crear el evento exitosamente, redirigir a EventosAdmin y mostrar alerta de éxito
+        navigate("/Eventos/EventosAdmin", { state: { success: true } });
       } else {
         console.error("Error en la respuesta:", data);
         alert("Error al crear el evento");

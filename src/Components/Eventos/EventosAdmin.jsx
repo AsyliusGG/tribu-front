@@ -47,11 +47,13 @@ const EventosAdmin = () => {
     fetchData();
   }, []);
 
+  // Obtener el nombre del sector por su ID
   const getSectorName = (sectorId) => {
     const sector = sectors.find((sector) => sector.sector_id === sectorId);
     return sector ? sector.sector_nombre : 'Desconocido';
   };
 
+  // Eliminar evento
   const handleDelete = async (eventId) => {
     try {
       const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
@@ -73,6 +75,7 @@ const EventosAdmin = () => {
     }
   };
 
+  // Mostrar el diálogo de eliminación
   const openDeleteDialog = (eventId) => {
     setEventToDelete(eventId);
     setDeleteDialogOpen(true);
@@ -91,12 +94,12 @@ const EventosAdmin = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ activo: !estadoActual }), // Cambia el estado activo
+        body: JSON.stringify({ disabled: !estadoActual }), // Cambia el estado 'disabled'
       });
 
       if (response.ok) {
         setEvents(events.map(event => 
-          event.id === eventId ? { ...event, activo: !estadoActual } : event
+          event.id === eventId ? { ...event, disabled: !estadoActual } : event
         ));
         setAlertMessage(`Evento ${!estadoActual ? 'activado' : 'desactivado'} correctamente.`);
       } else {
@@ -107,10 +110,12 @@ const EventosAdmin = () => {
     }
   };
 
+  // Calcular cupos disponibles (total - vendidos)
   const getCuposDisponibles = (evento) => {
-    return evento.cupo - (evento.cupos_comprados || 0);
+    return evento.cupos - (evento.cupos_comprados || 0);
   };
 
+  // Formatear fecha a 'dd/mm/yy'
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
@@ -119,6 +124,7 @@ const EventosAdmin = () => {
     return `${day}/${month}/${year}`;
   };
 
+  // Formatear hora a 'hh:mm'
   const formatTime = (timeString) => {
     const [hour, minute] = timeString.split(':');
     return `${hour}:${minute}`;
@@ -184,14 +190,14 @@ const EventosAdmin = () => {
               <td className="py-2 px-4 border-b">{getSectorName(event.sector)}</td>
               <td className="py-2 px-4 border-b">{event.cupos}</td>
               <td className="py-2 px-4 border-b">{getCuposDisponibles(event)}</td>
-              <td className="py-2 px-4 border-b">{event.activo ? 'Activo' : 'Desactivado'}</td>
+              <td className="py-2 px-4 border-b">{event.disabled ? 'Desactivado' : 'Activo'}</td>
               <td className="py-2 px-4 border-b">
                 <Button
-                  color={event.activo ? 'gray' : 'green'}
+                  color={!event.disabled ? 'gray' : 'green'}
                   className="mr-2"
-                  onClick={() => toggleEvento(event.id, event.activo)}
+                  onClick={() => toggleEvento(event.id, event.disabled)}
                 >
-                  {event.activo ? 'Desactivar' : 'Activar'}
+                  {!event.disabled ? 'Desactivar' : 'Activar'}
                 </Button>
                 <Button color="blue" className="mr-2" onClick={() => navigate(`/Eventos/ModificarEvento/${event.id}`)}>
                   Modificar

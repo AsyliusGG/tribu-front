@@ -17,7 +17,7 @@ const Eventos = () => {
   useEffect(() => {
     async function loadEventos() {
       const response = await getallEventos();
-      const eventosActivos = response.data.filter(evento => evento.activo); // Filtrar eventos activos
+      const eventosActivos = response.data.filter(evento => !evento.disabled); // Filtrar eventos activos
       setPosts(eventosActivos);
     }
 

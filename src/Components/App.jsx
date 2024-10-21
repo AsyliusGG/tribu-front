@@ -71,6 +71,7 @@ function App() {
           <Route path="/Eventos/CrearEvento" element={<CrearEvento />} />
           <Route path="/Components/eventos/CrearEvento" element={<CrearEvento />} />
           <Route path="/components/eventos/ModificarEvento" element={<ModificarEvento />} />
+          <Route path="/Eventos/ModificarEvento/:id" element={<ModificarEvento />} />
         </Routes>
         <Footer />
       </div>

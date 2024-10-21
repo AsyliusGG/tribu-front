@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Typography,
@@ -10,7 +10,6 @@ import {
   Alert,
 } from '@material-tailwind/react';
 
-// URLs de API
 const EVENTOS_API_URL = 'http://localhost:8000/eventos/api/v1/evento';
 const SECTOR_API_URL = 'http://localhost:8000/eventos/api/v1/sector';
 
@@ -19,16 +18,8 @@ const EventosAdmin = () => {
   const [sectors, setSectors] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [eventToDelete, setEventToDelete] = useState(null);
+  const [alertMessage, setAlertMessage] = useState('');
   const navigate = useNavigate();
-  const location = useLocation();
-  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-
-  useEffect(() => {
-    if (location.state?.success) {
-      setShowSuccessAlert(true);
-      setTimeout(() => setShowSuccessAlert(false), 3000);
-    }
-  }, [location.state]);
 
   // Cargar eventos y sectores desde la API
   useEffect(() => {
@@ -71,8 +62,9 @@ const EventosAdmin = () => {
       });
 
       if (response.ok) {
-        setEvents(events.filter((event) => event.id !== eventId));
+        setEvents(events.filter((event) => event.id !== eventId)); // Eliminar el evento de la tabla
         setDeleteDialogOpen(false);
+        setAlertMessage('Evento eliminado correctamente.');
       } else {
         console.error('Error al eliminar el evento');
       }
@@ -91,21 +83,42 @@ const EventosAdmin = () => {
     setEventToDelete(null);
   };
 
-  // Función para obtener cupos disponibles
-  const getCuposDisponibles = (evento) => {
-    return evento.cupo - (evento.cupos_comprados || 0); // Si cupos_comprados viene en la API
+  // Habilitar/Deshabilitar Evento
+  const toggleEvento = async (eventId, estadoActual) => {
+    try {
+      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ activo: !estadoActual }), // Cambia el estado activo
+      });
+
+      if (response.ok) {
+        setEvents(events.map(event => 
+          event.id === eventId ? { ...event, activo: !estadoActual } : event
+        ));
+        setAlertMessage(`Evento ${!estadoActual ? 'activado' : 'desactivado'} correctamente.`);
+      } else {
+        console.error('Error al cambiar el estado del evento');
+      }
+    } catch (error) {
+      console.error('Error al cambiar el estado del evento:', error);
+    }
   };
 
-  // Función para dar formato a la fecha en formato dd/mm/aa
+  const getCuposDisponibles = (evento) => {
+    return evento.cupo - (evento.cupos_comprados || 0);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = String(date.getFullYear()).slice(2); // Recortar los primeros dos dígitos del año
+    const year = String(date.getFullYear()).slice(2);
     return `${day}/${month}/${year}`;
   };
 
-  // Función para dar formato a la hora en formato 24 horas (hh:mm)
   const formatTime = (timeString) => {
     const [hour, minute] = timeString.split(':');
     return `${hour}:${minute}`;
@@ -117,7 +130,7 @@ const EventosAdmin = () => {
         Administrador de Eventos
       </Typography>
 
-      {showSuccessAlert && (
+      {alertMessage && (
         <Alert
           icon={
             <svg
@@ -135,7 +148,7 @@ const EventosAdmin = () => {
           }
           className="rounded-none border-l-4 border-[#2ec946] bg-[#2ec946]/10 font-medium text-[#2ec946]"
         >
-          Evento creado con éxito.
+          {alertMessage}
         </Alert>
       )}
 
@@ -169,15 +182,18 @@ const EventosAdmin = () => {
               <td className="py-2 px-4 border-b">{formatDate(event.fecha)}</td>
               <td className="py-2 px-4 border-b">{formatTime(event.hora)}</td>
               <td className="py-2 px-4 border-b">{getSectorName(event.sector)}</td>
-              <td className="py-2 px-4 border-b">{event.cupo}</td>
+              <td className="py-2 px-4 border-b">{event.cupos}</td>
               <td className="py-2 px-4 border-b">{getCuposDisponibles(event)}</td>
               <td className="py-2 px-4 border-b">{event.activo ? 'Activo' : 'Desactivado'}</td>
               <td className="py-2 px-4 border-b">
                 <Button
-                  color="blue"
+                  color={event.activo ? 'gray' : 'green'}
                   className="mr-2"
-                  onClick={() => navigate(`/eventos/${event.id}/modificar`)}
+                  onClick={() => toggleEvento(event.id, event.activo)}
                 >
+                  {event.activo ? 'Desactivar' : 'Activar'}
+                </Button>
+                <Button color="blue" className="mr-2" onClick={() => navigate(`/Eventos/ModificarEvento/${event.id}`)}>
                   Modificar
                 </Button>
                 <Button color="red" onClick={() => openDeleteDialog(event.id)}>

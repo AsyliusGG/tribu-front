@@ -17,8 +17,8 @@ const Eventos = () => {
   useEffect(() => {
     async function loadEventos() {
       const response = await getallEventos();
-      console.log(response.data);
-      setPosts(response.data);
+      const eventosActivos = response.data.filter(evento => evento.activo); // Filtrar eventos activos
+      setPosts(eventosActivos);
     }
 
     loadEventos();

@@ -1,18 +1,29 @@
-import axios from 'axios';
-
+import axios from "axios";
 
 export const getallEventos = () => {
-  return axios.get('http://localhost:8000/eventos/api/v1/evento/')
-}
+  return axios.get("http://localhost:8000/eventos/api/v1/evento/");
+};
 
 export const getallMadres = () => {
-  return axios.get('http://localhost:8000/madre/api/v1/madre/')
-}
+  return axios.get("http://localhost:8000/madre/api/v1/madre/");
+};
 
-export const getallHijo = () => {  
-  return axios.get('http://localhost:8000/hijo/api/v1/hijo/')
-}
+export const getallHijo = () => {
+  return axios.get("http://localhost:8000/hijo/api/v1/hijo/");
+};
 
 export const getallSector = () => {
-    return axios.get('http://localhost:8000/sector/api/v1/sector/')
-    }
+  return axios.get("http://localhost:8000/sector/api/v1/sector/");
+};
+
+const API_URL = "http://localhost:8000/eventos/api/v1/evento";
+
+export const getEventoById = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error al obtener el evento por ID", error);
+    throw error;
+  }
+};

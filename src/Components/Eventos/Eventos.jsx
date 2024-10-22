@@ -25,7 +25,7 @@ const Eventos = () => {
   }, []);
 
   const handlePostClick = (postId) => {
-    navigate(`/post/${postId}`);
+    navigate(`/verevento/${postId}`); // Cambia la ruta para que coincida con VerEvento.jsx
   };
 
   const goToAdmin = () => {
@@ -51,7 +51,6 @@ const Eventos = () => {
             <Card
               key={post.id}
               className="w-full h-full flex flex-col justify-between cursor-pointer"
-              onClick={() => handlePostClick(post.id)}
             >
               <CardHeader color="blue-gray" className="relative h-56">
                 <img
@@ -61,13 +60,18 @@ const Eventos = () => {
                 />
               </CardHeader>
               <CardBody className="flex-grow">
-                <Typography variant="h5" color="blue-gray" className="mb-2 text-center">
-                  {post.titulo}
+                <Typography variant="h5" className="mb-2 text-center font-bold">
+                  {post.nombre} {/* Mostrar nombre del evento en negrita */}
                 </Typography>
-                <Typography className="text-center">{post.descripcion}</Typography>
+                <Typography className="text-center mb-2">
+                  Sector: {post.sector?.sector_nombre || post.sector_nombre || 'N/A'} {/* Mostrar el nombre del sector si existe */}
+                </Typography>
+                <Typography className="text-center">
+                  Dirección: {post.lugar || 'No especificada'} {/* Mostrar la dirección si existe */}
+                </Typography>
               </CardBody>
               <CardFooter className="flex justify-center pt-4">
-                <Button>Read More</Button>
+                <Button onClick={() => handlePostClick(post.id)}>Read More</Button> {/* Manejar el clic */}
               </CardFooter>
             </Card>
           ))}

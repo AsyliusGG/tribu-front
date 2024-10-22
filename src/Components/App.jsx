@@ -14,6 +14,7 @@ import Home from "./Home";  // Importamos el nuevo componente Home
 import CrearEvento from "./Eventos/CrearEvento.jsx";
 import ModificarEvento from "./Eventos/ModificarEvento.jsx";
 import EventosAdmin from "./Eventos/EventosAdmin.jsx";
+import VerEvento from "./Eventos/VerEvento.jsx";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -72,6 +73,7 @@ function App() {
           <Route path="/Components/eventos/CrearEvento" element={<CrearEvento />} />
           <Route path="/components/eventos/ModificarEvento" element={<ModificarEvento />} />
           <Route path="/Eventos/ModificarEvento/:id" element={<ModificarEvento />} />
+          <Route path="/verevento/:id" element={<VerEvento />} />
         </Routes>
         <Footer />
       </div>

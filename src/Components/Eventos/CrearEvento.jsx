@@ -16,6 +16,7 @@ const CrearEvento = () => {
   const [cupo, setCupo] = useState("");
   const [valorAdulto, setValorAdulto] = useState("");
   const [valorNino, setValorNino] = useState("");
+  const [lugar, setLugar] = useState(""); // Nuevo campo para la dirección del lugar
   const [foto, setFoto] = useState(null);
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
@@ -85,6 +86,7 @@ const CrearEvento = () => {
       !fecha ||
       !hora ||
       !horaTermino ||
+      !lugar || // Validar que el lugar esté completado
       !sectorSeleccionado
     ) {
       alert("Por favor, rellena todos los campos.");
@@ -106,7 +108,7 @@ const CrearEvento = () => {
     formData.append("fecha", fecha);
     formData.append("hora", hora);
     formData.append("hora_termino", horaTermino); // Añadir hora de término
-    formData.append("lugar", sectorSeleccionado);
+    formData.append("lugar", lugar); // Añadir la dirección del lugar
     formData.append("sector", sectorSeleccionado);
 
     try {
@@ -151,19 +153,6 @@ const CrearEvento = () => {
                 label="Nombre"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-2">
-                Descripción
-              </Typography>
-              <Textarea
-                size="lg"
-                label="Descripción"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
                 required
               />
             </div>
@@ -259,7 +248,21 @@ const CrearEvento = () => {
 
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
-                Lugar del Evento (Sector)
+                Lugar del Evento (Dirección)
+              </Typography>
+              <Input
+                type="text"
+                size="lg"
+                label="Dirección del Evento"
+                value={lugar} // Nuevo campo para la dirección
+                onChange={(e) => setLugar(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-2">
+                Sector del Evento
               </Typography>
               <Select
                 size="lg"
@@ -275,6 +278,20 @@ const CrearEvento = () => {
                 ))}
               </Select>
             </div>
+
+            <div className="mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-2">
+                Descripción
+              </Typography>
+              <Textarea
+                size="lg"
+                label="Descripción"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                required
+              />
+            </div>
+
           </div>
 
           <Button type="submit" color="blue" fullWidth className="mt-4">

@@ -10,83 +10,39 @@ import {
   Alert,
 } from "@material-tailwind/react";
 
-const EVENTOS_API_URL = "http://localhost:8000/eventos/api/v1/evento";
-const SECTOR_API_URL = "http://localhost:8000/eventos/api/v1/sector";
+const ALIANZAS_API_URL = "http://localhost:8000/alianzas/api/v1/alianza"; // Actualizar con la API correcta
 
-const EventosAdmin = () => {
-  const [events, setEvents] = useState([]);
-  const [sectors, setSectors] = useState([]);
+const AlianzasAdmin = () => {
+  const [alianzas, setAlianzas] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState(null);
+  const [alianzaToDelete, setAlianzaToDelete] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
   const navigate = useNavigate();
 
-  // Cargar eventos y sectores desde la API
+  // Cargar alianzas desde la API
   useEffect(() => {
     async function fetchData() {
       try {
-        const [eventsResponse, sectorsResponse] = await Promise.all([
-          fetch(EVENTOS_API_URL),
-          fetch(SECTOR_API_URL),
-        ]);
+        const response = await fetch(ALIANZAS_API_URL);
 
-        if (eventsResponse.ok && sectorsResponse.ok) {
-          let eventsData = await eventsResponse.json();
-          const sectorsData = await sectorsResponse.json();
-
-          // Verificar si el evento fue ayer y desactivarlo si es necesario
-          const currentDate = new Date();
-          currentDate.setDate(currentDate.getDate() - 1); // Restar un día a la fecha actual
-          eventsData.forEach(async (event) => {
-            const eventDate = new Date(event.fecha);
-            if (eventDate < currentDate && !event.disabled) {
-              await desactivarEvento(event.id);
-              event.disabled = true; // Marcar como desactivado
-            }
-          });
-
-          setEvents(eventsData);
-          setSectors(sectorsData);
+        if (response.ok) {
+          const alianzasData = await response.json();
+          setAlianzas(alianzasData);
         } else {
-          console.error("Error al obtener los eventos o sectores.");
+          console.error("Error al obtener las alianzas.");
         }
       } catch (error) {
-        console.error("Error al obtener los eventos o sectores:", error);
+        console.error("Error al obtener las alianzas:", error);
       }
     }
 
     fetchData();
   }, []);
 
-  // Obtener el nombre del sector por su ID
-  const getSectorName = (sectorId) => {
-    const sector = sectors.find((sector) => sector.sector_id === sectorId);
-    return sector ? sector.sector_nombre : "Desconocido";
-  };
-
-  // Desactivar evento
-  const desactivarEvento = async (eventId) => {
+  // Eliminar alianza
+  const handleDelete = async (alianzaId) => {
     try {
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ disabled: true }), // Desactivar el evento
-      });
-
-      if (!response.ok) {
-        console.error("Error al desactivar el evento");
-      }
-    } catch (error) {
-      console.error("Error al desactivar el evento:", error);
-    }
-  };
-
-  // Eliminar evento
-  const handleDelete = async (eventId) => {
-    try {
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
+      const response = await fetch(`${ALIANZAS_API_URL}/${alianzaId}/`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -94,32 +50,32 @@ const EventosAdmin = () => {
       });
 
       if (response.ok) {
-        setEvents(events.filter((event) => event.id !== eventId)); // Eliminar el evento de la tabla
+        setAlianzas(alianzas.filter((alianza) => alianza.id !== alianzaId)); // Eliminar la alianza de la tabla
         setDeleteDialogOpen(false);
-        setAlertMessage("Evento eliminado correctamente.");
+        setAlertMessage("Alianza eliminada correctamente.");
       } else {
-        console.error("Error al eliminar el evento");
+        console.error("Error al eliminar la alianza");
       }
     } catch (error) {
-      console.error("Error al eliminar el evento:", error);
+      console.error("Error al eliminar la alianza:", error);
     }
   };
 
   // Mostrar el diálogo de eliminación
-  const openDeleteDialog = (eventId) => {
-    setEventToDelete(eventId);
+  const openDeleteDialog = (alianzaId) => {
+    setAlianzaToDelete(alianzaId);
     setDeleteDialogOpen(true);
   };
 
   const closeDeleteDialog = () => {
     setDeleteDialogOpen(false);
-    setEventToDelete(null);
+    setAlianzaToDelete(null);
   };
 
-  // Habilitar/Deshabilitar Evento
-  const toggleEvento = async (eventId, estadoActual) => {
+  // Habilitar/Deshabilitar Alianza
+  const toggleAlianza = async (alianzaId, estadoActual) => {
     try {
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
+      const response = await fetch(`${ALIANZAS_API_URL}/${alianzaId}/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -128,25 +84,20 @@ const EventosAdmin = () => {
       });
 
       if (response.ok) {
-        setEvents(
-          events.map((event) =>
-            event.id === eventId ? { ...event, disabled: !estadoActual } : event
+        setAlianzas(
+          alianzas.map((alianza) =>
+            alianza.id === alianzaId ? { ...alianza, disabled: !estadoActual } : alianza
           )
         );
         setAlertMessage(
-          `Evento ${!estadoActual ? "activado" : "desactivado"} correctamente.`
+          `Alianza ${!estadoActual ? "activada" : "desactivada"} correctamente.`
         );
       } else {
-        console.error("Error al cambiar el estado del evento");
+        console.error("Error al cambiar el estado de la alianza");
       }
     } catch (error) {
-      console.error("Error al cambiar el estado del evento:", error);
+      console.error("Error al cambiar el estado de la alianza:", error);
     }
-  };
-
-  // Calcular cupos disponibles (total - vendidos)
-  const getCuposDisponibles = (evento) => {
-    return evento.cupos - (evento.cupos_comprados || 0);
   };
 
   // Formatear fecha a 'dd/mm/yy'
@@ -158,16 +109,10 @@ const EventosAdmin = () => {
     return `${day}/${month}/${year}`;
   };
 
-  // Formatear hora a 'hh:mm'
-  const formatTime = (timeString) => {
-    const [hour, minute] = timeString.split(":");
-    return `${hour}:${minute}`;
-  };
-
   return (
     <div className="container mx-auto py-10">
       <Typography variant="h2" color="blue-gray" className="text-center mb-10">
-        Administrador de Eventos
+        Administrador de Alianzas
       </Typography>
 
       {alertMessage && (
@@ -197,7 +142,7 @@ const EventosAdmin = () => {
           variant="gradient"
           color="green"
           className="flex items-center"
-          onClick={() => navigate("/Eventos/CrearEvento")}
+          onClick={() => navigate("/Alianzas/CrearAlianza")}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -213,54 +158,46 @@ const EventosAdmin = () => {
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          Agregar Nuevo Evento
+          Agregar Nueva Alianza
         </Button>
       </div>
 
       <table className="min-w-full bg-white border border-gray-200">
         <thead>
           <tr>
-            <th className="py-2 px-4 border-b">Nombre</th>
-            <th className="py-2 px-4 border-b">Fecha</th>
-            <th className="py-2 px-4 border-b">Hora</th>
-            <th className="py-2 px-4 border-b">Sector</th>
-            <th className="py-2 px-4 border-b">Cupos Totales</th>
-            <th className="py-2 px-4 border-b">Cupos Disponibles</th>
+            <th className="py-2 px-4 border-b">Empresa</th>
+            <th className="py-2 px-4 border-b">Nombre Promo</th>
+            <th className="py-2 px-4 border-b">Promoción</th>
+            <th className="py-2 px-4 border-b">Fecha Inicio</th>
+            <th className="py-2 px-4 border-b">Fecha Final</th>
             <th className="py-2 px-4 border-b">Estado</th>
             <th className="py-2 px-4 border-b">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {events.map((event) => (
-            <tr key={event.id}>
-              <td className="py-2 px-4 border-b">{event.nombre}</td>
-              <td className="py-2 px-4 border-b">{formatDate(event.fecha)}</td>
-              <td className="py-2 px-4 border-b">{formatTime(event.hora)}</td>
+          {alianzas.map((alianza) => (
+            <tr key={alianza.id}>
+              <td className="py-2 px-4 border-b">{alianza.empresa}</td>
+              <td className="py-2 px-4 border-b">{alianza.nombrePromo}</td>
+              <td className="py-2 px-4 border-b">{alianza.promocion}</td>
+              <td className="py-2 px-4 border-b">{formatDate(alianza.fechaInicio)}</td>
+              <td className="py-2 px-4 border-b">{formatDate(alianza.fechaFinal)}</td>
               <td className="py-2 px-4 border-b">
-                {getSectorName(event.sector)}
-              </td>
-              <td className="py-2 px-4 border-b">{event.cupos}</td>
-              <td className="py-2 px-4 border-b">
-                {getCuposDisponibles(event)}
-              </td>
-              <td className="py-2 px-4 border-b">
-                {event.disabled ? "Desactivado" : "Activo"}
+                {alianza.disabled ? "Desactivado" : "Activo"}
               </td>
               <td className="py-2 px-4 border-b">
                 <div className="flex justify-between space-x-2">
                   <Button
-                    color={!event.disabled ? "gray" : "green"}
+                    color={!alianza.disabled ? "gray" : "green"}
                     className="flex items-center"
-                    onClick={() => toggleEvento(event.id, event.disabled)}
+                    onClick={() => toggleAlianza(alianza.id, alianza.disabled)}
                   >
-                    {!event.disabled ? "Desactivar" : "Activar"}
+                    {!alianza.disabled ? "Desactivar" : "Activar"}
                   </Button>
                   <Button
                     color="blue"
                     className="flex items-center"
-                    onClick={() =>
-                      navigate(`/Eventos/ModificarEvento/${event.id}`)
-                    }
+                    onClick={() => navigate(`/Alianzas/ModificarAlianza/${alianza.id}`)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -281,7 +218,7 @@ const EventosAdmin = () => {
                   <Button
                     color="red"
                     className="flex items-center"
-                    onClick={() => openDeleteDialog(event.id)}
+                    onClick={() => openDeleteDialog(alianza.id)}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -309,7 +246,7 @@ const EventosAdmin = () => {
       {deleteDialogOpen && (
         <Dialog open={deleteDialogOpen} handler={closeDeleteDialog}>
           <DialogHeader>Confirmar eliminación</DialogHeader>
-          <DialogBody>¿Desea realmente eliminar este evento?</DialogBody>
+          <DialogBody>¿Desea realmente eliminar esta alianza?</DialogBody>
           <DialogFooter>
             <Button
               variant="text"
@@ -321,7 +258,7 @@ const EventosAdmin = () => {
             <Button
               variant="gradient"
               color="red"
-              onClick={() => handleDelete(eventToDelete)}
+              onClick={() => handleDelete(alianzaToDelete)}
             >
               Sí
             </Button>
@@ -332,4 +269,4 @@ const EventosAdmin = () => {
   );
 };
 
-export default EventosAdmin;
+export default AlianzasAdmin;

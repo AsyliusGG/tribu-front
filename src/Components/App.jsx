@@ -15,6 +15,7 @@ import CrearEvento from "./Eventos/CrearEvento.jsx";
 import ModificarEvento from "./Eventos/ModificarEvento.jsx";
 import EventosAdmin from "./Eventos/EventosAdmin.jsx";
 import VerEvento from "./Eventos/VerEvento.jsx";
+import AlianzasAdmin from "./Alianzas/AlianzasAdmin.jsx";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -74,6 +75,7 @@ function App() {
           <Route path="/components/eventos/ModificarEvento" element={<ModificarEvento />} />
           <Route path="/Eventos/ModificarEvento/:id" element={<ModificarEvento />} />
           <Route path="/verevento/:id" element={<VerEvento />} />
+          <Route path="/Alianzas/AlianzasAdmin" element={<AlianzasAdmin />} />
         </Routes>
         <Footer />
       </div>

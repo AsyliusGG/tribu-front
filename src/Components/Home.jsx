@@ -5,6 +5,7 @@ import Eventos from "./Eventos/Eventos";
 import RecentPosts from "./RecentPost/RecentPosts";
 import JoinSection from "./JoinSection/JoinSection";
 import { Alert } from "@material-tailwind/react";
+import ProximosEventos from "./Eventos/ProximosEventos";
 
 // Reutilizamos el componente AlertCustomStyles con estilos personalizados para la posición
 function AlertCustomStyles({ message }) {
@@ -45,7 +46,7 @@ const Home = ({ isAuthenticated }) => {
       <Carousel />
       {isAuthenticated && (
         <>
-          <Eventos />
+          <ProximosEventos />
           <RecentPosts />
         </>
       )}

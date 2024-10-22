@@ -7,6 +7,7 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom"; // Añadido para la navegación
 
 const cardsData = [
   {
@@ -23,7 +24,7 @@ const cardsData = [
     description:
       "We provide detailed insights and analysis to ensure your product launch goes smoothly and reaches the right audience.",
     imgSrc:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80", // Reemplazamos con una nueva URL de imagen
+      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80", 
   },
   {
     id: 3,
@@ -36,12 +37,26 @@ const cardsData = [
 ];
 
 const Alianzas = () => {
+  const navigate = useNavigate(); // Navegación para el botón
+
+  const goToAdmin = () => {
+    navigate("/Alianzas/AlianzasAdmin"); // Ruta para la página del administrador de alianzas
+  };
+
   return (
     <div className="bg-gray-100 py-10">
       <div className="container mx-auto px-4">
+        {/* Botón de Administrador de Alianzas */}
+        <div className="flex justify-end mb-6">
+          <Button variant="gradient" color="blue" onClick={goToAdmin}>
+            Administrador de Alianzas
+          </Button>
+        </div>
+
         <Typography variant="h2" color="blue-gray" className="text-center mb-10">
           Nuestras Alianzas
         </Typography>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {cardsData.map((card) => (
             <Card key={card.id} className="w-full h-full flex flex-col justify-between">

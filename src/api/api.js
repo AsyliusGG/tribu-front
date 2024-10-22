@@ -27,3 +27,4 @@ export const getEventoById = async (id) => {
     throw error;
   }
 };
+

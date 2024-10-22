@@ -17,7 +17,10 @@ const Eventos = () => {
   useEffect(() => {
     async function loadEventos() {
       const response = await getallEventos();
-      const eventosActivos = response.data.filter(evento => !evento.disabled); // Filtrar eventos activos
+      const eventosActivos = response.data
+        .filter(evento => !evento.disabled) // Filtrar eventos activos
+        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); // Ordenar por fecha, de la más próxima a la más lejana
+
       setPosts(eventosActivos);
     }
 
@@ -30,6 +33,24 @@ const Eventos = () => {
 
   const goToAdmin = () => {
     navigate("/Eventos/EventosAdmin");
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatTime = (timeString) => {
+    const [hour, minute] = timeString.split(':');
+    return `${hour}:${minute}`;
+  };
+
+  const getSectorName = (sectorId) => {
+    const sector = sectors.find((sector) => sector.sector_id === sectorId);
+    return sector ? sector.sector_nombre : "Desconocido";
   };
 
   return (
@@ -63,15 +84,29 @@ const Eventos = () => {
                 <Typography variant="h5" className="mb-2 text-center font-bold">
                   {post.nombre} {/* Mostrar nombre del evento en negrita */}
                 </Typography>
+
+                {/* Mostrar la fecha del evento */}
+                <Typography className="text-center mb-2">
+                  Fecha: {formatDate(post.fecha)} {/* Formatear la fecha */}
+                </Typography>
+
+                {/* Mostrar la hora del evento */}
+                <Typography className="text-center mb-2">
+                  Hora: {formatTime(post.hora)} {/* Formatear la hora */}
+                </Typography>
+
+                {/* Mostrar el sector */}
                 <Typography className="text-center mb-2">
                   Sector: {post.sector?.sector_nombre || post.sector_nombre || 'N/A'} {/* Mostrar el nombre del sector si existe */}
                 </Typography>
+
+                {/* Mostrar la dirección */}
                 <Typography className="text-center">
                   Dirección: {post.lugar || 'No especificada'} {/* Mostrar la dirección si existe */}
                 </Typography>
               </CardBody>
               <CardFooter className="flex justify-center pt-4">
-                <Button onClick={() => handlePostClick(post.id)}>Read More</Button> {/* Manejar el clic */}
+                <Button onClick={() => handlePostClick(post.id)}>Ver Más</Button> {/* Manejar el clic */}
               </CardFooter>
             </Card>
           ))}

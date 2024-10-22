@@ -16,6 +16,7 @@ import ModificarEvento from "./Eventos/ModificarEvento.jsx";
 import EventosAdmin from "./Eventos/EventosAdmin.jsx";
 import VerEvento from "./Eventos/VerEvento.jsx";
 import AlianzasAdmin from "./Alianzas/AlianzasAdmin.jsx";
+import CarritoCompra from "./Compra/CarritoCompra.jsx"
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -76,6 +77,7 @@ function App() {
           <Route path="/Eventos/ModificarEvento/:id" element={<ModificarEvento />} />
           <Route path="/verevento/:id" element={<VerEvento />} />
           <Route path="/Alianzas/AlianzasAdmin" element={<AlianzasAdmin />} />
+          <Route path="/CarritoCompra" element={<CarritoCompra />} /> 
         </Routes>
         <Footer />
       </div>

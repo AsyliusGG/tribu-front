@@ -18,9 +18,19 @@ const Joinus = () => {
     'Maipú', 'Ñuñoa', 'San Bernardo', 'La Reina', 'Peñalolén'
   ];
 
-  const handleNumHijosChange = (e) => {
-    setNumHijos(parseInt(e.target.value, 10));
-    setFechasNacimiento(Array(parseInt(e.target.value, 10)).fill(''));
+  const handleNumHijosChange = (increment) => {
+    setNumHijos((prevNumHijos) => {
+      const newNumHijos = prevNumHijos + increment;
+      if (newNumHijos < 0 || newNumHijos > 20) return prevNumHijos;
+      const nuevasFechas = [...fechasNacimiento];
+      if (increment > 0) {
+        nuevasFechas.push('');
+      } else {
+        nuevasFechas.pop();
+      }
+      setFechasNacimiento(nuevasFechas);
+      return newNumHijos;
+    });
   };
 
   const handleFechaNacimientoChange = (index, value) => {
@@ -122,18 +132,20 @@ const Joinus = () => {
         <hr className="my-6 border-gray-800" />
 
         <div className="mb-6">
-          <label htmlFor="numHijos" className="block text-sm font-medium text-gray-700">¿Cuántos hijos tiene?</label>
-          <input 
-            type="number" 
-            id="numHijos" 
-            name="numHijos" 
-            className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" 
-            value={numHijos} 
-            onChange={handleNumHijosChange} 
-            min="0" 
-            max="20" 
-          />
-        </div>
+            <label htmlFor="numHijos" className="block text-sm font-medium text-gray-700">¿Cuántos hijos tiene?</label>
+            <div className="flex items-center">
+              <button type="button" onClick={() => handleNumHijosChange(-1)} className="px-3 py-1 border border-gray-500 rounded-md shadow-sm">-</button>
+              <input 
+                type="number" 
+                id="numHijos" 
+                name="numHijos" 
+                className="mx-2 w-16 text-center border border-gray-500 rounded-md shadow-sm p-2" 
+                value={numHijos} 
+                readOnly 
+              />
+              <button type="button" onClick={() => handleNumHijosChange(1)} className="px-3 py-1 border border-gray-500 rounded-md shadow-sm">+</button>
+            </div>
+          </div>
 
         {Array.from({ length: numHijos }).map((_, index) => (
           <div key={index} className="mb-4">

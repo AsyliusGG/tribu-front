@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 const Joinus = () => {
   const [numHijos, setNumHijos] = useState(0);
+  const [fechasNacimiento, setFechasNacimiento] = useState([]);
 
   const ciudadesQuintaRegion = [
     'Valparaíso', 'Viña del Mar', 'Quilpué', 'Villa Alemana', 'Quintero', 
@@ -19,13 +20,48 @@ const Joinus = () => {
 
   const handleNumHijosChange = (e) => {
     setNumHijos(parseInt(e.target.value, 10));
+    setFechasNacimiento(Array(parseInt(e.target.value, 10)).fill(''));
   };
 
+  const handleFechaNacimientoChange = (index, value) => {
+    const nuevasFechas = [...fechasNacimiento];
+    nuevasFechas[index] = value;
+    setFechasNacimiento(nuevasFechas);
+  };
+
+  const calcularEdad = (fechaNacimiento) => {
+    if (!fechaNacimiento) return '';
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    let edadAnios = hoy.getFullYear() - nacimiento.getFullYear();
+    let edadMeses = hoy.getMonth() - nacimiento.getMonth();
+    let edadDias = hoy.getDate() - nacimiento.getDate();
+
+    if (edadDias < 0) {
+      edadMeses--;
+      const ultimoDiaMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth(), 0).getDate();
+      edadDias += ultimoDiaMesAnterior;
+    }
+
+    if (edadMeses < 0) {
+      edadAnios--;
+      edadMeses += 12;
+    }
+
+    return `${edadAnios} años, ${edadMeses} meses y ${edadDias} días`;
+  };
+
+  const obtenerTextoEdadHijo = (index) => {
+    const sufijos = ['primer', 'segundo', 'tercer', 'cuarto', 'quinto', 'sexto', 'séptimo', 'octavo', 'noveno', 'décimo'];
+    return `La edad del ${sufijos[index] || (index + 1) + 'º'} hijo es:`;
+  };
+    
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <form className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="form-group">
+    <div className="min-h-screen bg-gray-100 py-8 overflow-auto">
+      <div className="flex justify-center items-center">
+        <form className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="form-group">
             <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">Nombre</label>
             <input type="text" id="nombre" name="nombre" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
           </div>
@@ -101,29 +137,18 @@ const Joinus = () => {
 
         {Array.from({ length: numHijos }).map((_, index) => (
           <div key={index} className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">Edad del hijo {index + 1}</label>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4">
               <div>
-                <label htmlFor={`meses-${index}`} className="block text-sm font-medium text-gray-700">Meses</label>
+                <label htmlFor={`fecha-nacimiento-${index}`} className="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
                 <input 
-                  type="number" 
-                  id={`meses-${index}`} 
-                  name={`meses-${index}`} 
+                  type="date" 
+                  id={`fecha-nacimiento-${index}`} 
+                  name={`fecha-nacimiento-${index}`} 
                   className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" 
-                  min="1" 
-                  max="12"
+                  value={fechasNacimiento[index] || ''} 
+                  onChange={(e) => handleFechaNacimientoChange(index, e.target.value)} 
                 />
-              </div>
-              <div>
-                <label htmlFor={`años-${index}`} className="block text-sm font-medium text-gray-700">Años</label>
-                <input 
-                  type="number" 
-                  id={`años-${index}`} 
-                  name={`años-${index}`} 
-                  className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" 
-                  min="1" 
-                  max="10"
-                />
+                <p className="mt-2 text-sm text-gray-900">{obtenerTextoEdadHijo(index)} {calcularEdad(fechasNacimiento[index])}</p>
               </div>
             </div>
           </div>
@@ -142,6 +167,7 @@ const Joinus = () => {
         </div>
         
       </form>
+    </div>
     </div>
   );
 };

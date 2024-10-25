@@ -49,7 +49,7 @@ const Eventos = () => {
   };
 
   const getSectorName = (sectorId) => {
-    const sector = sectors.find((sector) => sector.sector_id === sectorId);
+    const sector = sectors.find((sector) => sector.id === sectorId);
     return sector ? sector.sector_nombre : "Desconocido";
   };
 

@@ -269,8 +269,8 @@ const ModificarEvento = () => {
               >
                 {sectores.map((sector) => (
                   <Option
-                    key={sector.sector_id}
-                    value={String(sector.sector_id)}
+                    key={sector.id}
+                    value={String(sector.id)}
                   >
                     {sector.sector_nombre}
                   </Option>

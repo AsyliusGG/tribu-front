@@ -10,7 +10,7 @@ import {
   Alert,
 } from "@material-tailwind/react";
 
-const ALIANZAS_API_URL = "http://localhost:8000/alianzas/api/v1/alianza"; // Actualizar con la API correcta
+const ALIANZAS_API_URL = "http://localhost:8000/alianzas/api/v1/alianzas"; // Actualizar con la API correcta
 
 const AlianzasAdmin = () => {
   const [alianzas, setAlianzas] = useState([]);
@@ -86,7 +86,7 @@ const AlianzasAdmin = () => {
       if (response.ok) {
         setAlianzas(
           alianzas.map((alianza) =>
-            alianza.id === alianzaId ? { ...alianza, disabled: !estadoActual } : alianza
+            alianza.id === alianzaId ? { ...alianza, Estado: !estadoActual } : alianza
           )
         );
         setAlertMessage(
@@ -177,22 +177,22 @@ const AlianzasAdmin = () => {
         <tbody>
           {alianzas.map((alianza) => (
             <tr key={alianza.id}>
-              <td className="py-2 px-4 border-b">{alianza.empresa}</td>
-              <td className="py-2 px-4 border-b">{alianza.nombrePromo}</td>
-              <td className="py-2 px-4 border-b">{alianza.promocion}</td>
-              <td className="py-2 px-4 border-b">{formatDate(alianza.fechaInicio)}</td>
-              <td className="py-2 px-4 border-b">{formatDate(alianza.fechaFinal)}</td>
+              <td className="py-2 px-4 border-b">{alianza.alianza_empresa}</td>
+              <td className="py-2 px-4 border-b">{alianza.alianza_nombre}</td>
+              <td className="py-2 px-4 border-b">{alianza.Promocion}</td>
+              <td className="py-2 px-4 border-b">{formatDate(alianza.Fecha_inicio)}</td>
+              <td className="py-2 px-4 border-b">{formatDate(alianza.Fecha_final)}</td>
               <td className="py-2 px-4 border-b">
-                {alianza.disabled ? "Desactivado" : "Activo"}
+                {alianza.Estado ? "Desactivado" : "Activo"}
               </td>
               <td className="py-2 px-4 border-b">
                 <div className="flex justify-between space-x-2">
                   <Button
-                    color={!alianza.disabled ? "gray" : "green"}
+                    color={!alianza.Estado ? "gray" : "green"}
                     className="flex items-center"
-                    onClick={() => toggleAlianza(alianza.id, alianza.disabled)}
+                    onClick={() => toggleAlianza(alianza.id, alianza.Estado)}
                   >
-                    {!alianza.disabled ? "Desactivar" : "Activar"}
+                    {!alianza.Estado ? "Desactivar" : "Activar"}
                   </Button>
                   <Button
                     color="blue"

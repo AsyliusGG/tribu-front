@@ -17,6 +17,9 @@ import EventosAdmin from "./Eventos/EventosAdmin.jsx";
 import VerEvento from "./Eventos/VerEvento.jsx";
 import AlianzasAdmin from "./Alianzas/AlianzasAdmin.jsx";
 import CarritoCompra from "./Compra/CarritoCompra.jsx"
+import VerAlianza from "./Alianzas/VerAlianza.jsx";
+import CrearAlianza from "./Alianzas/CrearAlianza.jsx";
+import ModificarAlianza from "./Alianzas/ModificarAlianza.jsx";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -73,11 +76,13 @@ function App() {
           <Route path="/Eventos/EventosAdmin" element={<EventosAdmin />} />
           <Route path="/Eventos/CrearEvento" element={<CrearEvento />} />
           <Route path="/Components/eventos/CrearEvento" element={<CrearEvento />} />
-          <Route path="/components/eventos/ModificarEvento" element={<ModificarEvento />} />
           <Route path="/Eventos/ModificarEvento/:id" element={<ModificarEvento />} />
           <Route path="/verevento/:id" element={<VerEvento />} />
           <Route path="/Alianzas/AlianzasAdmin" element={<AlianzasAdmin />} />
           <Route path="/CarritoCompra" element={<CarritoCompra />} /> 
+          <Route path="/Alianzas/VerAlianza/:id" element={<VerAlianza />} />
+          <Route path="/Alianzas/CrearAlianza" element={<CrearAlianza />} />
+          <Route path="/Alianzas/ModificarAlianza/:id" element={<ModificarAlianza />} />
         </Routes>
         <Footer />
       </div>

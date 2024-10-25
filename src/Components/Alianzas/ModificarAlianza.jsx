@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Input,
@@ -6,9 +6,12 @@ import {
   Textarea,
   Card,
 } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CrearAlianza = () => {
+const ALIANZAS_API_URL = "http://localhost:8000/alianzas/api/v1/alianzas"; // Actualizar con la API correcta
+
+const ModificarAlianza = () => {
+  const { id } = useParams(); // Obtener el id de la alianza desde la URL
   const [empresa, setEmpresa] = useState("");
   const [nombrePromo, setNombrePromo] = useState("");
   const [promocion, setPromocion] = useState("");
@@ -19,6 +22,34 @@ const CrearAlianza = () => {
   const [descripcionLength, setDescripcionLength] = useState(0); // Estado para el contador de caracteres
   const [foto, setFoto] = useState(null);
   const navigate = useNavigate();
+
+  // Cargar los datos de la alianza desde la API
+  useEffect(() => {
+    const fetchAlianza = async () => {
+      try {
+        const response = await fetch(`${ALIANZAS_API_URL}/${id}/`);
+        if (response.ok) {
+          const alianza = await response.json();
+          // Precargar los valores
+          setEmpresa(alianza.alianza_empresa);
+          setNombrePromo(alianza.alianza_nombre);
+          setPromocion(alianza.Promocion);
+          setEstado(alianza.Estado);
+          setFechaInicio(alianza.Fecha_inicio);
+          setFechaFinal(alianza.Fecha_final);
+          setDescripcion(alianza.descripcion);
+          setDescripcionLength(alianza.descripcion.length);
+          setFoto(alianza.foto); // Si quieres mostrar la foto previamente cargada
+        } else {
+          console.error("Error al cargar los datos de la alianza.");
+        }
+      } catch (error) {
+        console.error("Error al cargar los datos de la alianza:", error);
+      }
+    };
+
+    fetchAlianza();
+  }, [id]);
 
   const handleFileChange = (e) => {
     setFoto(e.target.files[0]);
@@ -36,7 +67,7 @@ const CrearAlianza = () => {
     e.preventDefault();
 
     // Validar los campos del formulario
-    if (!empresa || !nombrePromo || !promocion || !descripcion || !foto || !fechaInicio || !fechaFinal) {
+    if (!empresa || !nombrePromo || !promocion || !descripcion || !fechaInicio || !fechaFinal) {
       alert("Por favor, rellena todos los campos.");
       return;
     }
@@ -50,22 +81,26 @@ const CrearAlianza = () => {
     formData.append("Fecha_inicio", fechaInicio);
     formData.append("Fecha_final", fechaFinal);
     formData.append("descripcion", descripcion);
-    formData.append("foto", foto); // Añadir la foto
+
+    if (foto instanceof File) {
+      formData.append("foto", foto); // Añadir la foto si es un archivo nuevo
+    }
 
     try {
-      // Enviar datos a tu API
-      const response = await fetch("http://localhost:8000/eventos/api/v1/alianzas/", {
-        method: "POST",
+      // Enviar los datos actualizados a tu API
+      const response = await fetch(`${ALIANZAS_API_URL}/${id}/`, {
+        method: "PUT", // Usamos PUT para actualizar
         body: formData,
       });
 
       const data = await response.json();
       if (response.ok) {
-        // Redirigir a AlianzasAdmin después de crear la alianza
+        // Redirigir a AlianzasAdmin después de guardar la alianza
         navigate("/Alianzas/AlianzasAdmin", { state: { success: true } });
+        alert("Se guardaron los datos exitosamente");
       } else {
         console.error("Error en la respuesta:", data);
-        alert("Error al crear la alianza");
+        alert("Error al modificar la alianza");
       }
     } catch (error) {
       alert("Hubo un error al enviar los datos");
@@ -77,7 +112,7 @@ const CrearAlianza = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="p-6 w-full max-w-4xl">
         <Typography variant="h4" color="blue-gray" className="text-center mb-6">
-          Crear Nueva Alianza
+          Modificar Alianza
         </Typography>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -91,7 +126,6 @@ const CrearAlianza = () => {
                 label="Nombre de la Empresa"
                 value={empresa}
                 onChange={(e) => setEmpresa(e.target.value)}
-                required
               />
             </div>
 
@@ -105,7 +139,6 @@ const CrearAlianza = () => {
                 label="Nombre de la Promoción"
                 value={nombrePromo}
                 onChange={(e) => setNombrePromo(e.target.value)}
-                required
               />
             </div>
 
@@ -119,7 +152,6 @@ const CrearAlianza = () => {
                 label="Detalle de la Promoción"
                 value={promocion}
                 onChange={(e) => setPromocion(e.target.value)}
-                required
               />
             </div>
 
@@ -132,7 +164,6 @@ const CrearAlianza = () => {
                 size="lg"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
-                required
               />
             </div>
 
@@ -146,7 +177,6 @@ const CrearAlianza = () => {
                 min={fechaInicio}
                 value={fechaFinal}
                 onChange={(e) => setFechaFinal(e.target.value)}
-                required
               />
             </div>
 
@@ -154,7 +184,7 @@ const CrearAlianza = () => {
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Foto de la Alianza
               </Typography>
-              <Input type="file" size="lg" onChange={handleFileChange} required />
+              <Input type="file" size="lg" onChange={handleFileChange} />
             </div>
 
             <div className="mb-4 col-span-2">
@@ -166,19 +196,26 @@ const CrearAlianza = () => {
                 label="Descripción"
                 value={descripcion}
                 onChange={handleDescripcionChange}
-                required
                 maxLength={500}
               />
             </div>
           </div>
 
-          <Button type="submit" color="blue" fullWidth className="mt-4">
-            Crear Alianza
-          </Button>
+          <div className="flex justify-between mt-4">
+            <Button
+              color="gray"
+              onClick={() => navigate("/Alianzas/AlianzasAdmin")}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" color="blue">
+              Guardar Cambios
+            </Button>
+          </div>
         </form>
       </Card>
     </div>
   );
 };
 
-export default CrearAlianza;
+export default ModificarAlianza;

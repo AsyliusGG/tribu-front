@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
   CardHeader,
@@ -8,10 +8,11 @@ import {
   Button,
 } from "@material-tailwind/react";
 
-const ALIANZA_API_URL = "http://localhost:8000/eventos/api/v1/alianzas"; // Actualiza con tu API correcta
+const ALIANZA_API_URL = "http://localhost:8000/alianzas/api/v1/alianzas";
 
 const VerAlianza = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [alianza, setAlianza] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,6 +22,7 @@ const VerAlianza = () => {
       try {
         const response = await fetch(`${ALIANZA_API_URL}/${id}/`);
         const data = await response.json();
+        console.log(data);  // <-- Para verificar la estructura de respuesta
         setAlianza(data);
         setLoading(false);
       } catch (error) {
@@ -33,9 +35,9 @@ const VerAlianza = () => {
   }, [id]);
 
   const handleDescuentoClick = () => {
-    console.log("Aplicar descuento para esta alianza");
-    // Lógica para hacer uso del descuento, como un redireccionamiento o mostrar más detalles
+    navigate(`/Alianzas/UsarAlianza/${id}`);
   };
+  
 
   if (loading) {
     return <Typography>Cargando...</Typography>;
@@ -49,8 +51,7 @@ const VerAlianza = () => {
     alianza && (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
         <Card className="w-full max-w-4xl p-6">
-          {/* Imagen de la alianza */}
-          <CardHeader color="blue-gray" className="relative h-[36rem]">
+          <CardHeader color="blue-gray" className="relative h-[18rem]"> {/* Reducimos la altura a la mitad */}
             <img
               src={alianza.foto}
               alt={alianza.alianza_nombre}
@@ -58,16 +59,10 @@ const VerAlianza = () => {
             />
           </CardHeader>
           <CardBody>
-            {/* Título de la alianza */}
-            <Typography
-              variant="h3"
-              color="blue-gray"
-              className="font-bold text-center"
-            >
+            <Typography variant="h3" color="blue-gray" className="font-bold text-center">
               {alianza.alianza_nombre}
             </Typography>
 
-            {/* Descripción, empresa y promoción */}
             <Typography color="blue-gray" className="mt-4">
               {alianza.descripcion}
             </Typography>
@@ -78,7 +73,6 @@ const VerAlianza = () => {
               <strong>Promoción:</strong> {alianza.Promocion}
             </Typography>
 
-            {/* Botón para usar el descuento */}
             <div className="mt-6 flex justify-center items-center">
               <Button color="blue" onClick={handleDescuentoClick}>
                 Hacer uso de mi descuento

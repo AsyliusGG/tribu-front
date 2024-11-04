@@ -38,7 +38,7 @@ const Carousel = () => {
     <div className="w-screen mx-auto"> {/* Ancho completo de la pantalla */}
       <div className="relative w-full">
         {/* Carrusel */}
-        <div className="overflow-hidden relative h-[27rem] sm:h-[32rem] xl:h-[40rem] 2xl:h-[36rem] w-screen">
+        <div className="overflow-hidden relative h-[93vh] w-screen">
           {images.map((src, index) => (
             <div
               key={index}

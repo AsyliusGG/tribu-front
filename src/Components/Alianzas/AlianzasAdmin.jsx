@@ -80,7 +80,7 @@ const AlianzasAdmin = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ disabled: !estadoActual }), // Cambia el estado 'disabled'
+        body: JSON.stringify({ Estado: !estadoActual }), // Cambiar el estado al contrario
       });
 
       if (response.ok) {
@@ -90,7 +90,7 @@ const AlianzasAdmin = () => {
           )
         );
         setAlertMessage(
-          `Alianza ${!estadoActual ? "activada" : "desactivada"} correctamente.`
+          `Alianza ${!estadoActual ? "desactivada" : "activada"} correctamente.`
         );
       } else {
         console.error("Error al cambiar el estado de la alianza");
@@ -183,16 +183,16 @@ const AlianzasAdmin = () => {
               <td className="py-2 px-4 border-b">{formatDate(alianza.Fecha_inicio)}</td>
               <td className="py-2 px-4 border-b">{formatDate(alianza.Fecha_final)}</td>
               <td className="py-2 px-4 border-b">
-                {alianza.Estado ? "Desactivado" : "Activo"}
+                {alianza.Estado ? "Activo" : "Desactivado"}
               </td>
               <td className="py-2 px-4 border-b">
                 <div className="flex justify-between space-x-2">
                   <Button
-                    color={!alianza.Estado ? "gray" : "green"}
+                    color={alianza.Estado ? "gray" : "green"}
                     className="flex items-center"
                     onClick={() => toggleAlianza(alianza.id, alianza.Estado)}
                   >
-                    {!alianza.Estado ? "Desactivar" : "Activar"}
+                    {alianza.Estado ? "Desactivar" : "Activar"}
                   </Button>
                   <Button
                     color="blue"

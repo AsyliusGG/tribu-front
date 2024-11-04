@@ -10,16 +10,18 @@ import Tribu from "./Tribu/Tribu.jsx";
 import Alianzas from "./Alianzas/Alianzas.jsx";
 import PrivateRoute from "./PrivateRoute";
 import Eventos from "./Eventos/Eventos.jsx";
-import Home from "./Home";  // Importamos el nuevo componente Home
+import Home from "./Home"; 
 import CrearEvento from "./Eventos/CrearEvento.jsx";
 import ModificarEvento from "./Eventos/ModificarEvento.jsx";
 import EventosAdmin from "./Eventos/EventosAdmin.jsx";
 import VerEvento from "./Eventos/VerEvento.jsx";
 import AlianzasAdmin from "./Alianzas/AlianzasAdmin.jsx";
 import CarritoCompra from "./Compra/CarritoCompra.jsx"
-import VerAlianza from "./Alianzas/VerAlianza.jsx";
 import CrearAlianza from "./Alianzas/CrearAlianza.jsx";
 import ModificarAlianza from "./Alianzas/ModificarAlianza.jsx";
+import VerAlianza from "./Alianzas/VerAlianza.jsx";
+import UsarAlianza from "./Alianzas/UsarAlianza.jsx";
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -83,6 +85,7 @@ function App() {
           <Route path="/Alianzas/VerAlianza/:id" element={<VerAlianza />} />
           <Route path="/Alianzas/CrearAlianza" element={<CrearAlianza />} />
           <Route path="/Alianzas/ModificarAlianza/:id" element={<ModificarAlianza />} />
+          <Route path="/Alianzas/UsarAlianza/:id" element={<UsarAlianza />} />
         </Routes>
         <Footer />
       </div>

@@ -53,7 +53,8 @@ const UsarAlianza = () => {
         {alianza ? (
           <>
             <Typography variant="h5" color="blue-gray" className="font-bold mb-4">
-              Muestra este código QR a la persona encargada en {alianza.alianza_empresa}
+              Muestra este código QR a la persona encargada en 
+              <span className="text-pink-500"> {alianza.alianza_empresa}</span>
             </Typography>
             <Typography color="blue-gray" className="mb-6">
               Para comprobar que eres miembro de esta maravillosa comunidad y poder acceder a

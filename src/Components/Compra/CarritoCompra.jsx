@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const CarritoCompra = () => {
   const [paymentMethod, setPaymentMethod] = useState('webpay');
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        const response = await fetch('http://localhost:8000/api/user', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        setUserData(data);
+      } catch (error) {
+        console.error('Error al obtener los datos del usuario:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handlePaymentChange = (e) => {
     setPaymentMethod(e.target.value);
@@ -16,11 +36,15 @@ const CarritoCompra = () => {
           {/* Tus datos */}
           <div className="bg-white shadow p-6 rounded-lg">
             <h2 className="text-xl font-bold mb-4">Tus datos</h2>
-            <div className="space-y-2">
-              <p><strong>Nelly Becerra</strong></p>
-              <p>nelly.becerrag@gmail.com</p>
-              <p>+56985320825</p>
-            </div>
+            {userData ? (
+              <div className="space-y-2">
+                <p><strong>{userData.first_name} {userData.last_name}</strong></p>
+                <p>{userData.email}</p>
+                <p>{userData.phone_number}</p>
+              </div>
+            ) : (
+              <p>Cargando datos...</p>
+            )}
           </div>
 
           {/* Detalle de la compra */}

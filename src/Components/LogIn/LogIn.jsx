@@ -1,46 +1,33 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // Importamos useNavigate para la redirección
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../../slices/authSlice'; 
 import { Alert, Input, Button, Typography, Card } from "@material-tailwind/react";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-function AlertCustomStyles({ message }) {
-  return (
-    <Alert color="red" className="mb-4">
-      {message}
-    </Alert>
-  );
-}
-
-export function LogIn({ onLogin }) {
+export function LogIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [alertMessage, setAlertMessage] = useState('');
-  const navigate = useNavigate();  // Hook para la redirección
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const { loading, error, user } = useSelector((state) => state.auth);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-  
-    try {
-      const response = await fetch('http://localhost:8000/api/v1/auth/jwt/create/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        localStorage.setItem("auth_token", data.access);  // Guardamos el token en localStorage
-        onLogin();  // Llamamos a la función onLogin para actualizar el estado de autenticación
-        // Redirigir a la página principal con el estado del mensaje
-        navigate("/", { state: { successMessage: "Inicio de sesión exitoso" } });
-      } else {
-        setAlertMessage(data.message || 'Error en el inicio de sesión');
+    dispatch(loginUser({ email, password })).then((result) => {
+      if (result.meta.requestStatus === 'fulfilled') {
+        // Imprime en consola el tipo de usuario
+        console.log("Tipo de usuario:");
+        console.log("is_superuser:", user?.is_superuser);
+        console.log("is_staff:", user?.is_staff);
+        console.log("is_staff_limited:", user?.is_staff_limited);
+        console.log("is_active:", user?.is_active);
+        
+        navigate('/');
       }
-    } catch (error) {
-      setAlertMessage('Error en el inicio de sesión');
-    }
+    });
   };
 
   return (
@@ -52,11 +39,11 @@ export function LogIn({ onLogin }) {
         <Typography color="gray" className="mt-1 font-normal">
           ¡Encantada de verte! Ingresa tus datos para iniciar sesión.
         </Typography>
-        {alertMessage && <AlertCustomStyles message={alertMessage} />}
+        {error && <Alert color="red" className="mb-4">{error.message || "Ocurrió un error. Revisa tu correo o contraseña."}</Alert>}
         <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="h6" color="blue-gray" className="-mb-3">
-              Correo Electronico
+              Correo Electrónico
             </Typography>
             <Input
               size="lg"
@@ -78,11 +65,12 @@ export function LogIn({ onLogin }) {
             />
           </div>
 
-          <Button className="mt-6" fullWidth type="submit">
-            Iniciar Sesión
+          <Button className="mt-6" fullWidth type="submit" disabled={loading}>
+            {loading ? 'Loading...' : 'Iniciar Sesión'}
           </Button>
         </form>
       </Card>
+      <ToastContainer />
     </div>
   );
 }

@@ -33,7 +33,7 @@ const Home = () => {
     <div>
       {successMessage && <AlertCustomStyles message={successMessage} />}
       {user && (
-        <Carousel is_superuser={user.is_superuser} is_staff={user.is_staff} />
+        <Carousel />
       )}
       {!isAuthenticated && <JoinSection />}
     </div>

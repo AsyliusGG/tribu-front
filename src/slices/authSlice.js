@@ -17,9 +17,6 @@ export const loginUser = createAsyncThunk(
       // Guarda el token en localStorage
       localStorage.setItem('auth_token', token);
 
-      // Imprime el token en la consola para verificar que se obtuvo correctamente
-      console.log("Token obtenido:", token);
-
       // Segunda solicitud para obtener los datos del usuario con el token
       const userResponse = await axios.get('http://localhost:8000/api/v1/auth/users/me/', {
         headers: {
@@ -29,6 +26,15 @@ export const loginUser = createAsyncThunk(
       });
 
       const userData = userResponse.data;
+
+      const fullName = `${userData.first_name} ${userData.last_name}`;
+      console.log("Nombre del usuario logeado:", fullName);
+      console.log("Tipo de usuario:");
+      console.log(" - is_superuser:", userData.is_superuser);
+      console.log(" - is_staff:", userData.is_staff);
+      console.log(" - is_staff_limited:", userData.is_staff_limited);
+      console.log(" - is_active:", userData.is_active);
+
       toast.success('Logged in successfully!');
       
       // Devuelve tanto el token como los datos del usuario

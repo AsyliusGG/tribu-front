@@ -1,187 +1,280 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Alert, Input, Button, Typography, Card } from "@material-tailwind/react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Joinus = () => {
-  const [numHijos, setNumHijos] = useState(0);
-  const [fechasNacimiento, setFechasNacimiento] = useState([]);
+export function Joinus() {
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    confirmarEmail: '',
+    password: '',
+    re_password: '',
+    phone_number: '',
+    run: '',
+    birthday: '',
+    job: '',
+    sector: '',
+    know_source: ''
+  });
+  
+  const [sectors, setSectors] = useState([]);
+  const navigate = useNavigate();
 
-  const ciudadesQuintaRegion = [
-    'Valparaíso', 'Viña del Mar', 'Quilpué', 'Villa Alemana', 'Quintero', 
-    'Concón', 'San Antonio', 'Los Andes', 'San Felipe', 'La Ligua', 
-    'Quillota', 'Limache', 'Olmué', 'Putaendo', 'Santa María'
-  ];
+  const formatRUT = (rut) => {
+    // Elimina todos los caracteres que no sean números o 'k'
+    rut = rut.replace(/[^0-9kK]/g, '');
 
-  const comunasQuintaRegionYMetropolitana = [
-    'Valparaíso', 'Viña del Mar', 'Quilpué', 'Villa Alemana', 'Quintero', 
-    'Concón', 'San Antonio', 'Los Andes', 'San Felipe', 'La Ligua', 
-    'Quillota', 'Limache', 'Olmué', 'Putaendo', 'Santa María',
-    'Santiago', 'Providencia', 'Las Condes', 'La Florida', 'Puente Alto', 
-    'Maipú', 'Ñuñoa', 'San Bernardo', 'La Reina', 'Peñalolén'
-  ];
+    // Asegúrate de que el RUT tenga al menos 2 caracteres
+    if (rut.length < 2) {
+      return rut;
+    }
 
-  const handleNumHijosChange = (increment) => {
-    setNumHijos((prevNumHijos) => {
-      const newNumHijos = prevNumHijos + increment;
-      if (newNumHijos < 0 || newNumHijos > 20) return prevNumHijos;
-      const nuevasFechas = [...fechasNacimiento];
-      if (increment > 0) {
-        nuevasFechas.push('');
-      } else {
-        nuevasFechas.pop();
+    // Separa el dígito verificador
+    const dv = rut.slice(-1);
+    const cuerpo = rut.slice(0, -1);
+
+    // Formatea el cuerpo del RUT con puntos
+    const cuerpoFormateado = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    // Retorna el RUT formateado
+    return `${cuerpoFormateado}-${dv}`;
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    let formattedValue = value;
+
+    if (name === 'run') {
+      // Limita la longitud del RUT a 9 caracteres
+      if (value.replace(/[^0-9kK]/g, '').length > 9) {
+        return;
       }
-      setFechasNacimiento(nuevasFechas);
-      return newNumHijos;
+      formattedValue = formatRUT(value);
+    }
+
+    setFormData({
+      ...formData,
+      [name]: formattedValue
     });
   };
 
-  const handleFechaNacimientoChange = (index, value) => {
-    const nuevasFechas = [...fechasNacimiento];
-    nuevasFechas[index] = value;
-    setFechasNacimiento(nuevasFechas);
-  };
-
-  const calcularEdad = (fechaNacimiento) => {
-    if (!fechaNacimiento) return '';
-    const hoy = new Date();
-    const nacimiento = new Date(fechaNacimiento);
-    let edadAnios = hoy.getFullYear() - nacimiento.getFullYear();
-    let edadMeses = hoy.getMonth() - nacimiento.getMonth();
-    let edadDias = hoy.getDate() - nacimiento.getDate();
-
-    if (edadDias < 0) {
-      edadMeses--;
-      const ultimoDiaMesAnterior = new Date(hoy.getFullYear(), hoy.getMonth(), 0).getDate();
-      edadDias += ultimoDiaMesAnterior;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (formData.email !== formData.confirmarEmail) {
+      toast.error("Los correos electrónicos no coinciden");
+      return;
     }
-
-    if (edadMeses < 0) {
-      edadAnios--;
-      edadMeses += 12;
+    if (formData.password !== formData.re_password) {
+      toast.error("Las contraseñas no coinciden");
+      return;
     }
+    try {
+      const response = await fetch("http://localhost:8000/api/v1/auth/users/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          email: formData.email,
+          password: formData.password,
+          re_password: formData.re_password,
+          phone_number: formData.phone_number,
+          run: formData.run,
+          birthday: formData.birthday,
+          job: formData.job,
+          sector: formData.sector,
+          know_source: formData.know_source
+        })
+      });
 
-    return `${edadAnios} años, ${edadMeses} meses y ${edadDias} días`;
+      if (response.ok) {
+        toast.success("Usuario registrado exitosamente");
+        navigate('/login');
+      } else {
+        const errorData = await response.json();
+        toast.error(`Error al registrar el usuario: ${errorData.message || "Error desconocido"}`);
+      }
+    } catch (error) {
+      toast.error(`Error al registrar el usuario: ${error.message}`);
+    }
   };
 
-  const obtenerTextoEdadHijo = (index) => {
-    const sufijos = ['primer', 'segundo', 'tercer', 'cuarto', 'quinto', 'sexto', 'séptimo', 'octavo', 'noveno', 'décimo'];
-    return `La edad del ${sufijos[index] || (index + 1) + 'º'} hijo es:`;
-  };
-    
   return (
-    <div className="min-h-screen bg-gray-100 py-8 overflow-auto">
-      <div className="flex justify-center items-center">
-        <form className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <div className="form-group">
-            <label htmlFor="nombre" className="block text-sm font-medium text-gray-700">Nombre</label>
-            <input type="text" id="nombre" name="nombre" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <Card color="transparent" shadow={false}>
+        <Typography variant="h4" color="blue-gray">
+          Registrarse
+        </Typography>
+        <Typography color="gray" className="mt-1 font-normal">
+          ¡Bienvenido! Ingresa tus datos para registrarte.
+        </Typography>
+        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
+          <div className="mb-1 flex flex-col gap-6">
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Nombre
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su nombre"
+              id="first_name"
+              name="first_name"
+              value={formData.first_name}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Apellidos
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese sus apellidos"
+              id="last_name"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Correo Electrónico
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su correo electrónico"
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Confirmar Correo Electrónico
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Confirme su correo electrónico"
+              id="confirmarEmail"
+              name="confirmarEmail"
+              type="email"
+              value={formData.confirmarEmail}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Contraseña
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su contraseña"
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+              pattern="(?=.*\d)(?=.*[A-Z]).{8,}"
+              title="La contraseña debe tener al menos 8 caracteres, incluyendo al menos un número y una letra mayúscula."
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Confirmar Contraseña
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Confirme su contraseña"
+              id="re_password"
+              name="re_password"
+              type="password"
+              value={formData.re_password}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Teléfono móvil
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su teléfono móvil"
+              id="phone_number"
+              name="phone_number"
+              value={formData.phone_number}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              RUT
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su RUT"
+              id="run"
+              name="run"
+              value={formData.run}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Fecha de Nacimiento
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su fecha de nacimiento"
+              id="birthday"
+              name="birthday"
+              type="date"
+              value={formData.birthday}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Trabajo
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su trabajo"
+              id="job"
+              name="job"
+              value={formData.job}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Sector
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese su sector"
+              id="sector"
+              name="sector"
+              value={formData.sector}
+              onChange={handleInputChange}
+              required
+            />
+            <Typography variant="h6" color="blue-gray" className="-mb-3">
+              Fuente de Conocimiento
+            </Typography>
+            <Input
+              size="lg"
+              placeholder="Ingrese la fuente de conocimiento"
+              id="know_source"
+              name="know_source"
+              value={formData.know_source}
+              onChange={handleInputChange}
+              required
+            />
           </div>
-          <div className="form-group">
-            <label htmlFor="rut" className="block text-sm font-medium text-gray-700">RUT</label>
-            <input type="text" id="rut" name="rut" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="apellidos" className="block text-sm font-medium text-gray-700">Apellidos</label>
-            <input type="text" id="apellidos" name="apellidos" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="telefono" className="block text-sm font-medium text-gray-700">Teléfono móvil</label>
-            <input type="text" id="telefono" name="telefono" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
-          </div>
-        </div>
-        <hr className="my-6 border-gray-800" />
-        <div className="grid grid-cols-2 gap-4">
-          <div className="form-group">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">E-mail</label>
-            <input type="email" id="email" name="email" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="confirmar-email" className="block text-sm font-medium text-gray-700">Confirmar E-mail</label>
-            <input type="email" id="confirmar-email" name="confirmar-email" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="contrasena" className="block text-sm font-medium text-gray-700">Contraseña</label>
-            <input type="password" id="contrasena" name="contrasena" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
-          </div>
-          <div className="form-group">
-            <label htmlFor="confirmar-contrasena" className="block text-sm font-medium text-gray-700">Confirmar Contraseña</label>
-            <input type="password" id="confirmar-contrasena" name="confirmar-contrasena" className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" required />
-          </div>
-        </div>
-
-        <hr className="my-6 border-gray-800" />
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label htmlFor="ciudad" className="block text-sm font-medium text-gray-700">Ciudad</label>
-            <select id="ciudad" name="ciudad" className="mt-1 block w-full py-2 px-3 border border-gray-500 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              {ciudadesQuintaRegion.map((ciudad, index) => (
-                <option key={index} value={ciudad}>{ciudad}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="comuna" className="block text-sm font-medium text-gray-700">Comuna</label>
-            <select id="comuna" name="comuna" className="mt-1 block w-full py-2 px-3 border border-gray-500 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-              {comunasQuintaRegionYMetropolitana.map((comuna, index) => (
-                <option key={index} value={comuna}>{comuna}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <hr className="my-6 border-gray-800" />
-
-        <div className="mb-6">
-            <label htmlFor="numHijos" className="block text-sm font-medium text-gray-700">¿Cuántos hijos tiene?</label>
-            <div className="flex items-center">
-              <button type="button" onClick={() => handleNumHijosChange(-1)} className="px-3 py-1 border border-gray-500 rounded-md shadow-sm">-</button>
-              <input 
-                type="number" 
-                id="numHijos" 
-                name="numHijos" 
-                className="mx-2 w-16 text-center border border-gray-500 rounded-md shadow-sm p-2" 
-                value={numHijos} 
-                readOnly 
-              />
-              <button type="button" onClick={() => handleNumHijosChange(1)} className="px-3 py-1 border border-gray-500 rounded-md shadow-sm">+</button>
-            </div>
-          </div>
-
-        {Array.from({ length: numHijos }).map((_, index) => (
-          <div key={index} className="mb-4">
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label htmlFor={`fecha-nacimiento-${index}`} className="block text-sm font-medium text-gray-700">Fecha de Nacimiento</label>
-                <input 
-                  type="date" 
-                  id={`fecha-nacimiento-${index}`} 
-                  name={`fecha-nacimiento-${index}`} 
-                  className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" 
-                  value={fechasNacimiento[index] || ''} 
-                  onChange={(e) => handleFechaNacimientoChange(index, e.target.value)} 
-                />
-                <p className="mt-2 text-sm text-gray-900">{obtenerTextoEdadHijo(index)} {calcularEdad(fechasNacimiento[index])}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        <hr className="my-6 border-gray-800" />
-
-        <div className="mb-6">
-          <label htmlFor="comentarios" className="block text-sm font-medium text-gray-700">¿Algo que nos quieras contar?</label>
-          <textarea 
-            id="comentarios" 
-            name="comentarios" 
-            className="mt-1 block w-full border border-gray-500 rounded-md shadow-sm p-2" 
-            rows="4"
-          ></textarea>
-        </div>
-        
-      </form>
-    </div>
+          <Button className="mt-6" fullWidth type="submit">
+            Registrarse
+          </Button>
+        </form>
+      </Card>
+      <ToastContainer />
     </div>
   );
-};
+}
 
 export default Joinus;

@@ -18,7 +18,7 @@ function AlertCustomStyles({ message }) {
 
 const Home = () => {
   const isAuthenticated = useSelector((state) => !!state.auth.token);
-  const user = useSelector((state) => state.auth.user); // Obtiene los datos del usuario
+  const user = useSelector((state) => state.auth.user); 
 
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -32,9 +32,7 @@ const Home = () => {
   return (
     <div>
       {successMessage && <AlertCustomStyles message={successMessage} />}
-      {user && (
-        <Carousel />
-      )}
+      <Carousel />
       {!isAuthenticated && <JoinSection />}
     </div>
   );

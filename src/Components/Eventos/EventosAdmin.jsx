@@ -10,8 +10,8 @@ import {
   Alert,
 } from "@material-tailwind/react";
 
-const EVENTOS_API_URL = "http://localhost:8000/eventos/api/v1/evento";
-const SECTOR_API_URL = "http://localhost:8000/eventos/api/v1/sector";
+const EVENTOS_API_URL = "http://localhost:8000/api/v1/evento";
+const SECTOR_API_URL = "http://localhost:8000/api/v1/sector";
 
 const EventosAdmin = () => {
   const [events, setEvents] = useState([]);

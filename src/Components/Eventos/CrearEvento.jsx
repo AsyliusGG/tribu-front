@@ -16,7 +16,7 @@ const CrearEvento = () => {
   const [cupo, setCupo] = useState("");
   const [valorAdulto, setValorAdulto] = useState("");
   const [valorNino, setValorNino] = useState("");
-  const [lugar, setLugar] = useState(""); // Nuevo campo para la dirección del lugar
+  const [lugar, setLugar] = useState("");
   const [foto, setFoto] = useState(null);
   const [fecha, setFecha] = useState("");
   const [hora, setHora] = useState("");
@@ -24,6 +24,16 @@ const CrearEvento = () => {
   const [sectorSeleccionado, setSectorSeleccionado] = useState("");
   const [sectores, setSectores] = useState([]);
   const navigate = useNavigate();
+
+  const token = localStorage.getItem("auth_token"); // Obtén el token de autenticación
+
+  // Verifica si el usuario está autenticado
+  useEffect(() => {
+    if (!token) {
+      alert("Debes iniciar sesión para acceder a esta página.");
+      navigate("/login"); // Redirige al login si no hay token
+    }
+  }, [token, navigate]);
 
   // Obtener la fecha actual en formato YYYY-MM-DD
   const obtenerFechaActual = () => {
@@ -38,32 +48,37 @@ const CrearEvento = () => {
   useEffect(() => {
     async function fetchSectores() {
       try {
-        const response = await fetch(
-          "http://localhost:8000/eventos/api/v1/sector"
-        );
-        const data = await response.json();
-        setSectores(data);
+        const response = await fetch("http://localhost:8000/api/v1/sector/", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Añadir el token al encabezado
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setSectores(data);
+        } else {
+          throw new Error("No se pudieron cargar los sectores");
+        }
       } catch (error) {
         console.error("Error al cargar sectores:", error);
       }
     }
     fetchSectores();
-  }, []);
+  }, [token]);
 
   const handleFileChange = (e) => {
     setFoto(e.target.files[0]);
   };
 
-  // Formatear los valores a pesos chilenos en la vista
   const formatCurrency = (value) => {
-    const numberValue = value.replace(/\D/g, ""); // Quitar todo lo que no sea número
+    const numberValue = value.replace(/\D/g, "");
     return new Intl.NumberFormat("es-CL", {
       style: "currency",
       currency: "CLP",
     }).format(numberValue);
   };
 
-  // Funciones para manejar los cambios y formatear los valores en la vista
   const handleValorAdultoChange = (e) => {
     setValorAdulto(formatCurrency(e.target.value));
   };
@@ -75,7 +90,6 @@ const CrearEvento = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar los campos del formulario
     if (
       !nombre ||
       !descripcion ||
@@ -86,46 +100,43 @@ const CrearEvento = () => {
       !fecha ||
       !hora ||
       !horaTermino ||
-      !lugar || // Validar que el lugar esté completado
+      !lugar ||
       !sectorSeleccionado
     ) {
       alert("Por favor, rellena todos los campos.");
       return;
     }
 
-    // Eliminar el formato de pesos chilenos y convertir a número antes de enviar al backend
     const valorAdultoNumber = parseInt(valorAdulto.replace(/\D/g, ""), 10);
     const valorNinoNumber = parseInt(valorNino.replace(/\D/g, ""), 10);
 
-    // Crear el FormData para enviar archivos junto con los datos
     const formData = new FormData();
     formData.append("nombre", nombre);
     formData.append("descripcion", descripcion);
-    formData.append("cupos", cupo); // Cambia "cupo" a "cupos" para coincidir con el modelo
-    formData.append("valor_adulto", valorAdultoNumber); // Enviar valor adulto sin formato
-    formData.append("valor_nino", valorNinoNumber); // Enviar valor niño sin formato
+    formData.append("cupos", cupo);
+    formData.append("valor_adulto", valorAdultoNumber);
+    formData.append("valor_nino", valorNinoNumber);
     formData.append("foto", foto);
     formData.append("fecha", fecha);
     formData.append("hora", hora);
-    formData.append("hora_termino", horaTermino); // Añadir hora de término
-    formData.append("lugar", lugar); // Añadir la dirección del lugar
+    formData.append("hora_termino", horaTermino);
+    formData.append("lugar", lugar);
     formData.append("sector", sectorSeleccionado);
 
     try {
-      // Enviar datos a tu API
-      const response = await fetch(
-        "http://localhost:8000/eventos/api/v1/evento/",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch("http://localhost:8000/api/v1/sector/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log("Encabezados enviados:", {
+        Authorization: `Bearer ${token}`,
+      });
 
-      const data = await response.json();
       if (response.ok) {
-        // Redirigir a EventosAdmin después de crear el evento
         navigate("/Eventos/EventosAdmin", { state: { success: true } });
       } else {
+        const data = await response.json();
         console.error("Error en la respuesta:", data);
         alert("Error al crear el evento");
       }
@@ -134,7 +145,6 @@ const CrearEvento = () => {
       console.error(error);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="p-6 w-full max-w-4xl">
@@ -254,7 +264,7 @@ const CrearEvento = () => {
                 type="text"
                 size="lg"
                 label="Dirección del Evento"
-                value={lugar} // Nuevo campo para la dirección
+                value={lugar}
                 onChange={(e) => setLugar(e.target.value)}
                 required
               />

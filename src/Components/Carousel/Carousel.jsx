@@ -1,29 +1,13 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 
-const Carousel = ({ is_superuser, is_staff }) => {
+const Carousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [images, setImages] = useState([
+
+  const images = [
     "https://flowbite.com/docs/images/carousel/carousel-1.svg",
     "https://flowbite.com/docs/images/carousel/carousel-2.svg",
     "https://flowbite.com/docs/images/carousel/carousel-3.svg",
-  ]);
-  const [isEditing, setIsEditing] = useState(false);
-  const [newImages, setNewImages] = useState([...images]);
-
-  // Cargar imágenes del servidor al montar el componente
-  useEffect(() => {
-    async function fetchImages() {
-      try {
-        const response = await axios.get("http://localhost:8000/carrusel/api/v1/carrusel/");
-        setImages(response.data.map((item) => item.foto));
-        setNewImages(response.data.map((item) => item.foto));
-      } catch (error) {
-        console.error("Error fetching carousel images:", error);
-      }
-    }
-    fetchImages();
-  }, []);
+  ];
 
   // Avanzar al siguiente slide automáticamente cada 3 segundos
   useEffect(() => {
@@ -34,7 +18,7 @@ const Carousel = ({ is_superuser, is_staff }) => {
     }, 3000); // Cada 3 segundos
 
     return () => {
-      clearInterval(interval);
+      clearInterval(interval); // Limpiar el intervalo cuando se desmonte el componente
     };
   }, [images.length]);
 
@@ -50,39 +34,10 @@ const Carousel = ({ is_superuser, is_staff }) => {
     );
   };
 
-  const handleEditToggle = () => {
-    setIsEditing(!isEditing);
-  };
-
-  const handleImageChange = (index, event) => {
-    const updatedImages = [...newImages];
-    updatedImages[index] = URL.createObjectURL(event.target.files[0]);
-    setNewImages(updatedImages);
-  };
-
-  const handleSave = async () => {
-    try {
-      const formData = new FormData();
-      newImages.forEach((image, index) => {
-        if (image !== images[index]) {
-          formData.append(`slide${index + 1}`, image);
-        }
-      });
-      await axios.post("/api/carrusel/update", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setImages(newImages);
-      setIsEditing(false);
-      alert("Images updated successfully!");
-    } catch (error) {
-      console.error("Error saving images:", error);
-      alert("Failed to update images.");
-    }
-  };
-
   return (
-    <div className="w-screen mx-auto">
+    <div className="w-screen mx-auto"> {/* Ancho completo de la pantalla */}
       <div className="relative w-full">
+        {/* Carrusel */}
         <div className="overflow-hidden relative h-[93vh] w-screen">
           {images.map((src, index) => (
             <div
@@ -162,44 +117,6 @@ const Carousel = ({ is_superuser, is_staff }) => {
             </svg>
           </span>
         </button>
-
-        {/* Botón Editar para el Superusuario o Staff */}
-        {(is_superuser || is_staff) && (
-          <div className="absolute top-5 right-5 z-40">
-            <button
-              onClick={handleEditToggle}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Editar Carrusel
-            </button>
-          </div>
-        )}
-
-        {/* Formulario de edición (visible solo si isEditing es true) */}
-        {isEditing && (is_superuser || is_staff) && (
-          <div className="absolute inset-0 bg-white bg-opacity-90 flex flex-col items-center justify-center p-8">
-            <h2 className="text-2xl font-bold mb-4">Editar Carrusel</h2>
-            {[...Array(5)].map((_, index) => (
-              <div key={index} className="mb-2">
-                <label className="block text-gray-700 font-medium">
-                  Slide {index + 1}:
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleImageChange(index, e)}
-                  className="mt-1 block w-full"
-                />
-              </div>
-            ))}
-            <button
-              onClick={handleSave}
-              className="mt-4 bg-green-500 text-white px-6 py-2 rounded"
-            >
-              Guardar
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

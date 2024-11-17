@@ -18,8 +18,8 @@ const Eventos = () => {
     async function loadEventos() {
       const response = await getallEventos();
       const eventosActivos = response.data
-        .filter(evento => !evento.disabled) // Filtrar eventos activos
-        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); // Ordenar por fecha, de la más próxima a la más lejana
+        .filter(evento => !evento.disabled) 
+        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); 
 
       setPosts(eventosActivos);
     }
@@ -28,7 +28,7 @@ const Eventos = () => {
   }, []);
 
   const handlePostClick = (postId) => {
-    navigate(`/verevento/${postId}`); // Cambia la ruta para que coincida con VerEvento.jsx
+    navigate(`/verevento/${postId}`); 
   };
 
   const goToAdmin = () => {

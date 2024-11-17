@@ -25,17 +25,15 @@ const CrearEvento = () => {
   const [sectores, setSectores] = useState([]);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("auth_token"); // Obtén el token de autenticación
+  const token = localStorage.getItem("auth_token");
 
-  // Verifica si el usuario está autenticado
   useEffect(() => {
     if (!token) {
       alert("Debes iniciar sesión para acceder a esta página.");
-      navigate("/login"); // Redirige al login si no hay token
+      navigate("/login");
     }
   }, [token, navigate]);
 
-  // Obtener la fecha actual en formato YYYY-MM-DD
   const obtenerFechaActual = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -44,13 +42,12 @@ const CrearEvento = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // Cargar los sectores desde la API
   useEffect(() => {
     async function fetchSectores() {
       try {
         const response = await fetch("http://localhost:8000/api/v1/sector/", {
           headers: {
-            Authorization: `Bearer ${token}`, // Añadir el token al encabezado
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -124,11 +121,14 @@ const CrearEvento = () => {
     formData.append("sector", sectorSeleccionado);
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/sector/", {
+      const response = await fetch("http://localhost:8000/api/v1/evento/", {
+        method: "POST", // Cambiado a POST
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // Encabezado de autorización
         },
+        body: formData, // Enviar los datos como FormData
       });
+
       console.log("Encabezados enviados:", {
         Authorization: `Bearer ${token}`,
       });
@@ -145,6 +145,7 @@ const CrearEvento = () => {
       console.error(error);
     }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <Card className="p-6 w-full max-w-4xl">
@@ -213,7 +214,12 @@ const CrearEvento = () => {
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Foto del Evento
               </Typography>
-              <Input type="file" size="lg" onChange={handleFileChange} required />
+              <Input
+                type="file"
+                size="lg"
+                onChange={handleFileChange}
+                required
+              />
             </div>
 
             <div className="mb-4">
@@ -301,7 +307,6 @@ const CrearEvento = () => {
                 required
               />
             </div>
-
           </div>
 
           <Button type="submit" color="blue" fullWidth className="mt-4">
@@ -314,6 +319,3 @@ const CrearEvento = () => {
 };
 
 export default CrearEvento;
-
-
-

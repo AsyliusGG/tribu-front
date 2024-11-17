@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getEventoById } from "../../api/api.js";
+import { useDispatch } from "react-redux";
+import { agregarEvento } from "../../slices/carritoSlice.js";
 import {
   Card,
   CardHeader,
@@ -11,6 +13,8 @@ import {
 
 const VerEvento = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch(); // Define el dispatch
   const [evento, setEvento] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,9 +50,26 @@ const VerEvento = () => {
   };
 
   const handleComprar = () => {
-    const totalPagar =
-      cantidadNino * evento.valor_nino + cantidadAdulto * evento.valor_adulto;
-    console.log(`Total a pagar: ${totalPagar.toLocaleString("es-CL")} CLP`);
+    if (cantidadNino === 0 && cantidadAdulto === 0) {
+      alert("Debe seleccionar al menos un boleto para comprar.");
+      return;
+    }
+
+    dispatch(
+      agregarEvento({
+        eventoId: evento.id,
+        nombreEvento: evento.nombre,
+        cantidadNino,
+        cantidadAdulto,
+        precioNino: evento.valor_nino,
+        precioAdulto: evento.valor_adulto,
+        subtotal:
+          cantidadNino * evento.valor_nino + cantidadAdulto * evento.valor_adulto,
+      })
+    );
+
+    alert("Entradas agregadas al carrito");
+    navigate("../../compra/carritoCompra"); // Redirigir al carrito
   };
 
   if (loading) {
@@ -63,7 +84,6 @@ const VerEvento = () => {
     evento && (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
         <Card className="w-full max-w-4xl p-6">
-          {/* Imagen con el doble de altura */}
           <CardHeader color="blue-gray" className="relative h-[36rem]">
             <img
               src={evento.foto}
@@ -72,7 +92,6 @@ const VerEvento = () => {
             />
           </CardHeader>
           <CardBody>
-            {/* Título centrado */}
             <Typography
               variant="h3"
               color="blue-gray"
@@ -81,7 +100,6 @@ const VerEvento = () => {
               {evento.nombre}
             </Typography>
 
-            {/* Descripción, sector, y dirección */}
             <Typography color="blue-gray" className="mt-4">
               {evento.descripcion}
             </Typography>
@@ -92,7 +110,6 @@ const VerEvento = () => {
               <strong>Dirección:</strong> {evento.lugar || "No especificada"}
             </Typography>
 
-            {/* Apartado Compra de Boletos */}
             <div className="mt-8">
               <Typography
                 variant="h4"
@@ -102,24 +119,17 @@ const VerEvento = () => {
                 Compra Boletos
               </Typography>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Columna 1: Mostrar precios */}
                 <div className="flex flex-col justify-between">
-                  {/* Ajustando los márgenes */}
                   <Typography className="mb-2 mt-2 mr-4 text-right">
-                    {" "}
-                    {/* Ajustado con `mt-6` para mayor espacio superior */}
                     <strong>Valor Niño:</strong> $
                     {evento.valor_nino.toLocaleString("es-CL")}
                   </Typography>
                   <Typography className="mb-4 mr-4 text-right">
-                    {" "}
-                    {/* Ajustado con `mb-4` para más espacio inferior */}
                     <strong>Valor Adulto:</strong> $
                     {evento.valor_adulto.toLocaleString("es-CL")}
                   </Typography>
                 </div>
 
-                {/* Columna 2: Botones para + y - cantidad */}
                 <div>
                   <div className="flex items-center justify-between mb-2 border border-gray-300 rounded-lg p-1 w-60">
                     <Button
@@ -155,7 +165,6 @@ const VerEvento = () => {
                 </div>
               </div>
 
-              {/* Botón Comprar */}
               <div className="mt-6 flex justify-center items-center">
                 <Button color="blue" onClick={handleComprar}>
                   Comprar Entradas

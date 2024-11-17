@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom"; // Agrega useLocation
 import {
   Navbar,
   MobileNav,
@@ -12,21 +12,43 @@ import {
 } from "@material-tailwind/react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../slices/authSlice";
+import axios from "axios"; // Para realizar solicitudes si es necesario
 
 export default function StickyNavbar() {
   const [openNav, setOpenNav] = useState(false);
   const [logoutDialog, setLogoutDialog] = useState(false);
   const [openProfileMenu, setOpenProfileMenu] = useState(false);
   const token = useSelector((state) => state.auth.token);
-  const user = useSelector((state) => state.auth.user); 
+  const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation(); // Para detectar cambios en la URL
 
   useEffect(() => {
     const handleResize = () => window.innerWidth >= 960 && setOpenNav(false);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Actualizar información del usuario al cambiar de página
+  useEffect(() => {
+    if (token && !user) {
+      // Si el token existe pero no hay información de usuario, cargar los datos
+      axios
+        .get("http://localhost:8000/api/v1/auth/users/me/", {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          dispatch({ type: "auth/setUser", payload: response.data }); // Usa tu acción para actualizar el usuario
+        })
+        .catch((error) => {
+          console.error("Error al cargar el usuario:", error);
+          if (error.response?.status === 401) {
+            handleLogout(); // Si el token es inválido, cerrar sesión
+          }
+        });
+    }
+  }, [token, location.pathname]); // Escuchar cambios en token y ruta
 
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
@@ -107,7 +129,11 @@ export default function StickyNavbar() {
       <img
         onClick={() => setOpenProfileMenu((prev) => !prev)}
         alt="Profile"
-        src="https://images.unsplash.com/photo-1633332755192-727a05c4013d"
+        src={
+          user?.profile_picture // Asegúrate de que `user.profile_picture` sea el campo que contiene la URL de la foto del usuario
+            ? user.profile_picture
+            : "https://via.placeholder.com/150" // URL de la foto por defecto
+        }
         className="h-10 w-10 cursor-pointer rounded-full object-cover hover:ring-2 hover:ring-pink-500 transition duration-200"
       />
       {openProfileMenu && (
@@ -135,6 +161,7 @@ export default function StickyNavbar() {
       )}
     </div>
   );
+  
 
   return (
     <div className="sticky top-0 w-screen shadow-md z-20 bg-white">
@@ -206,7 +233,20 @@ export default function StickyNavbar() {
           </div>
         </div>
         <MobileNav open={openNav}>
-          <ul className="flex flex-col items-start gap-4">
+          <ul className="flex flex-col items-start gap-4 mt-4">
+            {user?.is_superuser || user?.is_staff ? (
+              <li>
+                <Typography
+                  as="span"
+                  variant="small"
+                  color="blue-gray"
+                  className="font-normal cursor-pointer hover:text-pink-500 transition duration-200"
+                >
+                  <Link to="/bashboard">Funciones de Admin</Link>
+                </Typography>
+              </li>
+            ) : null}
+
             {[
               { name: "La Tribu", path: "/tribu" },
               { name: "Nosotras", path: "/nosotras" },
@@ -229,6 +269,7 @@ export default function StickyNavbar() {
                 </Typography>
               </li>
             ))}
+
             {token && (
               <>
                 <li>
@@ -281,6 +322,7 @@ export default function StickyNavbar() {
                 </li>
               </>
             )}
+
             {!token && (
               <>
                 <li>

@@ -1,139 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { resetearCarrito, extenderTiempo } from "../../slices/carritoSlice";
+import { useNavigate } from "react-router-dom";
 
 const CarritoCompra = () => {
-  const [paymentMethod, setPaymentMethod] = useState('webpay');
-  const [userData, setUserData] = useState(null);
+  const { items, expirationTime } = useSelector((state) => state.carrito);
+  const user = useSelector((state) => state.auth.user);
+  const token = useSelector((state) => state.auth.token);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [showWarning, setShowWarning] = useState(false);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const token = localStorage.getItem('auth_token');
-        const response = await fetch('http://localhost:8000/api/user', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setUserData(data);
-      } catch (error) {
-        console.error('Error al obtener los datos del usuario:', error);
-      }
-    };
+    if (expirationTime) {
+      const interval = setInterval(() => {
+        const remainingTime = expirationTime - Date.now();
+        setTimeLeft(Math.max(remainingTime, 0));
 
-    fetchUserData();
-  }, []);
+        if (remainingTime <= 30000 && remainingTime > 0) {
+          setShowWarning(true);
+        }
 
-  const handlePaymentChange = (e) => {
-    setPaymentMethod(e.target.value);
+        if (remainingTime <= 0) {
+          clearInterval(interval);
+          alert("El tiempo de reserva ha expirado.");
+          dispatch(resetearCarrito());
+          navigate("/"); // Redirigir a la página principal
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [expirationTime, dispatch, navigate]);
+
+  const handleContinuar = () => {
+    dispatch(extenderTiempo());
+    setShowWarning(false);
   };
+
+  const handleCancelar = () => {
+    dispatch(resetearCarrito());
+    navigate("/");
+  };
+
+  if (items.length === 0) {
+    return <p className="text-center text-gray-500">Aún no has agregado nada a tu carrito.</p>;
+  }
+
+  const total = items.reduce((acc, item) => acc + item.subtotal, 0);
 
   return (
     <div className="container mx-auto py-10">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Sección izquierda (Datos, Detalle de la compra, Método de pago, Términos y condiciones) */}
-        <div className="lg:col-span-2 space-y-6">
-          
-          {/* Tus datos */}
-          <div className="bg-white shadow p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Tus datos</h2>
-            {userData ? (
-              <div className="space-y-2">
-                <p><strong>{userData.first_name} {userData.last_name}</strong></p>
-                <p>{userData.email}</p>
-                <p>{userData.phone_number}</p>
-              </div>
-            ) : (
-              <p>Cargando datos...</p>
-            )}
-          </div>
+      <h2 className="text-2xl font-bold mb-6">Carrito de Compras</h2>
 
-          {/* Detalle de la compra */}
-          <div className="bg-white shadow p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Detalle de la compra</h2>
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="font-semibold">Peluquería Perritos de 5 Kg a 9.9 Kg</p>
-                <p className="text-gray-500">Lunes 28 de octubre 09:00 hrs. | 120 min | Diamond Pets</p>
-              </div>
-              <p className="font-bold">$11.500</p>
-            </div>
-          </div>
-
-          {/* Método de pago */}
-          <div className="bg-white shadow p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Método de pago</h2>
-            <div className="space-y-4">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="webpay"
-                  checked={paymentMethod === 'webpay'}
-                  onChange={handlePaymentChange}
-                  className="mr-2"
-                />
-                <label>Webpay</label>
-                <img src="https://cdn.example.com/webpay-logo.png" alt="Webpay" className="ml-2 h-6" />
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="card"
-                  checked={paymentMethod === 'card'}
-                  onChange={handlePaymentChange}
-                  className="mr-2"
-                />
-                <label>Tarjeta de Crédito o Débito con CVV</label>
-                <div className="ml-2 flex space-x-2">
-                  <img src="https://cdn.example.com/visa-logo.png" alt="Visa" className="h-6" />
-                  <img src="https://cdn.example.com/mastercard-logo.png" alt="Mastercard" className="h-6" />
-                  <img src="https://cdn.example.com/amex-logo.png" alt="Amex" className="h-6" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Términos y condiciones */}
-          <div className="bg-white shadow p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Términos y condiciones</h2>
-            <p className="text-gray-600">
-              Por favor revisa con atención la siguiente información:
-            </p>
-            <p className="text-gray-500 text-sm">
-              Se pueden hacer cambios a la reserva hasta 24 horas antes del horario programado.
-              No se puede cancelar reservas pagadas en línea.
-            </p>
+      {showWarning && (
+        <div className="bg-yellow-100 p-4 rounded-lg shadow mb-4">
+          <p>El carrito está por vencerse. ¿Desea continuar comprando o cancelar la compra?</p>
+          <div className="flex justify-end space-x-4 mt-4">
+            <button onClick={handleContinuar} className="bg-green-500 text-white px-4 py-2 rounded">
+              Continuar
+            </button>
+            <button onClick={handleCancelar} className="bg-red-500 text-white px-4 py-2 rounded">
+              Cancelar
+            </button>
           </div>
         </div>
+      )}
 
-        {/* Sección derecha (Confirmación de la compra) */}
-        <div>
-          <div className="bg-white shadow p-6 rounded-lg">
-            <h2 className="text-xl font-bold mb-4">Confirmación de la compra</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <p>Subtotal</p>
-                <p>$11.500</p>
-              </div>
-              <div className="flex justify-between">
-                <p>Descuentos</p>
-                <p>$0</p>
-              </div>
-              <hr />
-              <div className="flex justify-between font-bold">
-                <p>Total</p>
-                <p>$11.500</p>
-              </div>
-              <p className="text-sm text-gray-500 mt-4">
-                Al realizar el pago, declaro que acepto los términos y condiciones de la empresa.
-              </p>
-              <button className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">
-                Continuar
-              </button>
+      <div className="bg-white shadow p-6 rounded-lg space-y-4">
+        {items.map((item, index) => (
+          <div key={index} className="flex justify-between items-center">
+            <div>
+              <h3 className="font-bold">{item.nombreEvento}</h3>
+              <p>Niños: {item.cantidadNino} | Adultos: {item.cantidadAdulto}</p>
             </div>
+            <p className="font-bold">${item.subtotal.toLocaleString("es-CL")}</p>
           </div>
-        </div>
+        ))}
+      </div>
+
+      <div className="mt-6">
+        <h3 className="text-xl font-bold">Total: ${total.toLocaleString("es-CL")}</h3>
+        <button className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4 hover:bg-blue-600">
+          Pagar con Webpay
+        </button>
       </div>
     </div>
   );

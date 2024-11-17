@@ -64,17 +64,18 @@ const EventosAdmin = () => {
     return sector ? sector.sector_nombre : "Desconocido";
   };
 
-  // Desactivar evento
   const desactivarEvento = async (eventId) => {
     try {
+      const token = localStorage.getItem("auth_token"); // Recuperar token de localStorage
       const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Agregar token de autenticación
         },
         body: JSON.stringify({ disabled: true }), // Desactivar el evento
       });
-
+  
       if (!response.ok) {
         console.error("Error al desactivar el evento");
       }
@@ -82,17 +83,18 @@ const EventosAdmin = () => {
       console.error("Error al desactivar el evento:", error);
     }
   };
-
-  // Eliminar evento
+  
   const handleDelete = async (eventId) => {
     try {
+      const token = localStorage.getItem("auth_token"); // Recuperar token de localStorage
       const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Agregar token de autenticación
         },
       });
-
+  
       if (response.ok) {
         setEvents(events.filter((event) => event.id !== eventId)); // Eliminar el evento de la tabla
         setDeleteDialogOpen(false);
@@ -104,29 +106,19 @@ const EventosAdmin = () => {
       console.error("Error al eliminar el evento:", error);
     }
   };
-
-  // Mostrar el diálogo de eliminación
-  const openDeleteDialog = (eventId) => {
-    setEventToDelete(eventId);
-    setDeleteDialogOpen(true);
-  };
-
-  const closeDeleteDialog = () => {
-    setDeleteDialogOpen(false);
-    setEventToDelete(null);
-  };
-
-  // Habilitar/Deshabilitar Evento
+  
   const toggleEvento = async (eventId, estadoActual) => {
     try {
+      const token = localStorage.getItem("auth_token"); // Recuperar token de localStorage
       const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Agregar token de autenticación
         },
         body: JSON.stringify({ disabled: !estadoActual }), // Cambia el estado 'disabled'
       });
-
+  
       if (response.ok) {
         setEvents(
           events.map((event) =>
@@ -143,6 +135,7 @@ const EventosAdmin = () => {
       console.error("Error al cambiar el estado del evento:", error);
     }
   };
+  
 
   // Calcular cupos disponibles (total - vendidos)
   const getCuposDisponibles = (evento) => {

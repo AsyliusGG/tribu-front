@@ -4,10 +4,10 @@ import { FaBuilding, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 
 const Contacto = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
+    last_name: "",
     email: "",
-    phone: "",
+    phone_number: "",
     subject: "",
     message: "",
   });
@@ -19,18 +19,37 @@ const Contacto = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Formulario enviado:", formData);
-    alert("Mensaje enviado con éxito");
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      subject: "",
-      message: "",
-    });
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/v1/contact/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console.log("Formulario enviado:", formData);
+        alert("Mensaje enviado con éxito");
+        setFormData({
+          name: "",
+          last_name: "",
+          email: "",
+          phone_number: "",
+          subject: "",
+          message: "",
+        });
+      } else {
+        const errorData = await response.json();
+        console.error("Error al enviar el formulario:", errorData);
+        alert("Error al enviar el mensaje");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al enviar el mensaje");
+    }
   };
 
   return (
@@ -54,64 +73,49 @@ const Contacto = () => {
         <div className="flex flex-col md:flex-row gap-8">
           {/* Formulario de contacto */}
           <div className="flex-1">
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex gap-4">
-                <Input
-                  label="First Name"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-                <Input
-                  label="Last Name"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
-              <div className="flex gap-4">
-                <Input
-                  type="email"
-                  label="Your email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-                <Input
-                  type="tel"
-                  label="Phone Number"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full"
-                />
-              </div>
+            <form onSubmit={handleSubmit}>
               <Input
-                label="Subject"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Name"
+              />
+              <Input
+                type="text"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+                placeholder="Last Name"
+              />
+              <Input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email"
+              />
+              <Input
+                type="text"
+                name="phone_number"
+                value={formData.phone_number}
+                onChange={handleChange}
+                placeholder="Phone Number"
+              />
+              <Input
+                type="text"
                 name="subject"
                 value={formData.subject}
                 onChange={handleChange}
-                required
+                placeholder="Subject"
               />
               <Textarea
-                label="Your message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                required
+                placeholder="Message"
               />
-              <Button
-                type="submit"
-                className="w-full bg-pink-300 hover:bg-pink-400 text-white"
-              >
-                Enviar mensaje
-              </Button>
+              <Button type="submit">Enviar</Button>
             </form>
           </div>
 

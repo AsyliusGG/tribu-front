@@ -1,31 +1,56 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Alert, Input, Button, Typography, Card } from "@material-tailwind/react";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Alert,
+  Input,
+  Button,
+  Typography,
+  Card,
+  Select,
+  Option,
+} from "@material-tailwind/react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function Joinus() {
   const [formData, setFormData] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    confirmarEmail: '',
-    password: '',
-    re_password: '',
-    phone_number: '',
-    run: '',
-    birthday: '',
-    job: '',
-    sector: '',
-    know_source: ''
+    first_name: "",
+    last_name: "",
+    email: "",
+    confirmarEmail: "",
+    password: "",
+    re_password: "",
+    phone_number: "",
+    run: "",
+    birthday: "",
+    job: "",
+    sector: "",
+    know_source: "",
   });
-  
+
   const [sectors, setSectors] = useState([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    async function fetchSectors() {
+      try {
+        const response = await fetch("http://localhost:8000/api/v1/sector/");
+        if (response.ok) {
+          const data = await response.json();
+          setSectors(data); // Guardar los sectores en el estado
+        } else {
+          toast.error("Error al cargar los sectores.");
+        }
+      } catch (error) {
+        toast.error("Error al conectar con el servidor.");
+      }
+    }
+    fetchSectors();
+  }, []);
+
   const formatRUT = (rut) => {
     // Elimina todos los caracteres que no sean números o 'k'
-    rut = rut.replace(/[^0-9kK]/g, '');
+    rut = rut.replace(/[^0-9kK]/g, "");
 
     // Asegúrate de que el RUT tenga al menos 2 caracteres
     if (rut.length < 2) {
@@ -37,7 +62,7 @@ export function Joinus() {
     const cuerpo = rut.slice(0, -1);
 
     // Formatea el cuerpo del RUT con puntos
-    const cuerpoFormateado = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const cuerpoFormateado = cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 
     // Retorna el RUT formateado
     return `${cuerpoFormateado}-${dv}`;
@@ -47,9 +72,9 @@ export function Joinus() {
     const { name, value } = e.target;
     let formattedValue = value;
 
-    if (name === 'run') {
+    if (name === "run") {
       // Limita la longitud del RUT a 9 caracteres
-      if (value.replace(/[^0-9kK]/g, '').length > 9) {
+      if (value.replace(/[^0-9kK]/g, "").length > 9) {
         return;
       }
       formattedValue = formatRUT(value);
@@ -57,7 +82,14 @@ export function Joinus() {
 
     setFormData({
       ...formData,
-      [name]: formattedValue
+      [name]: formattedValue,
+    });
+  };
+
+  const handleSectorChange = (sectorId) => {
+    setFormData({
+      ...formData,
+      sector: sectorId,
     });
   };
 
@@ -88,16 +120,20 @@ export function Joinus() {
           birthday: formData.birthday,
           job: formData.job,
           sector: formData.sector,
-          know_source: formData.know_source
-        })
+          know_source: formData.know_source,
+        }),
       });
 
       if (response.ok) {
         toast.success("Usuario registrado exitosamente");
-        navigate('/login');
+        navigate("/login");
       } else {
         const errorData = await response.json();
-        toast.error(`Error al registrar el usuario: ${errorData.message || "Error desconocido"}`);
+        toast.error(
+          `Error al registrar el usuario: ${
+            errorData.message || "Error desconocido"
+          }`
+        );
       }
     } catch (error) {
       toast.error(`Error al registrar el usuario: ${error.message}`);
@@ -113,7 +149,10 @@ export function Joinus() {
         <Typography color="gray" className="mt-1 font-normal">
           ¡Bienvenido! Ingresa tus datos para registrarte.
         </Typography>
-        <form className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96" onSubmit={handleSubmit}>
+        <form
+          className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96"
+          onSubmit={handleSubmit}
+        >
           <div className="mb-1 flex flex-col gap-6">
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Nombre
@@ -245,15 +284,21 @@ export function Joinus() {
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Sector
             </Typography>
-            <Input
+            <Select
               size="lg"
-              placeholder="Ingrese su sector"
-              id="sector"
-              name="sector"
+              label="Selecciona un Sector"
               value={formData.sector}
-              onChange={handleInputChange}
+              onChange={(e) => handleSectorChange(e)}
               required
-            />
+            >
+              {sectors.map((sector) => (
+                <Option key={sector.id} value={String(sector.id)}>
+                  {" "}
+                  {sector.sector_nombre}
+                </Option>
+              ))}
+            </Select>
+
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Fuente de Conocimiento
             </Typography>

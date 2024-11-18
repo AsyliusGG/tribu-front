@@ -45,6 +45,72 @@ const CarritoCompra = () => {
     navigate("/");
   };
 
+  const handlePagarConWebpay = async () => {
+    const eventoId = items[0]?.eventoId; // Asume que todos los items son del mismo evento
+    const cantidadAdultos = items.reduce((acc, item) => acc + item.cantidadAdulto, 0);
+    const cantidadNinos = items.reduce((acc, item) => acc + item.cantidadNino, 0);
+  
+    if (!user || !user.id) {
+      console.error("Error: Usuario no autenticado o ID no definido");
+      alert("Debes estar autenticado para realizar el pago.");
+      return;
+    }
+  
+    if (!eventoId || (cantidadAdultos === 0 && cantidadNinos === 0)) {
+      alert("Los datos del carrito están incompletos.");
+      return;
+    }
+  
+    const data = {
+      buy_order: `orden_evento`,
+      session_id: user.id, // Asegúrate de que user.id está definido
+      cantidad_adultos: cantidadAdultos,
+      cantidad_ninos: cantidadNinos,
+      evento_id: eventoId,
+    };
+  
+    console.log("Datos enviados al backend:", data);
+  
+    try {
+      const response = await fetch("http://localhost:8000/api/v1/iniciar_pago/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Incluye el token si es necesario
+        },
+        body: JSON.stringify(data),
+      });
+  
+      console.log("Estado de la respuesta:", response.status);
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error al iniciar el pago:", errorData);
+        alert("Error al iniciar el pago: " + errorData.error);
+        return;
+      }
+  
+      const result = await response.json();
+      console.log("Respuesta de la API:", result);
+  
+      // Concatenar el token a la URL
+      if (result.url && result.token) {
+        const redirectUrl = `${result.url}?token_ws=${result.token}`;
+        console.log("Redirigiendo a URL:", redirectUrl);
+        window.location.href = redirectUrl;
+      } else {
+        console.error("Datos de redirección incompletos:", result);
+        alert("Error al obtener la URL de redirección.");
+      }
+    } catch (error) {
+      console.error("Error al procesar el pago:", error);
+      alert("Error al procesar el pago.");
+    }
+  };
+  
+      
+  
+
   if (items.length === 0) {
     return <p className="text-center text-gray-500">Aún no has agregado nada a tu carrito.</p>;
   }
@@ -83,7 +149,10 @@ const CarritoCompra = () => {
 
       <div className="mt-6">
         <h3 className="text-xl font-bold">Total: ${total.toLocaleString("es-CL")}</h3>
-        <button className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4 hover:bg-blue-600">
+        <button
+          onClick={handlePagarConWebpay}
+          className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4 hover:bg-blue-600"
+        >
           Pagar con Webpay
         </button>
       </div>

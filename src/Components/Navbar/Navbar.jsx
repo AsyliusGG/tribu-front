@@ -67,7 +67,7 @@ export default function StickyNavbar() {
             color="blue-gray"
             className="font-normal cursor-pointer hover:text-pink-500 transition duration-200"
           >
-            <Link to="/bashboard">Funciones de Admin</Link>
+            <Link to="/adminSettings">Funciones de Admin</Link>
           </Typography>
         </li>
       ) : null}

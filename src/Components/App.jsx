@@ -25,6 +25,7 @@ import ModificarAlianza from "./Alianzas/ModificarAlianza.jsx";
 import VerAlianza from "./Alianzas/VerAlianza.jsx";
 import UsarAlianza from "./Alianzas/UsarAlianza.jsx";
 import Contacto from "./Contacto/Contacto.jsx";
+import AdminSettings from "./Dashboard/AdminSettings.jsx";
 
 function App() {
   return (
@@ -76,6 +77,7 @@ function App() {
           />
           <Route path="/Alianzas/UsarAlianza/:id" element={<UsarAlianza />} />
           <Route path="/Contacto" element={<Contacto />} />
+          <Route path="/AdminSettings" element={<AdminSettings />} />
         </Routes>
         <Footer />
       </Router>

@@ -28,63 +28,133 @@ import Contacto from "./Contacto/Contacto.jsx";
 import AdminSettings from "./Dashboard/AdminSettings.jsx";
 import ConfirmacionCompra from "./Compra/ConfirmarCompra.jsx";
 import ErrorPago from "./Compra/ErrorPago.jsx";
-
+import { CarritoProvider } from "./Compra/CarritoContext.jsx";
 
 function App() {
   return (
     <Provider store={store}>
       <Router>
-        <StickyNavbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/Tribu" element={<Tribu />} />
-          <Route path="/Nosotras" element={<Nosotras />} />
-          <Route path="/Historia" element={<Historia />} />
-          <Route path="/confirmacion-pago" element={<ConfirmacionCompra />} />
-          <Route path="/error-pago" element={<ErrorPago />} />
-          <Route
-            path="/Alianzas"
-            element={
-              <PrivateRoute>
-                <Alianzas />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/Eventos"
-            element={
-              <PrivateRoute>
-                <Eventos />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/joinus" element={<Joinus />} />
-          <Route path="/Eventos" element={<Eventos />} />
-          <Route path="/Eventos/EventosAdmin" element={<EventosAdmin />} />
-          <Route path="/Eventos/CrearEvento" element={<CrearEvento />} />
-          <Route
-            path="/Components/eventos/CrearEvento"
-            element={<CrearEvento />}
-          />
-          <Route
-            path="/Eventos/ModificarEvento/:id"
-            element={<ModificarEvento />}
-          />
-          <Route path="/verevento/:id" element={<VerEvento />} />
-          <Route path="/Alianzas/AlianzasAdmin" element={<AlianzasAdmin />} />
-          <Route path="/CarritoCompra" element={<CarritoCompra />} />
-          <Route path="/Alianzas/VerAlianza/:id" element={<VerAlianza />} />
-          <Route path="/Alianzas/CrearAlianza" element={<CrearAlianza />} />
-          <Route
-            path="/Alianzas/ModificarAlianza/:id"
-            element={<ModificarAlianza />}
-          />
-          <Route path="/Alianzas/UsarAlianza/:id" element={<UsarAlianza />} />
-          <Route path="/Contacto" element={<Contacto />} />
-          <Route path="/AdminSettings" element={<AdminSettings />} />
-        </Routes>
-        <Footer />
+        <CarritoProvider>
+          <StickyNavbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/Tribu" element={<Tribu />} />
+            <Route path="/Nosotras" element={<Nosotras />} />
+            <Route path="/Historia" element={<Historia />} />
+            <Route path="/confirmacion-pago" element={<ConfirmacionCompra />} />
+            <Route path="/error-pago" element={<ErrorPago />} />
+            <Route
+              path="/Alianzas"
+              element={
+                <PrivateRoute>
+                  <Alianzas />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Eventos"
+              element={
+                <PrivateRoute>
+                  <Eventos />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/joinus" element={<Joinus />} />
+            <Route
+              path="/Eventos/EventosAdmin"
+              element={
+                <PrivateRoute>
+                  <EventosAdmin />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Eventos/CrearEvento"
+              element={
+                <PrivateRoute>
+                  <CrearEvento />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Components/eventos/CrearEvento"
+              element={<CrearEvento />}
+            />
+            <Route
+              path="/Eventos/ModificarEvento/:id"
+              element={<ModificarEvento />}
+            />
+            <Route
+              path="/verevento/:id"
+              element={
+                <PrivateRoute>
+                  <VerEvento />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Alianzas/AlianzasAdmin"
+              element={
+                <PrivateRoute>
+                  <AlianzasAdmin />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/CarritoCompra"
+              element={
+                <PrivateRoute>
+                  <CarritoCompra />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Alianzas/VerAlianza/:id"
+              element={
+                <PrivateRoute>
+                  <VerAlianza />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Alianzas/CrearAlianza"
+              element={
+                <PrivateRoute>
+                  <CrearAlianza />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Alianzas/ModificarAlianza/:id"
+              element={
+                <PrivateRoute>
+                  <ModificarAlianza />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Alianzas/UsarAlianza/:id"
+              element={
+                <PrivateRoute>
+                  <UsarAlianza />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/Contacto" element={<Contacto />} />
+            <Route
+              path="/AdminSettings"
+              element={
+                <PrivateRoute>
+                  <AdminSettings />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/confirmar-pago" element={<ConfirmacionCompra />} />
+            <Route path="/error-pago" element={<ErrorPago />} />
+          </Routes>
+          <Footer />
+        </CarritoProvider>
       </Router>
     </Provider>
   );

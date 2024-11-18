@@ -1,20 +1,25 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const ErrorPago = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
+  const navigate = useNavigate();
 
-  const status = queryParams.get('status');
-  const buyOrder = queryParams.get('buy_order');
-  const amount = queryParams.get('amount');
+  const handleRetry = () => {
+    navigate("/carritoCompra");
+  };
 
   return (
-    <div>
-      <h1>Error en el Pago</h1>
-      <p>Status: {status}</p>
-      <p>Buy Order: {buyOrder}</p>
-      <p>Amount: {amount}</p>
+    <div className="container mx-auto py-10 text-center">
+      <h1 className="text-3xl font-bold text-red-500 mb-4">¡Error en el Pago!</h1>
+      <p className="text-gray-700 mb-6">
+        Ocurrió un problema al procesar el pago. Por favor, intente nuevamente.
+      </p>
+      <button
+        onClick={handleRetry}
+        className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600"
+      >
+        Volver al Carrito
+      </button>
     </div>
   );
 };

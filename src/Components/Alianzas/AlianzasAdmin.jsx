@@ -10,7 +10,7 @@ import {
   Alert,
 } from "@material-tailwind/react";
 
-const ALIANZAS_API_URL = "http://localhost:8000/alianzas/api/v1/alianzas"; // Actualizar con la API correcta
+const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas"; // Actualizar con la API correcta
 
 const AlianzasAdmin = () => {
   const [alianzas, setAlianzas] = useState([]);

@@ -1,52 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { resetearCarrito, extenderTiempo } from "../../slices/carritoSlice";
+import { resetearCarrito } from "../../slices/carritoSlice";
 import { useNavigate } from "react-router-dom";
-
-
-const token = localStorage.getItem("auth_token");
+import { useCarrito } from "./CarritoContext";
 
 const CarritoCompra = () => {
-  const { items, expirationTime } = useSelector((state) => state.carrito);
+  const { items } = useSelector((state) => state.carrito);
   const user = useSelector((state) => state.auth.user);
   const token = useSelector((state) => state.auth.token);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [timeLeft, setTimeLeft] = useState(0);
-  const [showWarning, setShowWarning] = useState(false);
-
-  useEffect(() => {
-    if (expirationTime) {
-      const interval = setInterval(() => {
-        const remainingTime = expirationTime - Date.now();
-        setTimeLeft(Math.max(remainingTime, 0));
-
-        if (remainingTime <= 30000 && remainingTime > 0) {
-          setShowWarning(true);
-        }
-
-        if (remainingTime <= 0) {
-          clearInterval(interval);
-          alert("El tiempo de reserva ha expirado.");
-          dispatch(resetearCarrito());
-          navigate("/"); // Redirigir a la página principal
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
-    }
-  }, [expirationTime, dispatch, navigate]);
-
-  const handleContinuar = () => {
-    dispatch(extenderTiempo());
-    setShowWarning(false);
-  };
-
-  const handleCancelar = () => {
-    dispatch(resetearCarrito());
-    navigate("/");
-  };
+  const { timeLeft, showWarning, handleContinuar, handleCancelar } = useCarrito(); // Usa el contexto
 
   const handlePagarConWebpay = async () => {
     const eventoId = items[0]?.eventoId; // Asume que todos los items son del mismo evento
@@ -54,7 +19,6 @@ const CarritoCompra = () => {
     const cantidadNinos = items.reduce((acc, item) => acc + item.cantidadNino, 0);
   
     if (!user || !user.id) {
-      console.error("Error: Usuario no autenticado o ID no definido");
       alert("Debes estar autenticado para realizar el pago.");
       return;
     }
@@ -96,8 +60,11 @@ const CarritoCompra = () => {
       const result = await response.json();
       console.log("Respuesta de la API:", result);
   
-      // Concatenar el token a la URL
-      if (result.url && result.token) {
+      if (result.frontend_url) {
+        // Redirige al frontend_url devuelto por la API
+        console.log("Redirigiendo a página de confirmación:", result.frontend_url);
+        window.location.href = result.frontend_url;
+      } else if (result.url && result.token) {
         const redirectUrl = `${result.url}?token_ws=${result.token}`;
         console.log("Redirigiendo a URL:", redirectUrl);
         window.location.href = redirectUrl;
@@ -110,8 +77,6 @@ const CarritoCompra = () => {
       alert("Error al procesar el pago.");
     }
   };
-  
-      
   
 
   if (items.length === 0) {
@@ -152,6 +117,9 @@ const CarritoCompra = () => {
 
       <div className="mt-6">
         <h3 className="text-xl font-bold">Total: ${total.toLocaleString("es-CL")}</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Tiempo restante para finalizar la compra: <strong>{Math.ceil(timeLeft / 1000)}</strong> segundos
+        </p>
         <button
           onClick={handlePagarConWebpay}
           className="w-full bg-blue-500 text-white py-2 rounded-lg mt-4 hover:bg-blue-600"

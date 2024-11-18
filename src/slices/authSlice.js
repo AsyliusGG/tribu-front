@@ -87,8 +87,31 @@ export const authSlice = createSlice({
         state.error = action.payload;
       });
   },
+  
 });
 
+export const getUserInfo = createAsyncThunk(
+  "auth/getUserInfo",
+  async (_, { getState, rejectWithValue }) => {
+    const state = getState();
+    const token = state.auth.token;
+
+    if (!token) {
+      return rejectWithValue("No token found");
+    }
+
+    try {
+      const response = await axios.get("http://localhost:8000/api/v1/auth/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data || "Error fetching user info");
+    }
+  }
+);
 // Exporta la acción logout para usarla en los componentes
 export const { logout } = authSlice.actions;
 

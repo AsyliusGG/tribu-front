@@ -8,7 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const ALIANZAS_API_URL = "http://localhost:8000/alianzas/api/v1/alianzas"; // Actualizar con la API correcta
+const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas"; // Actualizar con la API correcta
 
 const ModificarAlianza = () => {
   const { id } = useParams(); // Obtener el id de la alianza desde la URL

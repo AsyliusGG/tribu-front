@@ -9,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
-const ALIANZAS_API_URL = "http://localhost:8000/alianzas/api/v1/alianzas"; // Actualizar con la API correcta
+const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas"; 
 
 const Alianzas = () => {
   const [alianzas, setAlianzas] = useState([]);

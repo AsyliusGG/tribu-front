@@ -54,7 +54,7 @@ const CrearAlianza = () => {
 
     try {
       // Enviar datos a tu API
-      const response = await fetch("http://localhost:8000/eventos/api/v1/alianzas/", {
+      const response = await fetch("http://localhost:8000/api/v1/alianzas/", {
         method: "POST",
         body: formData,
       });

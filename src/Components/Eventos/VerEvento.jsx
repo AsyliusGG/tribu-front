@@ -9,18 +9,20 @@ import {
   CardBody,
   Typography,
   Button,
+  Alert,
 } from "@material-tailwind/react";
 
 const VerEvento = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Define el dispatch
+  const dispatch = useDispatch();
   const [evento, setEvento] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [cantidadNino, setCantidadNino] = useState(0);
   const [cantidadAdulto, setCantidadAdulto] = useState(0);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     const loadEvento = async () => {
@@ -49,7 +51,36 @@ const VerEvento = () => {
       setCantidadAdulto(cantidadAdulto - 1);
   };
 
-  const handleComprar = () => {
+  const agregarAlCarrito = () => {
+    if (cantidadNino === 0 && cantidadAdulto === 0) {
+      alert("Debe seleccionar al menos un boleto para agregar al carrito.");
+      return;
+    }
+
+    dispatch(
+      agregarEvento({
+        eventoId: evento.id,
+        nombreEvento: evento.nombre,
+        cantidadNino,
+        cantidadAdulto,
+        precioNino: evento.valor_nino,
+        precioAdulto: evento.valor_adulto,
+        subtotal:
+          cantidadNino * evento.valor_nino + cantidadAdulto * evento.valor_adulto,
+      })
+    );
+
+    // Mensaje de éxito y limpieza de cantidades
+    setSuccessMessage("Entradas agregadas al carrito con éxito.");
+    setCantidadNino(0);
+    setCantidadAdulto(0);
+
+    setTimeout(() => {
+      setSuccessMessage("");
+    }, 3000); // Oculta el mensaje después de 3 segundos
+  };
+
+  const handleComprarAhora = () => {
     if (cantidadNino === 0 && cantidadAdulto === 0) {
       alert("Debe seleccionar al menos un boleto para comprar.");
       return;
@@ -68,8 +99,7 @@ const VerEvento = () => {
       })
     );
 
-    alert("Entradas agregadas al carrito");
-    navigate("../../carritoCompra"); // Redirigir al carrito
+    navigate("../../carritoCompra"); // Redirige al carrito
   };
 
   if (loading) {
@@ -82,7 +112,16 @@ const VerEvento = () => {
 
   return (
     evento && (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-10">
+        {successMessage && (
+          <Alert
+            color="green"
+            className="fixed top-20 z-50 w-80 text-center"
+          >
+            {successMessage}
+          </Alert>
+        )}
+
         <Card className="w-full max-w-4xl p-6">
           <CardHeader color="blue-gray" className="relative h-[36rem]">
             <img
@@ -165,9 +204,12 @@ const VerEvento = () => {
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-center items-center">
-                <Button color="blue" onClick={handleComprar}>
-                  Comprar Entradas
+              <div className="mt-6 flex justify-between items-center">
+                <Button color="green" onClick={agregarAlCarrito}>
+                  Agregar al Carrito
+                </Button>
+                <Button color="blue" onClick={handleComprarAhora}>
+                  Comprar Ahora
                 </Button>
               </div>
             </div>

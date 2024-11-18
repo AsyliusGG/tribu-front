@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetearCarrito, extenderTiempo } from "../../slices/carritoSlice";
 import { useNavigate } from "react-router-dom";
 
+
+const token = localStorage.getItem("auth_token");
+
 const CarritoCompra = () => {
   const { items, expirationTime } = useSelector((state) => state.carrito);
   const user = useSelector((state) => state.auth.user);

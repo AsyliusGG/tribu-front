@@ -69,7 +69,7 @@ const VerEvento = () => {
     );
 
     alert("Entradas agregadas al carrito");
-    navigate("../../compra/carritoCompra"); // Redirigir al carrito
+    navigate("../../carritoCompra"); // Redirigir al carrito
   };
 
   if (loading) {

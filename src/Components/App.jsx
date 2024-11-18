@@ -26,6 +26,9 @@ import VerAlianza from "./Alianzas/VerAlianza.jsx";
 import UsarAlianza from "./Alianzas/UsarAlianza.jsx";
 import Contacto from "./Contacto/Contacto.jsx";
 import AdminSettings from "./Dashboard/AdminSettings.jsx";
+import ConfirmacionCompra from "./Compra/ConfirmarCompra.jsx";
+import ErrorPago from "./Compra/ErrorPago.jsx";
+
 
 function App() {
   return (
@@ -37,6 +40,8 @@ function App() {
           <Route path="/Tribu" element={<Tribu />} />
           <Route path="/Nosotras" element={<Nosotras />} />
           <Route path="/Historia" element={<Historia />} />
+          <Route path="/confirmacion-pago" element={<ConfirmacionCompra />} />
+          <Route path="/error-pago" element={<ErrorPago />} />
           <Route
             path="/Alianzas"
             element={

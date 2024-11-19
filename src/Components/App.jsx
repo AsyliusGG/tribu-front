@@ -29,6 +29,7 @@ import AdminSettings from "./Dashboard/AdminSettings.jsx";
 import ConfirmacionCompra from "./Compra/ConfirmarCompra.jsx";
 import ErrorPago from "./Compra/ErrorPago.jsx";
 import { CarritoProvider } from "./Compra/CarritoContext.jsx";
+import ActivatePage from "./ActivatePage/ActivatePage.jsx";
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
             <Route path="/Historia" element={<Historia />} />
             <Route path="/confirmacion-pago" element={<ConfirmacionCompra />} />
             <Route path="/error-pago" element={<ErrorPago />} />
+            <Route path="/activate/:uid/:token" element={<ActivatePage />} />
             <Route
               path="/Alianzas"
               element={

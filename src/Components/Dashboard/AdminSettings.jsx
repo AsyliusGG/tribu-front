@@ -1,45 +1,82 @@
 import React from "react";
-import { MdHome, MdSettings, MdDashboard } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { Box, CssBaseline, Drawer, AppBar, Toolbar, Typography, List, ListItem, ListItemIcon, ListItemText, IconButton } from "@mui/material";
+import { Home, Settings, People, Dashboard, Logout } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+
+const drawerWidth = 240;
 
 const AdminSettings = () => {
-  return (
-    <div className="flex">
-      {/* Sidebar */}
-      <div className="w-64 h-screen bg-gray-800 text-white">
-        <h1 className="text-center text-xl font-bold py-6">Admin Panel</h1>
-        <nav className="mt-10">
-          <ul>
-            <li className="px-6 py-2 hover:bg-gray-700">
-              <Link to="/admin/dashboard" className="flex items-center">
-                <MdDashboard className="text-2xl mr-2" />
-                Dashboard
-              </Link>
-            </li>
-            <li className="px-6 py-2 hover:bg-gray-700">
-              <Link to="/admin/home" className="flex items-center">
-                <MdHome className="text-2xl mr-2" />
-                Home
-              </Link>
-            </li>
-            <li className="px-6 py-2 hover:bg-gray-700">
-              <Link to="/admin/settings" className="flex items-center">
-                <MdSettings className="text-2xl mr-2" />
-                Settings
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
+  const navigate = useNavigate();
 
-      {/* Main Content */}
-      <div className="flex-1 bg-gray-100 p-10">
-        <h2 className="text-3xl font-bold">Welcome to Admin Dashboard</h2>
-        <p className="mt-4 text-gray-600">
-          Aquí puedes administrar las configuraciones principales.
-        </p>
-      </div>
-    </div>
+  const menuItems = [
+    { text: "Dashboard", icon: <Dashboard />, path: "/admin/dashboard" },
+    { text: "Usuarios", icon: <People />, path: "/admin/usuarios" },
+    { text: "Configuración", icon: <Settings />, path: "/admin/configuracion" },
+    { text: "Inicio", icon: <Home />, path: "/" },
+    { text: "Cerrar Sesión", icon: <Logout />, path: "/logout" },
+  ];
+
+  const handleNavigation = (path) => {
+    navigate(path);
+  };
+
+  return (
+    <Box sx={{ display: "flex" }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+          backgroundColor: "#1976d2",
+        }}
+      >
+        <Toolbar>
+          <Typography variant="h6" noWrap component="div">
+            Panel de Administración
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          [`& .MuiDrawer-paper`]: {
+            width: drawerWidth,
+            boxSizing: "border-box",
+          },
+        }}
+      >
+        <Toolbar />
+        <Box sx={{ overflow: "auto" }}>
+          <List>
+            {menuItems.map((item, index) => (
+              <ListItem button key={index} onClick={() => handleNavigation(item.path)}>
+                <ListItemIcon>{item.icon}</ListItemIcon>
+                <ListItemText primary={item.text} />
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: "background.default",
+          p: 3,
+          minHeight: "100vh",
+        }}
+      >
+        <Toolbar />
+        <Typography variant="h4" gutterBottom>
+          Bienvenido al Panel de Administración
+        </Typography>
+        <Typography variant="body1">
+          Selecciona una de las opciones del menú lateral para administrar las configuraciones del sistema.
+        </Typography>
+      </Box>
+    </Box>
   );
 };
 

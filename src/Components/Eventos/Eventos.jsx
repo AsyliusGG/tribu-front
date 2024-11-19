@@ -1,4 +1,4 @@
-import { getallEventos } from '../../api/api.js';
+import { getallEventos, getallSector } from '../../api/api.js';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -12,23 +12,29 @@ import {
 
 const Eventos = () => {
   const [posts, setPosts] = useState([]);
+  const [sectores, setSectores] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     async function loadEventos() {
-      const response = await getallEventos();
-      const eventosActivos = response.data
-        .filter(evento => !evento.disabled) 
-        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha)); 
+      const [eventosResponse, sectoresResponse] = await Promise.all([
+        getallEventos(),
+        getallSector()
+      ]);
+
+      const eventosActivos = eventosResponse.data
+        .filter(evento => !evento.disabled)
+        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
 
       setPosts(eventosActivos);
+      setSectores(sectoresResponse.data);
     }
 
     loadEventos();
   }, []);
 
   const handlePostClick = (postId) => {
-    navigate(`/verevento/${postId}`); 
+    navigate(`/verevento/${postId}`);
   };
 
   const goToAdmin = () => {
@@ -49,7 +55,7 @@ const Eventos = () => {
   };
 
   const getSectorName = (sectorId) => {
-    const sector = sectors.find((sector) => sector.id === sectorId);
+    const sector = sectores.find((sector) => sector.id === sectorId);
     return sector ? sector.sector_nombre : "Desconocido";
   };
 
@@ -69,44 +75,32 @@ const Eventos = () => {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {posts.map((post) => (
-            <Card
-              key={post.id}
-              className="w-full h-full flex flex-col justify-between cursor-pointer"
-            >
+            <Card key={post.id} className="w-full h-full flex flex-col justify-between cursor-pointer">
               <CardHeader color="blue-gray" className="relative h-56">
-                <img
-                  src={post.foto}
-                  alt={post.descripcion}
-                  className="w-full h-full object-cover"
-                />
+                <img src={post.foto} alt={post.descripcion} className="w-full h-full object-cover" />
               </CardHeader>
               <CardBody className="flex-grow">
                 <Typography variant="h5" className="mb-2 text-center font-bold">
-                  {post.nombre} {/* Mostrar nombre del evento en negrita */}
+                  {post.nombre}
                 </Typography>
-
-                {/* Mostrar la fecha del evento */}
                 <Typography className="text-center mb-2">
-                  Fecha: {formatDate(post.fecha)} {/* Formatear la fecha */}
+                  Fecha: {formatDate(post.fecha)}
                 </Typography>
-
-                {/* Mostrar la hora del evento */}
                 <Typography className="text-center mb-2">
-                  Hora: {formatTime(post.hora)} {/* Formatear la hora */}
+                  Hora: {formatTime(post.hora)}
                 </Typography>
-
-                {/* Mostrar el sector */}
                 <Typography className="text-center mb-2">
-                  Sector: {post.sector?.sector_nombre || post.sector_nombre || 'N/A'} {/* Mostrar el nombre del sector si existe */}
+                  Lugar: {post.lugar}
                 </Typography>
-
-                {/* Mostrar la dirección */}
-                <Typography className="text-center">
-                  Dirección: {post.lugar || 'No especificada'} {/* Mostrar la dirección si existe */}
+                <Typography className="text-center mb-2">
+                  Sector: {getSectorName(post.sector)}
+                </Typography>
+                <Typography className="text-center mb-2">
+                  Cupos: {post.cupos}
                 </Typography>
               </CardBody>
               <CardFooter className="flex justify-center pt-4">
-                <Button onClick={() => handlePostClick(post.id)}>Ver Más</Button> {/* Manejar el clic */}
+                <Button onClick={() => handlePostClick(post.id)}>Ver Más</Button>
               </CardFooter>
             </Card>
           ))}

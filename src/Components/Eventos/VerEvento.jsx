@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getEventoById } from "../../api/api.js";
+import { getEventoById, getallSector } from "../../api/api.js";
 import { useDispatch } from "react-redux";
 import { agregarEvento } from "../../slices/carritoSlice.js";
 import {
@@ -17,6 +17,7 @@ const VerEvento = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [evento, setEvento] = useState(null);
+  const [sectores, setSectores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -27,11 +28,15 @@ const VerEvento = () => {
   useEffect(() => {
     const loadEvento = async () => {
       try {
-        const eventoData = await getEventoById(id);
+        const [eventoData, sectoresResponse] = await Promise.all([
+          getEventoById(id),
+          getallSector()
+        ]);
         setEvento(eventoData);
-        setLoading(false);
+        setSectores(sectoresResponse.data);
       } catch (error) {
-        setError("Error al cargar el evento.");
+        setError(error);
+      } finally {
         setLoading(false);
       }
     };
@@ -110,6 +115,11 @@ const VerEvento = () => {
     return <Typography>Error: {error}</Typography>;
   }
 
+  const getSectorName = (sectorId) => {
+    const sector = sectores.find((sector) => sector.id === sectorId);
+    return sector ? sector.sector_nombre : "Desconocido";
+  };
+
   return (
     evento && (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 py-10">
@@ -143,7 +153,7 @@ const VerEvento = () => {
               {evento.descripcion}
             </Typography>
             <Typography color="blue-gray" className="mt-4">
-              <strong>Sector:</strong> {evento.sector?.sector_nombre || "N/A"}
+              <strong>Sector:</strong> {getSectorName(evento.sector)}
             </Typography>
             <Typography color="blue-gray" className="mt-2">
               <strong>Dirección:</strong> {evento.lugar || "No especificada"}

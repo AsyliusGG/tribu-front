@@ -61,9 +61,8 @@ const CarritoCompra = () => {
       console.log("Respuesta de la API:", result);
   
       if (result.frontend_url) {
-        // Redirige al frontend_url devuelto por la API
         console.log("Redirigiendo a página de confirmación:", result.frontend_url);
-        window.location.href = result.frontend_url;
+        window.location.href = result.frontend_url; // Redirige a la URL del frontend
       } else if (result.url && result.token) {
         const redirectUrl = `${result.url}?token_ws=${result.token}`;
         console.log("Redirigiendo a URL:", redirectUrl);

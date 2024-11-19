@@ -150,8 +150,8 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/confirmar-pago" element={<ConfirmacionCompra />} />
-            <Route path="/error-pago" element={<ErrorPago />} />
+            <Route path="/confirmar_pago" element={<ConfirmacionCompra />} />
+            <Route path="/error_pago" element={<ErrorPago />} />
           </Routes>
           <Footer />
         </CarritoProvider>

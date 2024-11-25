@@ -161,19 +161,18 @@ export default function StickyNavbar() {
       )}
     </div>
   );
-  
 
   return (
     <div className="sticky top-0 w-screen shadow-md z-20 bg-white">
       <Navbar className="z-10 max-w-full rounded-none px-4 py-2 lg:px-8 lg:py-4">
         <div className="flex items-center justify-between text-blue-gray-900">
-          <Typography
-            as="a"
-            href="/"
-            className="mr-auto cursor-pointer font-medium hover:text-pink-500 transition duration-200"
-          >
-            Tribu de Mamás
-          </Typography>
+          <a href="/" className="mr-auto">
+            <img
+              src="/tribuTipo.svg"
+              alt="Tribu de Mamás Logo"
+              className="h-8 w-auto" // Ajusta el tamaño del logo según tus necesidades
+            />
+          </a>
           <div className="hidden lg:flex items-center gap-6">
             {navList}
             {token && profileMenu}
@@ -219,12 +218,12 @@ export default function StickyNavbar() {
             {!token && (
               <>
                 <Link to="/login">
-                  <button className="bg-pink-500 text-white ml-4 px-4 py-2 rounded hover:bg-pink-700 transition duration-200">
+                  <button className="bg-pink-300 text-white ml-4 px-4 py-2 rounded-xl hover:bg-pink-500 transition duration-200">
                     Iniciar Sesión
                   </button>
                 </Link>
                 <Link to="/joinus">
-                  <button className="bg-pink-500 text-white px-4 py-2 rounded hover:bg-pink-700 transition duration-200">
+                  <button className="bg-pink-300 text-white px-4 py-2 rounded-xl hover:bg-pink-500 transition duration-200">
                     Registrarse
                   </button>
                 </Link>

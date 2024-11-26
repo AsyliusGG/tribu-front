@@ -73,7 +73,6 @@ export default function StickyNavbar() {
       ) : null}
       {[
         { name: "La Tribu", path: "/tribu" },
-        { name: "Nosotras", path: "/nosotras" },
         { name: "Nuestra Historia", path: "/historia" },
         ...(token
           ? [
@@ -248,7 +247,6 @@ export default function StickyNavbar() {
 
             {[
               { name: "La Tribu", path: "/tribu" },
-              { name: "Nosotras", path: "/nosotras" },
               { name: "Nuestra Historia", path: "/historia" },
               ...(token
                 ? [

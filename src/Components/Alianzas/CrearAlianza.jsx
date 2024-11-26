@@ -12,11 +12,11 @@ const CrearAlianza = () => {
   const [empresa, setEmpresa] = useState("");
   const [nombrePromo, setNombrePromo] = useState("");
   const [promocion, setPromocion] = useState("");
-  const [estado, setEstado] = useState(false); // Checkbox para activar o desactivar la alianza
+  const [estado, setEstado] = useState(false); 
   const [fechaInicio, setFechaInicio] = useState("");
   const [fechaFinal, setFechaFinal] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [descripcionLength, setDescripcionLength] = useState(0); // Estado para el contador de caracteres
+  const [descripcionLength, setDescripcionLength] = useState(0);
   const [foto, setFoto] = useState(null);
   const navigate = useNavigate();
 
@@ -35,7 +35,6 @@ const CrearAlianza = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar los campos del formulario
     if (!empresa || !nombrePromo || !promocion || !descripcion || !foto || !fechaInicio || !fechaFinal) {
       alert("Por favor, rellena todos los campos.");
       return;
@@ -46,7 +45,7 @@ const CrearAlianza = () => {
     formData.append("alianza_empresa", empresa);
     formData.append("alianza_nombre", nombrePromo);
     formData.append("Promocion", promocion);
-    formData.append("Estado", estado); // Estado de la alianza (true o false)
+    formData.append("Estado", estado); 
     formData.append("Fecha_inicio", fechaInicio);
     formData.append("Fecha_final", fechaFinal);
     formData.append("descripcion", descripcion);
@@ -56,7 +55,14 @@ const CrearAlianza = () => {
       // Enviar datos a tu API
       const response = await fetch("http://localhost:8000/api/v1/alianzas/", {
         method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`, // Encabezado de autorización
+        },
         body: formData,
+      });
+
+      console.log("Encabezados enviados:", {
+        Authorization: `Bearer ${token}`,
       });
 
       const data = await response.json();

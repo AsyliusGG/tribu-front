@@ -27,12 +27,12 @@
 
 .background-image.bg2 {
   background-image: url('/src/assets/1.jpg');
-  animation-delay: 5s;
+  animation-delay: 3s;
 }
 
 .background-image.bg3 {
   background-image: url('/src/assets/1.jpg');
-  animation-delay: 10s;
+  animation-delay: 7s;
 }
 
 @keyframes fade {

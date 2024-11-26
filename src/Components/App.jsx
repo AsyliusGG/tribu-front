@@ -7,7 +7,6 @@ import StickyNavbar from "./Navbar/Navbar.jsx";
 import Footer from "./Footer/Footer.jsx";
 import LogIn from "./LogIn/LogIn.jsx";
 import Joinus from "./Joinus/Joinus.jsx";
-import Nosotras from "./Nosotras/Nosotras.jsx";
 import Historia from "./NuestraHistoria/Historia.jsx";
 import Tribu from "./Tribu/Tribu.jsx";
 import Alianzas from "./Alianzas/Alianzas.jsx";
@@ -40,7 +39,6 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/Tribu" element={<Tribu />} />
-            <Route path="/Nosotras" element={<Nosotras />} />
             <Route path="/Historia" element={<Historia />} />
             <Route path="/confirmacion-pago" element={<ConfirmacionCompra />} />
             <Route path="/error-pago" element={<ErrorPago />} />

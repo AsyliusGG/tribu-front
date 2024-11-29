@@ -295,17 +295,7 @@ export default function StickyNavbar() {
                     </Link>
                   </Typography>
                 </li>
-                <li>
-                  <Typography
-                    as="span"
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal cursor-pointer hover:text-pink-500 transition duration-200"
-                    onClick={() => navigate("/perfil")}
-                  >
-                    Mi Perfil
-                  </Typography>
-                </li>
+
                 <li>
                   <Typography
                     as="span"

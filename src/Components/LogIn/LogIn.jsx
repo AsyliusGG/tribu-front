@@ -51,6 +51,7 @@ export function LogIn() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              autoComplete="email"
             />
             <Typography variant="h6" color="blue-gray" className="-mb-3">
               Contraseña
@@ -62,6 +63,7 @@ export function LogIn() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="current-password"
             />
           </div>
 

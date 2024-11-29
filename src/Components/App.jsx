@@ -29,6 +29,7 @@ import ConfirmacionCompra from "./Compra/ConfirmarCompra.jsx";
 import ErrorPago from "./Compra/ErrorPago.jsx";
 import { CarritoProvider } from "./Compra/CarritoContext.jsx";
 import ActivatePage from "./ActivatePage/ActivatePage.jsx";
+import Perfil from "./Perfil/Perfil.jsx";
 
 function App() {
   return (
@@ -74,6 +75,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <CrearEvento />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Perfil"
+              element={
+                <PrivateRoute>
+                  <Perfil />
                 </PrivateRoute>
               }
             />

@@ -139,7 +139,7 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem('auth_token', token);
 
       // Segunda solicitud para obtener los datos del usuario con el token
-      const userResponse = await axios.get('http://localhost:8000/api/v1/auth/users/me/', {
+      const userResponse = await axios.get('http://127.0.0.1:8000/api/v1/user/', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

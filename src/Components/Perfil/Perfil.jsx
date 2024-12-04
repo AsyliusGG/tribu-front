@@ -7,6 +7,7 @@ const Perfil = () => {
 
   useEffect(() => {
     async function fetchUser() {
+
       const token = localStorage.getItem('token'); // Obtén el token de autenticación desde el almacenamiento local
       console.log("Token:", token); // Mensaje de depuración
 
@@ -15,8 +16,10 @@ const Perfil = () => {
         return;
       }
 
+
+
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/auth/users/", {
+        const response = await fetch("http://127.0.0.1:8000/api/v1/user/", { 
           headers: {
             'Authorization': `Bearer ${token}` // Incluye el token en los encabezados de la solicitud
           }

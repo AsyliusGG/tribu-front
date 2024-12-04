@@ -50,6 +50,7 @@ export default function StickyNavbar() {
     }
   }, [token, location.pathname]); // Escuchar cambios en token y ruta
 
+
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
     dispatch(logout()); // Actualiza el estado global

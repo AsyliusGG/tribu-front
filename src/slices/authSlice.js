@@ -109,7 +109,7 @@ export const getUserInfo = createAsyncThunk(
     }
 
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/auth/me", {
+      const response = await axios.get("http://localhost:8000/api/v1/auth/users/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -181,8 +181,6 @@ export const authSlice = createSlice({
           // Resetear el estado
           state.token = null;
           state.user = null;
-          state.loading = false;
-          state.error = null;
           state.isLoading = false;
           state.isError = false;
           state.isSuccess = false;

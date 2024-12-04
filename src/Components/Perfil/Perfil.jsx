@@ -1,96 +1,149 @@
-import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import "react-toastify/dist/ReactToastify.css";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Perfil = () => {
-  const [user, setUser] = useState(null);
+  const user = useSelector((state) => state.auth.user); // Obtén el usuario desde Redux
+  const [addingChild, setAddingChild] = useState(false);
+  const [children, setChildren] = useState([]);
+  const [childData, setChildData] = useState({
+    nombre: "",
+    apellido: "",
+    fecha_nacimiento: "",
+  });
 
-  useEffect(() => {
-    async function fetchUser() {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setChildData({ ...childData, [name]: value });
+  };
 
-      const token = localStorage.getItem('token'); // Obtén el token de autenticación desde el almacenamiento local
-      console.log("Token:", token); // Mensaje de depuración
+  const handleAddChild = () => {
+    setChildren([...children, childData]);
+    setChildData({ nombre: "", apellido: "", fecha_nacimiento: "" });
+  };
 
-      if (!token) {
-        toast.error("No se encontró el token de autenticación.");
-        return;
-      }
-
-
-
-      try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/user/", { 
+  const handleSaveChildren = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/v1/hijos/", // URL correcta del endpoint
+        { hijos: children },
+        {
           headers: {
-            'Authorization': `Bearer ${token}` // Incluye el token en los encabezados de la solicitud
-          }
-        });
-        console.log("Response status:", response.status); // Mensaje de depuración
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Datos del usuario:", data); // Mensaje de depuración
-          setUser(data); // Guardar la información del usuario en el estado
-        } else {
-          const errorData = await response.json();
-          console.log("Error data:", errorData); // Mensaje de depuración
-          toast.error("Error al cargar la información del usuario.");
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
-      } catch (error) {
-        console.error("Error al conectar con el servidor:", error); // Mensaje de depuración
-        toast.error("Error al conectar con el servidor.");
+      );
+      console.log("Respuesta del servidor:", response.data);
+    } catch (error) {
+      console.error("Error al guardar los hijos:", error.response || error.message);
+      if (error.response?.status === 401) {
+        alert("Autenticación requerida. Por favor inicia sesión nuevamente.");
+      } else if (error.response?.status === 404) {
+        alert("Ruta no encontrada. Verifica la URL del backend.");
+      } else {
+        alert("Ocurrió un error inesperado al guardar los hijos.");
       }
     }
-    fetchUser();
-  }, []);
-
-  console.log("Estado del usuario:", user); // Mensaje de depuración
-
-  if (!user) {
-    return <div>Cargando...</div>;
-  }
+    
+  };
 
   return (
-    <div className="flex">
-      <div className="w-1/4 p-4">
-        <h2 className="text-xl font-bold mb-4">Información del Usuario</h2>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Nombre:</h3>
-          <p>{user.first_name}</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">Mi Perfil</h1>
+        {user ? (
+          <div>
+            <p className="text-gray-700 text-lg">
+              <span className="font-semibold">Nombre: </span>
+              {user.first_name} {user.last_name}
+            </p>
+            <p className="text-gray-700 text-lg mt-2">
+              <span className="font-semibold">Correo electrónico: </span>
+              {user.email}
+            </p>
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">No hay información de usuario disponible.</p>
+        )}
+
+        {/* Botón para agregar hijos */}
+        <div className="mt-6">
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+            onClick={() => setAddingChild(true)}
+          >
+            Agregar Hijo
+          </button>
         </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Apellido:</h3>
-          <p>{user.last_name}</p>
-        </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Email:</h3>
-          <p>{user.email}</p>
-        </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Teléfono:</h3>
-          <p>{user.phone_number}</p>
-        </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">RUT:</h3>
-          <p>{user.run}</p>
-        </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Fecha de Nacimiento:</h3>
-          <p>{user.birthday}</p>
-        </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Trabajo:</h3>
-          <p>{user.job}</p>
-        </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Sector:</h3>
-          <p>{user.sector}</p>
-        </div>
-        <div className="mb-4 p-4 border rounded">
-          <h3 className="font-semibold">Fuente de Conocimiento:</h3>
-          <p>{user.know_source}</p>
-        </div>
-      </div>
-      <div className="w-3/4 p-4">
-        {/* Aquí puedes agregar más contenido o funcionalidades para el perfil */}
+
+        {/* Panel para agregar hijos */}
+        {addingChild && (
+          <div className="mt-6 bg-gray-50 p-4 rounded-lg shadow-md">
+            <h2 className="text-lg font-semibold text-gray-800">Agregar Información de Hijos</h2>
+            <div className="mt-4 space-y-4">
+              <div>
+                <label className="block text-gray-600 font-medium">Nombre</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={childData.nombre}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                  placeholder="Nombre del hijo"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 font-medium">Apellido</label>
+                <input
+                  type="text"
+                  name="apellido"
+                  value={childData.apellido}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                  placeholder="Apellido del hijo"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-600 font-medium">Fecha de Nacimiento</label>
+                <input
+                  type="date"
+                  name="fecha_nacimiento"
+                  value={childData.fecha_nacimiento}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                />
+              </div>
+            </div>
+            <button
+              className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-200"
+              onClick={handleAddChild}
+            >
+              Agregar Hijo a la Lista
+            </button>
+
+            {/* Lista de hijos agregados */}
+            {children.length > 0 && (
+              <div className="mt-4">
+                <h3 className="font-medium text-gray-800">Hijos Agregados:</h3>
+                <ul className="list-disc pl-6">
+                  {children.map((child, index) => (
+                    <li key={index} className="text-gray-700">
+                      {child.nombre} {child.apellido} - {child.fecha_nacimiento}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <button
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+              onClick={handleSaveChildren}
+            >
+              Guardar Hijos
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

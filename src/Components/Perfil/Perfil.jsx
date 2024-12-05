@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 
 const Perfil = () => {
   const user = useSelector((state) => state.auth.user); // Obtén el usuario desde Redux
+  const token = useSelector((state) => state.auth.token); // Obtén el token desde Redux
   const [addingChild, setAddingChild] = useState(false);
   const [children, setChildren] = useState([]);
   const [childData, setChildData] = useState({
@@ -11,12 +12,62 @@ const Perfil = () => {
     apellido: "",
     fecha_nacimiento: "",
   });
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: ""
+  });
 
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email
+      });
+    }
+  }, [user]);
+  
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setChildData({ 
+      ...childData, 
+      [name]: value });
+  };
+
+  const handleEdit = () => {
+    setEditing(true);
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await axios.put('http://127.0.0.1:8000//api/v1/auth/users/me/', formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // Actualiza el usuario en el estado de Redux si es necesario
+      setEditing(false);
+      alert('Información actualizada correctamente.');
+    } catch (error) {
+      console.error("Error al actualizar la información:", error.response || error.message);
+      if (error.response?.status === 404) {
+        alert("Ruta no encontrada. Verifica la URL del backend.");
+      } else {
+        alert("Ocurrió un error inesperado al actualizar la información.");
+      }
+    }
+  };
+
+  const handleChildInputChange = (e) => {
     const { name, value } = e.target;
     setChildData({ ...childData, [name]: value });
   };
-
+  
   const handleAddChild = () => {
     setChildren([...children, childData]);
     setChildData({ nombre: "", apellido: "", fecha_nacimiento: "" });
@@ -25,7 +76,7 @@ const Perfil = () => {
   const handleSaveChildren = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/hijos/", // URL correcta del endpoint
+        "http://127.0.0.1:8000/api/v1/hijo/", // URL correcta del endpoint
         { hijos: children },
         {
           headers: {
@@ -54,14 +105,63 @@ const Perfil = () => {
         <h1 className="text-2xl font-bold text-gray-800 text-center mb-4">Mi Perfil</h1>
         {user ? (
           <div>
-            <p className="text-gray-700 text-lg">
-              <span className="font-semibold">Nombre: </span>
-              {user.first_name} {user.last_name}
-            </p>
-            <p className="text-gray-700 text-lg mt-2">
-              <span className="font-semibold">Correo electrónico: </span>
-              {user.email}
-            </p>
+            {editing ? (
+              <div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Nombre:</label>
+                  <input
+                    type="text"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Apellido:</label>
+                  <input
+                    type="text"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Correo electrónico:</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
+                  onClick={handleSave}
+                >
+                  Guardar
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p className="text-gray-700 text-lg">
+                  <span className="font-semibold">Nombre: </span>
+                  {user.first_name} {user.last_name}
+                </p>
+                <p className="text-gray-700 text-lg mt-2">
+                  <span className="font-semibold">Correo electrónico: </span>
+                  {user.email}
+                </p>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 mt-4"
+                  onClick={handleEdit}
+                >
+                  Editar
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <p className="text-gray-500 text-center">No hay información de usuario disponible.</p>
@@ -76,77 +176,8 @@ const Perfil = () => {
             Agregar Hijo
           </button>
         </div>
-
-        {/* Panel para agregar hijos */}
-        {addingChild && (
-          <div className="mt-6 bg-gray-50 p-4 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold text-gray-800">Agregar Información de Hijos</h2>
-            <div className="mt-4 space-y-4">
-              <div>
-                <label className="block text-gray-600 font-medium">Nombre</label>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={childData.nombre}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                  placeholder="Nombre del hijo"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-600 font-medium">Apellido</label>
-                <input
-                  type="text"
-                  name="apellido"
-                  value={childData.apellido}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                  placeholder="Apellido del hijo"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-600 font-medium">Fecha de Nacimiento</label>
-                <input
-                  type="date"
-                  name="fecha_nacimiento"
-                  value={childData.fecha_nacimiento}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
-                />
-              </div>
-            </div>
-            <button
-              className="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 transition duration-200"
-              onClick={handleAddChild}
-            >
-              Agregar Hijo a la Lista
-            </button>
-
-            {/* Lista de hijos agregados */}
-            {children.length > 0 && (
-              <div className="mt-4">
-                <h3 className="font-medium text-gray-800">Hijos Agregados:</h3>
-                <ul className="list-disc pl-6">
-                  {children.map((child, index) => (
-                    <li key={index} className="text-gray-700">
-                      {child.nombre} {child.apellido} - {child.fecha_nacimiento}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <button
-              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
-              onClick={handleSaveChildren}
-            >
-              Guardar Hijos
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
 };
-
 export default Perfil;

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Button,
 } from "@material-tailwind/react";
+import axios from 'axios';
 
 
 
@@ -73,18 +74,35 @@ const AdminSettings = () => {
     return endDate - hoy < dosSemanas && endDate - hoy > 0;
   }).length;
 
+  const handleDownloadUsers = async () => {
+    try {
+      const response = await axios.get("http://localhost:8000/api/v1/descargar_usuarios/", {
+        responseType: 'blob', // Para manejar la descarga de archivos
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'usuarios.xlsx'); // Nombre del archivo a descargar
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error('Error al descargar usuarios:', error);
+    }
+  };
+
   return (
     // Panel lateral
     <div className="flex">
       <div className="w-1/6 bg-gray-200 p-4">
-      <Button variant="gradient" color="blue" onClick={() => navigate("/Alianzas/AlianzasAdmin")}>
+      <Button variant="gradient" color="blue" onClick={() => navigate("/Alianzas/AlianzasAdmin")} className="my-2 w-full">
         Administrador de Alianzas
       </Button>
-      <Button variant="gradient" color="blue" onClick={() => navigate("/Eventos/EventosAdmin")}>
+      <Button variant="gradient" color="blue" onClick={() => navigate("/Eventos/EventosAdmin")} className="my-2 w-full">
         Administrador de Eventos
       </Button>
-
-        <button className="w-full mb-2 p-2 bg-blue-500 text-white">Botón 3</button>
+      <Button variant="gradient" color="blue" onClick={handleDownloadUsers} className="my-2 w-full">
+        Descargar Usuarios
+      </Button>
       </div>
 
       {/* Graficos */}

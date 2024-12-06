@@ -1,4 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+} from "@material-tailwind/react";
+
+
 
 const AdminSettings = () => {
   const [eventos, setEventos] = useState([]);
@@ -6,6 +12,7 @@ const AdminSettings = () => {
   const [memberships, setMemberships] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +74,20 @@ const AdminSettings = () => {
   }).length;
 
   return (
+    // Panel lateral
+    <div className="flex">
+      <div className="w-1/6 bg-gray-200 p-4">
+      <Button variant="gradient" color="blue" onClick={() => navigate("/Alianzas/AlianzasAdmin")}>
+        Administrador de Alianzas
+      </Button>
+      <Button variant="gradient" color="blue" onClick={() => navigate("/Eventos/EventosAdmin")}>
+        Administrador de Eventos
+      </Button>
+
+        <button className="w-full mb-2 p-2 bg-blue-500 text-white">Botón 3</button>
+      </div>
+
+      {/* Graficos */}
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
       <div className="flex justify-around mb-8">
@@ -105,6 +126,7 @@ const AdminSettings = () => {
           <p className="text-gray-700">Cantidad de membresías próximas a vencer: {membresiasProximasAVencer}</p>
         </div>
       </div>
+    </div>
     </div>
   );
 };

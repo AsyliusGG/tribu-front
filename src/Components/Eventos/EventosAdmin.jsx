@@ -114,7 +114,7 @@ const EventosAdmin = () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Agregar token de autenticación
+          'Authorization': `Bearer ${token}`, // Agregar token de autenticación
         },
         body: JSON.stringify({ disabled: !estadoActual }), // Cambia el estado 'disabled'
       });

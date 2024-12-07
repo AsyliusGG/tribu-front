@@ -23,7 +23,7 @@ const ActivatePage = () => {
             token
         }
         dispatch(activate(userData))
-        toast.success("Your account has been activated! You can login now")
+        toast.success("Tu cuenta está activada!")
     }
 
     useEffect(() => {
@@ -47,7 +47,7 @@ const ActivatePage = () => {
 
                 {isLoading && <Spinner />}
 
-                <button className="btn btn-accent btn-activate-account" type="submit" onClick={handleSubmit}>Activate Account</button>
+                <button className="btn btn-accent btn-activate-account" type="submit" onClick={handleSubmit}>Activar cuenta</button>
             </div>
         </div>
     )

@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { resetearCarrito } from "../../slices/carritoSlice";
 import { useNavigate } from "react-router-dom";
 import { useCarrito } from "./CarritoContext";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const CarritoCompra = () => {
   const { items } = useSelector((state) => state.carrito);

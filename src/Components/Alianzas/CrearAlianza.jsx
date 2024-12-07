@@ -7,6 +7,8 @@ import {
   Card,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const CrearAlianza = () => {
   const [empresa, setEmpresa] = useState("");

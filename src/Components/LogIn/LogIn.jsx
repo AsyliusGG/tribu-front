@@ -5,7 +5,7 @@ import { loginUser } from '../../slices/authSlice';
 import { Alert, Input, Button, Typography, Card } from "@material-tailwind/react";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import Cookies from 'js-cookie';
 export function LogIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,20 +14,20 @@ export function LogIn() {
 
   const { loading, error, user } = useSelector((state) => state.auth);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(loginUser({ email, password })).then((result) => {
-      if (result.meta.requestStatus === 'fulfilled') {
-        // Imprime en consola el tipo de usuario
-        console.log("Tipo de usuario:");
-        console.log("is_superuser:", user?.is_superuser);
-        console.log("is_staff:", user?.is_staff);
-        console.log("is_staff_limited:", user?.is_staff_limited);
-        console.log("is_active:", user?.is_active);
-        
+    try {
+      const result = await dispatch(loginUser({ email, password })).unwrap();
+      if (result.token) {
+        Cookies.set('auth_token', result.token, { expires: 7 }); // Guardar el token en las cookies por 7 días
+        toast.success("Inicio de sesión exitoso");
         navigate('/');
+      } else {
+        toast.error("Error al iniciar sesión");
       }
-    });
+    } catch (err) {
+      toast.error("Error al iniciar sesión");
+    }
   };
 
   return (

@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetearCarrito, extenderTiempo } from "../../slices/carritoSlice";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const CarritoContext = createContext();
 

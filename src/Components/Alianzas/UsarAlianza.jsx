@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Typography, Button } from "@material-tailwind/react";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const UsarAlianza = () => {
   const { id } = useParams();

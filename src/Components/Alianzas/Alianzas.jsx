@@ -8,8 +8,11 @@ import {
   Button,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas"; 
+
 
 const Alianzas = () => {
   const [alianzas, setAlianzas] = useState([]);

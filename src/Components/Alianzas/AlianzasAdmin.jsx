@@ -9,6 +9,8 @@ import {
   DialogFooter,
   Alert,
 } from "@material-tailwind/react";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas"; // Actualizar con la API correcta
 

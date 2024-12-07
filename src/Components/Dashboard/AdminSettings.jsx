@@ -4,6 +4,8 @@ import {
   Button,
 } from "@material-tailwind/react";
 import axios from 'axios';
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 
 

@@ -9,6 +9,8 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const ModificarEvento = () => {
   const { id } = useParams(); // Obtener el id del evento de los parámetros de la URL
@@ -31,7 +33,7 @@ const ModificarEvento = () => {
     async function fetchSectores() {
       try {
         const response = await fetch(
-          "http://localhost:8000/eventos/api/v1/sector"
+          "http://localhost:8000/api/v1/sector"
         );
         const data = await response.json();
         setSectores(data);
@@ -47,7 +49,7 @@ const ModificarEvento = () => {
     async function fetchEvento() {
       try {
         const response = await fetch(
-          `http://localhost:8000/eventos/api/v1/evento/${id}`
+          `http://localhost:8000/api/v1/evento/${id}`
         );
         const data = await response.json();
 
@@ -121,10 +123,13 @@ const ModificarEvento = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/eventos/api/v1/evento/${id}/`,
+        `http://localhost:8000/api/v1/evento/${id}/`,
         {
-          method: "PATCH",
+          method: "PUT",
           body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 

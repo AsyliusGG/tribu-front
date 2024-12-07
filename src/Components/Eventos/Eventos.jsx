@@ -9,6 +9,8 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const Eventos = () => {
   const [posts, setPosts] = useState([]);

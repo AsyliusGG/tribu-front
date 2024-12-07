@@ -9,6 +9,8 @@ import {
   DialogFooter,
   Alert,
 } from "@material-tailwind/react";
+import Cookies from "js-cookie";
+const token = Cookies.get("auth_token");
 
 const EVENTOS_API_URL = "http://localhost:8000/api/v1/evento";
 const SECTOR_API_URL = "http://localhost:8000/api/v1/sector";
@@ -66,7 +68,7 @@ const EventosAdmin = () => {
 
   const desactivarEvento = async (eventId) => {
     try {
-      const token = localStorage.getItem("auth_token"); // Recuperar token de localStorage
+    
       const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
         method: "PATCH",
         headers: {
@@ -86,7 +88,7 @@ const EventosAdmin = () => {
   
   const handleDelete = async (eventId) => {
     try {
-      const token = localStorage.getItem("auth_token"); // Recuperar token de localStorage
+      
       const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
         method: "DELETE",
         headers: {
@@ -109,7 +111,7 @@ const EventosAdmin = () => {
   
   const toggleEvento = async (eventId, estadoActual) => {
     try {
-      const token = localStorage.getItem("auth_token"); // Recuperar token de localStorage
+      
       const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
         method: "PATCH",
         headers: {

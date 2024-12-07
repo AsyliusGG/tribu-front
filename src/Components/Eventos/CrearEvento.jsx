@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { getallSector } from '../../api/api.js';
 import {
   Button,
   Input,
@@ -9,6 +10,7 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
 
 const CrearEvento = () => {
   const [nombre, setNombre] = useState("");
@@ -25,94 +27,42 @@ const CrearEvento = () => {
   const [sectores, setSectores] = useState([]);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("auth_token");
+  const token = Cookies.get("auth_token");
 
   useEffect(() => {
     if (!token) {
       alert("Debes iniciar sesión para acceder a esta página.");
       navigate("/login");
     }
-  }, [token, navigate]);
 
-  const obtenerFechaActual = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  useEffect(() => {
-    async function fetchSectores() {
+    const fetchSectores = async () => {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/sector/", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setSectores(data);
+        const response = await getallSector();
+        if (response.status === 200) {
+          setSectores(response.data);
         } else {
           throw new Error("No se pudieron cargar los sectores");
         }
       } catch (error) {
         console.error("Error al cargar sectores:", error);
       }
-    }
+    };
+
     fetchSectores();
-  }, [token]);
+  }, [token, navigate]);
 
   const handleFileChange = (e) => {
     setFoto(e.target.files[0]);
   };
 
-  const formatCurrency = (value) => {
-    const numberValue = value.replace(/\D/g, "");
-    return new Intl.NumberFormat("es-CL", {
-      style: "currency",
-      currency: "CLP",
-    }).format(numberValue);
-  };
-
-  const handleValorAdultoChange = (e) => {
-    setValorAdulto(formatCurrency(e.target.value));
-  };
-
-  const handleValorNinoChange = (e) => {
-    setValorNino(formatCurrency(e.target.value));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (
-      !nombre ||
-      !descripcion ||
-      !cupo ||
-      !valorAdulto ||
-      !valorNino ||
-      !foto ||
-      !fecha ||
-      !hora ||
-      !horaTermino ||
-      !lugar ||
-      !sectorSeleccionado
-    ) {
-      alert("Por favor, rellena todos los campos.");
-      return;
-    }
-
-    const valorAdultoNumber = parseInt(valorAdulto.replace(/\D/g, ""), 10);
-    const valorNinoNumber = parseInt(valorNino.replace(/\D/g, ""), 10);
-
     const formData = new FormData();
     formData.append("nombre", nombre);
     formData.append("descripcion", descripcion);
-    formData.append("cupos", cupo);
-    formData.append("valor_adulto", valorAdultoNumber);
-    formData.append("valor_nino", valorNinoNumber);
+    formData.append("cupo", cupo);
+    formData.append("valor_adulto", valorAdulto);
+    formData.append("valor_nino", valorNino);
     formData.append("foto", foto);
     formData.append("fecha", fecha);
     formData.append("hora", hora);
@@ -122,15 +72,11 @@ const CrearEvento = () => {
 
     try {
       const response = await fetch("http://localhost:8000/api/v1/evento/", {
-        method: "POST", // Cambiado a POST
+        method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // Encabezado de autorización
+          Authorization: `Bearer ${token}`,
         },
-        body: formData, // Enviar los datos como FormData
-      });
-
-      console.log("Encabezados enviados:", {
-        Authorization: `Bearer ${token}`,
+        body: formData,
       });
 
       if (response.ok) {
@@ -167,7 +113,18 @@ const CrearEvento = () => {
                 required
               />
             </div>
-
+            <div className="mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-2">
+                Descripción
+              </Typography>
+              <Textarea
+                size="lg"
+                label="Descripción"
+                value={descripcion}
+                onChange={(e) => setDescripcion(e.target.value)}
+                required
+              />
+            </div>
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Cupo
@@ -181,35 +138,45 @@ const CrearEvento = () => {
                 required
               />
             </div>
-
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Valor Adulto
               </Typography>
               <Input
-                type="text"
+                type="number"
                 size="lg"
                 label="Valor Adulto"
                 value={valorAdulto}
-                onChange={handleValorAdultoChange}
+                onChange={(e) => setValorAdulto(e.target.value)}
                 required
               />
             </div>
-
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Valor Niño
               </Typography>
               <Input
-                type="text"
+                type="number"
                 size="lg"
                 label="Valor Niño"
                 value={valorNino}
-                onChange={handleValorNinoChange}
+                onChange={(e) => setValorNino(e.target.value)}
                 required
               />
             </div>
-
+            <div className="mb-4">
+              <Typography variant="h6" color="blue-gray" className="mb-2">
+                Lugar del Evento
+              </Typography>
+              <Input
+                type="text"
+                size="lg"
+                label="Lugar"
+                value={lugar}
+                onChange={(e) => setLugar(e.target.value)}
+                required
+              />
+            </div>
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Foto del Evento
@@ -221,7 +188,6 @@ const CrearEvento = () => {
                 required
               />
             </div>
-
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Fecha del Evento
@@ -229,13 +195,11 @@ const CrearEvento = () => {
               <Input
                 type="date"
                 size="lg"
-                min={obtenerFechaActual()}
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
                 required
               />
             </div>
-
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Hora de Inicio
@@ -248,7 +212,6 @@ const CrearEvento = () => {
                 required
               />
             </div>
-
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Hora de Término
@@ -261,21 +224,6 @@ const CrearEvento = () => {
                 required
               />
             </div>
-
-            <div className="mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-2">
-                Lugar del Evento (Dirección)
-              </Typography>
-              <Input
-                type="text"
-                size="lg"
-                label="Dirección del Evento"
-                value={lugar}
-                onChange={(e) => setLugar(e.target.value)}
-                required
-              />
-            </div>
-
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
                 Sector del Evento
@@ -294,21 +242,7 @@ const CrearEvento = () => {
                 ))}
               </Select>
             </div>
-
-            <div className="mb-4">
-              <Typography variant="h6" color="blue-gray" className="mb-2">
-                Descripción
-              </Typography>
-              <Textarea
-                size="lg"
-                label="Descripción"
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-                required
-              />
-            </div>
           </div>
-
           <Button type="submit" color="blue" fullWidth className="mt-4">
             Crear Evento
           </Button>

@@ -14,10 +14,10 @@ const Carousel = () => {
       setCurrentIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
-    }, 3000); // Cada 3 segundos
+    }, 15000); // Aquí se pone cada cuanto tiempo cambia las fotos
 
     return () => {
-      clearInterval(interval); // Limpiar el intervalo cuando se desmonte el componente
+      clearInterval(interval); 
     };
   }, [images.length]);
 
@@ -34,7 +34,7 @@ const Carousel = () => {
   };
 
   return (
-    <div className="w-screen mx-auto"> {/* Ancho completo de la pantalla */}
+    <div className="w-screen mx-auto"> 
       <div className="relative w-full">
         {/* Carrusel */}
         <div className="overflow-hidden relative h-[93vh] w-screen">
@@ -54,7 +54,7 @@ const Carousel = () => {
           ))}
         </div>
 
-        {/* Indicadores */}
+        
         <div className="flex absolute bottom-5 left-1/2 z-30 space-x-3 -translate-x-1/2">
           {images.map((_, index) => (
             <button
@@ -69,7 +69,7 @@ const Carousel = () => {
           ))}
         </div>
 
-        {/* Botón Anterior */}
+        
         <button
           type="button"
           className="flex absolute top-0 left-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none"
@@ -93,7 +93,7 @@ const Carousel = () => {
           </span>
         </button>
 
-        {/* Botón Siguiente */}
+        
         <button
           type="button"
           className="flex absolute top-0 right-0 z-30 justify-center items-center px-4 h-full cursor-pointer group focus:outline-none"

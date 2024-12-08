@@ -67,13 +67,13 @@ const ModificarAlianza = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     // Validar los campos del formulario
     if (!empresa || !nombrePromo || !promocion || !descripcion || !fechaInicio || !fechaFinal) {
       alert("Por favor, rellena todos los campos.");
       return;
     }
-
+  
     // Crear el FormData para enviar archivos junto con los datos
     const formData = new FormData();
     formData.append("alianza_empresa", empresa);
@@ -83,18 +83,21 @@ const ModificarAlianza = () => {
     formData.append("Fecha_inicio", fechaInicio);
     formData.append("Fecha_final", fechaFinal);
     formData.append("descripcion", descripcion);
-
+  
     if (foto instanceof File) {
       formData.append("foto", foto); // Añadir la foto si es un archivo nuevo
     }
-
+  
     try {
       // Enviar los datos actualizados a tu API
       const response = await fetch(`${ALIANZAS_API_URL}/${id}/`, {
         method: "PUT", // Usamos PUT para actualizar
+        headers: {
+          Authorization: `Bearer ${token}`, // Solo el token, sin Content-Type
+        },
         body: formData,
       });
-
+  
       const data = await response.json();
       if (response.ok) {
         // Redirigir a AlianzasAdmin después de guardar la alianza
@@ -109,6 +112,7 @@ const ModificarAlianza = () => {
       console.error(error);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

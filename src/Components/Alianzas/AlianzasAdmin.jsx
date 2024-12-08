@@ -81,6 +81,7 @@ const AlianzasAdmin = () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ Estado: !estadoActual }), // Cambiar el estado al contrario
       });

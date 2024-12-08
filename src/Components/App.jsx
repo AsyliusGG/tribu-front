@@ -31,6 +31,7 @@ import { CarritoProvider } from "./Compra/CarritoContext.jsx";
 import ActivatePage from "./ActivatePage/ActivatePage.jsx";
 import Perfil from "./Perfil/Perfil.jsx";
 import ComprobarMembresia from "./Alianzas/ComprobarUsuario.jsx";
+import Membresia from "./Membresia/Membresia.jsx";
 
 function App() {
   return (
@@ -163,6 +164,7 @@ function App() {
             <Route path="/confirmar_pago" element={<ConfirmacionCompra />} />
             <Route path="/error_pago" element={<ErrorPago />} />
             <Route path="/Alianzas/ComprobarUsuario:id" element ={<ComprobarMembresia />} />
+            <Route path="/Membresia/Membresia" element={<Membresia />} />
           </Routes>
           <Footer />
         </CarritoProvider>

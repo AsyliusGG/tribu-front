@@ -30,6 +30,7 @@ import ErrorPago from "./Compra/ErrorPago.jsx";
 import { CarritoProvider } from "./Compra/CarritoContext.jsx";
 import ActivatePage from "./ActivatePage/ActivatePage.jsx";
 import Perfil from "./Perfil/Perfil.jsx";
+import ComprobarMembresia from "./Alianzas/ComprobarUsuario.jsx";
 
 function App() {
   return (
@@ -161,6 +162,7 @@ function App() {
             />
             <Route path="/confirmar_pago" element={<ConfirmacionCompra />} />
             <Route path="/error_pago" element={<ErrorPago />} />
+            <Route path="/Alianzas/ComprobarUsuario:id" element ={<ComprobarMembresia />} />
           </Routes>
           <Footer />
         </CarritoProvider>

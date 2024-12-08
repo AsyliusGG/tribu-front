@@ -6,6 +6,7 @@ import { Alert } from "@material-tailwind/react";
 import ProximosEventos from "./Eventos/ProximosEventos";
 import { getUserInfo } from "../slices/authSlice";
 import { useLocation } from "react-router-dom";
+import Cookies from "js-cookie";
 
 function AlertCustomStyles({ message }) {
   return (
@@ -29,6 +30,8 @@ const Home = () => {
 
   // Recuperar datos del usuario al montar si está autenticado
   useEffect(() => {
+    const token = Cookies.get("auth_token");
+
     if (isAuthenticated && !user) {
       dispatch(getUserInfo());
     }

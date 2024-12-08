@@ -2,13 +2,41 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import Cookies from "js-cookie";
-const token = Cookies.get("auth_token");
 
 const UsarAlianza = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutos en segundos
   const [alianza, setAlianza] = useState(null);
+  const [qrCode, setQrCode] = useState(null); // Estado para almacenar el código QR
+   const [user, setUser] = useState(null);
+  const [membership, setMembership] = useState(null);
+  const token = Cookies.get("auth_token");
+  useEffect(() => {
+    
+    const fetchMembershipData = async () => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/v1/memberships/generate-qr`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // setUser(data.user); // Supongamos que la API devuelve los datos del usuario en el campo `user`
+          setMembership(data); // Almacena los detalles de la membresía
+          setQrCode(data.qr_code); // Almacena el código QR en base64
+        } else {
+          console.error("Error al obtener los datos de la membresía");
+        }
+      } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+      }
+    };
+
+    fetchMembershipData();
+  }, [id, token]);
 
   useEffect(() => {
     // Fetch de la información de la alianza para mostrar empresa y promoción
@@ -46,8 +74,7 @@ const UsarAlianza = () => {
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
-  // Generar URL para el código QR
-  const qrCodeUrl = `https://example.com/ComprobarMembresia?id=${id}`;
+ 
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
@@ -67,11 +94,10 @@ const UsarAlianza = () => {
             </Typography>
 
             {/* Código QR simulado */}
-            <div className="border border-gray-400 w-48 h-48 mx-auto mb-6 flex items-center justify-center">
-              <a href={qrCodeUrl} target="_blank" rel="noopener noreferrer">
-                <Typography color="blue-gray">QR Code for {qrCodeUrl}</Typography>
-              </a>
-            </div>
+           
+            {qrCode && (
+              <img src={`data:image/png;base64,${qrCode}`} alt="QR Code" className="w-48 h-48 mx-auto mb-6" />
+            )}
 
             {/* Temporizador */}
             <Typography variant="h6" color="blue-gray" className="mb-6">

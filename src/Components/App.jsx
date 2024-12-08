@@ -171,12 +171,8 @@ function App() {
             />
             <Route path="/confirmar_pago" element={<ConfirmacionCompra />} />
             <Route path="/error_pago" element={<ErrorPago />} />
-<<<<<<< Updated upstream
             <Route path="/Alianzas/ComprobarUsuario:id" element ={<ComprobarMembresia />} />
             <Route path="/Membresia/Membresia" element={<Membresia />} />
-=======
-            
->>>>>>> Stashed changes
           </Routes>
           <Footer />
         </CarritoProvider>

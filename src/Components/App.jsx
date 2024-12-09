@@ -171,7 +171,7 @@ function App() {
             />
             <Route path="/confirmar_pago" element={<ConfirmacionCompra />} />
             <Route path="/error_pago" element={<ErrorPago />} />
-            <Route path="/Alianzas/ComprobarUsuario:id" element ={<ComprobarMembresia />} />
+            <Route path="/membership/:uuid" element ={<ComprobarMembresia />} />
             <Route path="/Membresia/Membresia" element={<Membresia />} />
           </Routes>
           <Footer />

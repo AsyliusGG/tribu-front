@@ -4,7 +4,7 @@ import { Card, Typography } from "@material-tailwind/react";
 import Cookies from "js-cookie";
 
 const ComprobarMembresia = () => {
-  const { id } = useParams(); // Si necesitas usar un parámetro en la URL
+  const { uuid } = useParams(); // Obtener la UUID de la URL
   const [user, setUser] = useState(null);
   const [membership, setMembership] = useState(null);
   const token = Cookies.get("auth_token");
@@ -12,7 +12,7 @@ const ComprobarMembresia = () => {
   useEffect(() => {
     const fetchMembershipData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/memberships/${id}/`, {
+        const response = await fetch(`http://localhost:8000/api/v1/memberships/${uuid}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -20,8 +20,8 @@ const ComprobarMembresia = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setUser(data.user); // Supongamos que la API devuelve los datos del usuario en el campo `user`
           setMembership(data); // Almacena los detalles de la membresía
+          fetchUserData(data.user); // Obtener la información del usuario utilizando la ID del usuario
         } else {
           console.error("Error al obtener los datos de la membresía");
         }
@@ -30,8 +30,27 @@ const ComprobarMembresia = () => {
       }
     };
 
+    const fetchUserData = async (userId) => {
+      try {
+        const response = await fetch(`http://localhost:8000/api/v1/users/${userId}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data); // Almacena los datos del usuario
+        } else {
+          console.error("Error al obtener los datos del usuario");
+        }
+      } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+      }
+    };
+
     fetchMembershipData();
-  }, [id, token]);
+  }, [uuid, token]);
 
   // Verifica si la membresía está activa según el campo `active` y la fecha de vencimiento
   const isMembershipActive = (membership) =>

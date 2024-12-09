@@ -3,9 +3,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../../slices/authSlice'; 
 import { Alert, Input, Button, Typography, Card } from "@material-tailwind/react";
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
+
 export function LogIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,7 +22,7 @@ export function LogIn() {
       if (result.token) {
         Cookies.set('auth_token', result.token, { expires: 7 }); // Guardar el token en las cookies por 7 días
         toast.success("Inicio de sesión exitoso");
-        navigate('/');
+        navigate('/'); // Redirigir a la página principal
       } else {
         toast.error("Error al iniciar sesión");
       }

@@ -24,10 +24,10 @@ export function LogIn() {
         toast.success("Inicio de sesión exitoso");
         navigate('/'); // Redirigir a la página principal
       } else {
-        toast.error("Error al iniciar sesión");
+        toast.error("Error al iniciar sesión. Verifica tus credenciales");
       }
     } catch (err) {
-      toast.error("Error al iniciar sesión");
+      toast.error("Error al iniciar sesión. Verifica tus credenciales");
     }
   };
 

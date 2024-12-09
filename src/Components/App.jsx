@@ -32,6 +32,7 @@ import ActivatePage from "./ActivatePage/ActivatePage.jsx";
 import Perfil from "./Perfil/Perfil.jsx";
 import ComprobarMembresia from "./Alianzas/ComprobarUsuario.jsx";
 import Membresia from "./Membresia/Membresia.jsx";
+import ConfirmarCorreoAviso from "./ActivatePage/ConfirmarCorreoAviso.jsx";
 
 function App() {
   return (
@@ -172,7 +173,8 @@ function App() {
             <Route path="/confirmar_pago" element={<ConfirmacionCompra />} />
             <Route path="/error_pago" element={<ErrorPago />} />
             <Route path="/membership/:uuid" element ={<ComprobarMembresia />} />
-            <Route path="/Membresia/Membresia" element={<Membresia />} />
+            <Route path="/Membresia" element={<Membresia />} />
+            <Route path="/confirmarCorreo" element={<ConfirmarCorreoAviso />} />
           </Routes>
           <Footer />
         </CarritoProvider>

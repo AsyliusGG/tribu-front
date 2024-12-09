@@ -63,7 +63,7 @@ export function Joinus() {
 
       if (response.ok) {
         toast.success("Usuario registrado exitosamente");
-        navigate("/login");
+        navigate("/confirmarCorreo");
       } else {
         const errorData = await response.json();
         toast.error(

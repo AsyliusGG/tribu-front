@@ -170,8 +170,7 @@ export const loginUser = createAsyncThunk(
       return { token, user: userData };
     } catch (error) {
       console.error('Error en la autenticación:', error);
-      toast.error('Login failed! Check your credentials.');
-      return rejectWithValue(error.response?.data || 'Error de autenticación');
+      return rejectWithValue(error.response?.data || 'Error de autenticación. Verifica tus credentiales.');
     }
   }
 );

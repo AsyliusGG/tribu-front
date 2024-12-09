@@ -15,11 +15,7 @@ const PrivateRoute = ({ children }) => {
     return <Navigate to="/confirmarCorreo" />;
   }
 
-  if (user && user.is_active && !user.memberships_active) {
-    // Si el usuario está autenticado y su cuenta está activada pero no tiene membresía activa
-    return <Navigate to="/membresia" />;
-  }
-
+ 
   return children; // Si todo está bien, renderizar el componente hijo
 };
 

@@ -1,47 +1,39 @@
-import { getallEventos, getallSector } from '../../api/api.js';
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Typography,
-  Button,
-} from "@material-tailwind/react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Button, Typography, Card, CardHeader, CardBody, CardFooter } from "@material-tailwind/react";
+import axios from 'axios';
 import Cookies from "js-cookie";
-const token = Cookies.get("auth_token");
 
 const Eventos = () => {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user); // Obtener el usuario desde el estado de Redux
   const [posts, setPosts] = useState([]);
   const [sectores, setSectores] = useState([]);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function loadEventos() {
-      const [eventosResponse, sectoresResponse] = await Promise.all([
-        getallEventos(),
-        getallSector()
-      ]);
+    const fetchEventos = async () => {
+      try {
+        const token = Cookies.get("auth_token");
+        const headers = {
+          'Authorization': `Bearer ${token}`
+        };
+        const eventosResponse = await axios.get("http://localhost:8000/api/v1/evento/", { headers });
+        const sectoresResponse = await axios.get("http://localhost:8000/api/v1/sector/", { headers });
+        const eventosActivos = eventosResponse.data.filter(evento => !evento.disabled);
+        setPosts(eventosActivos);
+        setSectores(sectoresResponse.data);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
+    };
 
-      const eventosActivos = eventosResponse.data
-        .filter(evento => !evento.disabled)
-        .sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-
-      setPosts(eventosActivos);
-      setSectores(sectoresResponse.data);
-    }
-
-    loadEventos();
+    fetchEventos();
   }, []);
-
-  const handlePostClick = (postId) => {
-    navigate(`/verevento/${postId}`);
-  };
-
-  const goToAdmin = () => {
-    navigate("/Eventos/EventosAdmin");
-  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -61,15 +53,24 @@ const Eventos = () => {
     return sector ? sector.sector_nombre : "Desconocido";
   };
 
+  const goToAdmin = () => {
+    navigate("/Eventos/EventosAdmin");
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
   return (
     <div className="bg-gray-100 py-10">
       <div className="container mx-auto px-4">
         {/* Botón de Administrador de Eventos */}
-        <div className="flex justify-end mb-6">
-          <Button variant="gradient" color="blue" onClick={goToAdmin}>
-            Administrador de Eventos
-          </Button>
-        </div>
+        {user && user.is_staff && (
+          <div className="flex justify-end mb-6">
+            <Button variant="gradient" color="blue" onClick={goToAdmin}>
+              Administrador de Eventos
+            </Button>
+          </div>
+        )}
         
         <Typography variant="h2" color="blue-gray" className="text-center mb-10">
           Nuestros Eventos
@@ -81,28 +82,24 @@ const Eventos = () => {
               <CardHeader color="blue-gray" className="relative h-56">
                 <img src={post.foto} alt={post.descripcion} className="w-full h-full object-cover" />
               </CardHeader>
-              <CardBody className="flex-grow">
-                <Typography variant="h5" className="mb-2 text-center font-bold">
+              <CardBody>
+                <Typography variant="h5" color="blue-gray" className="mb-2">
                   {post.nombre}
                 </Typography>
-                <Typography className="text-center mb-2">
-                  Fecha: {formatDate(post.fecha)}
+                <Typography color="blue-gray" className="mb-2">
+                  {formatDate(post.fecha)} - {formatTime(post.hora)}
                 </Typography>
-                <Typography className="text-center mb-2">
-                  Hora: {formatTime(post.hora)}
-                </Typography>
-                <Typography className="text-center mb-2">
-                  Lugar: {post.lugar}
-                </Typography>
-                <Typography className="text-center mb-2">
+                <Typography color="blue-gray" className="mb-2">
                   Sector: {getSectorName(post.sector)}
                 </Typography>
-                <Typography className="text-center mb-2">
-                  Cupos: {post.cupos}
+                <Typography color="blue-gray" className="mb-2">
+                  Lugar: {post.lugar}
                 </Typography>
               </CardBody>
-              <CardFooter className="flex justify-center pt-4">
-                <Button onClick={() => handlePostClick(post.id)}>Ver Más</Button>
+              <CardFooter className="flex justify-end">
+                <Button variant="gradient" color="blue" onClick={() => navigate(`/Eventos/VerEvento/${post.id}`)}>
+                  Ver Detalles
+                </Button>
               </CardFooter>
             </Card>
           ))}

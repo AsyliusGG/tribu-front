@@ -9,6 +9,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
 const token = Cookies.get("auth_token");
 
 const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas"; 
@@ -17,6 +18,7 @@ const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas";
 const Alianzas = () => {
   const [alianzas, setAlianzas] = useState([]);
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user); // Obtener el usuario desde el estado de Redux
 
   // Obtener alianzas activas desde la API
   useEffect(() => {
@@ -47,15 +49,17 @@ const Alianzas = () => {
     <div className="bg-gray-100 py-10">
       <div className="container mx-auto px-4">
         {/* Botón de Administrador de Alianzas */}
-        <div className="flex justify-end mb-6">
-          <Button
-            variant="gradient"
-            color="blue"
-            onClick={() => navigate("/Alianzas/AlianzasAdmin")}
-          >
-            Administrador de Alianzas
-          </Button>
-        </div>
+        {user && user.is_staff && (
+          <div className="flex justify-end mb-6">
+            <Button
+              variant="gradient"
+              color="blue"
+              onClick={() => navigate("/Alianzas/AlianzasAdmin")}
+            >
+              Administrador de Alianzas
+            </Button>
+          </div>
+        )}
 
         <Typography variant="h2" color="blue-gray" className="text-center mb-10">
           Nuestras Alianzas

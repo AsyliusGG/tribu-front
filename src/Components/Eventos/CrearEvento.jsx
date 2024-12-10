@@ -71,7 +71,7 @@ const CrearEvento = () => {
     formData.append("sector", sectorSeleccionado);
 
     try {
-      const response = await fetch("http://localhost:8000/api/v1/evento/", {
+      const response = await fetch("http://20.51.120.81:8000/api/v1/evento/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

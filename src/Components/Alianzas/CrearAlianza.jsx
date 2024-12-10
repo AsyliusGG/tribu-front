@@ -55,7 +55,7 @@ const CrearAlianza = () => {
 
     try {
       // Enviar datos a tu API
-      const response = await fetch("http://localhost:8000/api/v1/alianzas/", {
+      const response = await fetch("http://20.51.120.81:8000/api/v1/alianzas/", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`, // Encabezado de autorización

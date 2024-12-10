@@ -12,8 +12,8 @@ import {
 import Cookies from "js-cookie";
 const token = Cookies.get("auth_token");
 
-const EVENTOS_API_URL = "http://localhost:8000/api/v1/evento";
-const SECTOR_API_URL = "http://localhost:8000/api/v1/sector";
+const EVENTOS_API_URL = "http://20.51.120.81:8000/api/v1/evento";
+const SECTOR_API_URL = "http://20.51.120.81:8000/api/v1/sector";
 
 const EventosAdmin = () => {
   const [events, setEvents] = useState([]);
@@ -135,6 +135,16 @@ const EventosAdmin = () => {
     } catch (error) {
       console.error("Error al cambiar el estado del evento:", error);
     }
+  };
+
+  const openDeleteDialog = (event) => {
+    setEventToDelete(event);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setEventToDelete(null);
+    setDeleteDialogOpen(false);
   };
   
 

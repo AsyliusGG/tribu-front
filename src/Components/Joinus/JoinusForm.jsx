@@ -34,7 +34,7 @@ export function Joinus() {
   useEffect(() => {
     async function fetchSectors() {
       try {
-        const response = await fetch("http://localhost:8000/api/v1/sector/");
+        const response = await fetch("http://20.51.120.81:8000/api/v1/sector/");
         if (response.ok) {
           const data = await response.json();
           setSectors(data); // Guardar los sectores en el estado
@@ -104,7 +104,7 @@ export function Joinus() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:8000/api/v1/auth/users/", {
+      const response = await fetch("http://20.51.120.81:8000/api/v1/auth/users/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

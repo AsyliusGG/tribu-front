@@ -12,7 +12,7 @@ import {
 import Cookies from "js-cookie";
 const token = Cookies.get("auth_token");
 
-const ALIANZAS_API_URL = "http://localhost:8000/api/v1/alianzas"; // Actualizar con la API correcta
+const ALIANZAS_API_URL = "http://20.51.120.81:8000/api/v1/alianzas"; // Actualizar con la API correcta
 
 const AlianzasAdmin = () => {
   const [alianzas, setAlianzas] = useState([]);

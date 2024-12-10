@@ -33,7 +33,7 @@ const ModificarEvento = () => {
     async function fetchSectores() {
       try {
         const response = await fetch(
-          "http://localhost:8000/api/v1/sector"
+          "http://20.51.120.81:8000/api/v1/sector"
         );
         const data = await response.json();
         setSectores(data);
@@ -49,7 +49,7 @@ const ModificarEvento = () => {
     async function fetchEvento() {
       try {
         const response = await fetch(
-          `http://localhost:8000/api/v1/evento/${id}`
+          `http://20.51.120.81:8000/api/v1/evento/${id}`
         );
         const data = await response.json();
 
@@ -123,7 +123,7 @@ const ModificarEvento = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/evento/${id}/`,
+        `http://20.51.120.81:8000/api/v1/evento/${id}/`,
         {
           method: "PUT",
           body: formData,

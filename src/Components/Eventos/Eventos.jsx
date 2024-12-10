@@ -20,8 +20,8 @@ const Eventos = () => {
         const headers = {
           'Authorization': `Bearer ${token}`
         };
-        const eventosResponse = await axios.get("http://localhost:8000/api/v1/evento/", { headers });
-        const sectoresResponse = await axios.get("http://localhost:8000/api/v1/sector/", { headers });
+        const eventosResponse = await axios.get("http://20.51.120.81:8000/api/v1/evento/", { headers });
+        const sectoresResponse = await axios.get("http://20.51.120.81:8000/api/v1/sector/", { headers });
         const eventosActivos = eventosResponse.data.filter(evento => !evento.disabled);
         setPosts(eventosActivos);
         setSectores(sectoresResponse.data);

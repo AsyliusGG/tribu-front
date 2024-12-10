@@ -8,7 +8,7 @@ import {
   Button,
 } from "@material-tailwind/react";
 
-const ALIANZA_API_URL = "http://localhost:8000/api/v1/alianzas";
+const ALIANZA_API_URL = "http://20.51.120.81:8000/api/v1/alianzas";
 
 const VerAlianza = () => {
   const { id } = useParams();

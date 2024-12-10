@@ -81,7 +81,13 @@ const CarritoCompra = () => {
   
 
   if (items.length === 0) {
-    return <p className="text-center text-gray-500">Aún no has agregado nada a tu carrito.</p>;
+    return (
+      <div className="w-3/5 mx-auto my-8">
+        <img src="carrito.png" alt="Carrito vacío" className="w-[40%] mx-auto mt-4" />
+        <p className="text-center text-gray-700 text-xl pb-[10%]">Aún no has agregado nada a tu carrito.</p>
+
+      </div>
+    );
   }
 
   const total = items.reduce((acc, item) => acc + item.subtotal, 0);

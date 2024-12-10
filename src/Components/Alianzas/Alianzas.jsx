@@ -48,18 +48,7 @@ const Alianzas = () => {
   return (
     <div className="bg-gray-100 py-10">
       <div className="container mx-auto px-4">
-        {/* Botón de Administrador de Alianzas */}
-        {user && user.is_staff && (
-          <div className="flex justify-end mb-6">
-            <Button
-              variant="gradient"
-              color="blue"
-              onClick={() => navigate("/Alianzas/AlianzasAdmin")}
-            >
-              Administrador de Alianzas
-            </Button>
-          </div>
-        )}
+      
 
         <Typography variant="h2" color="blue-gray" className="text-center mb-10">
           Nuestras Alianzas

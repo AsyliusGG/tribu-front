@@ -24,11 +24,11 @@ const AdminSettings = () => {
         };
 
         const [eventosResponse, sectoresResponse, membershipsResponse, alianzasResponse, hijosResponse] = await Promise.all([
-          axios.get("http://20.51.120.81:8000/api/v1/eventos/", { headers }),
-          axios.get("http://20.51.120.81:8000/api/v1/sectores/", { headers }),
+          axios.get("http://20.51.120.81:8000/api/v1/evento/", { headers }),
+          axios.get("http://20.51.120.81:8000/api/v1/sector/", { headers }),
           axios.get("http://20.51.120.81:8000/api/v1/memberships/", { headers }),
-          axios.get("http://20.51.120.81:8000/api/v1/alianzas/", { headers }),
-          axios.get("http://20.51.120.81:8000/api/v1/hijos/", { headers })
+          axios.get("http://20.51.120.81:8000/api/v1/alianza/", { headers }),
+          axios.get("http://20.51.120.81:8000/api/v1/hijo/", { headers })
         ]);
 
         setEventos(eventosResponse.data);

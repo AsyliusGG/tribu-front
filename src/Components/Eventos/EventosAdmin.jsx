@@ -83,6 +83,35 @@ const EventosAdmin = () => {
     }
   };
 
+  const handleActivateDeactivate = async (eventId, isActive) => {
+    try {
+      const token = Cookies.get("auth_token");
+      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ disabled: !isActive }),
+      });
+
+      if (response.ok) {
+        setEvents(events.map((event) => (event.id === eventId ? { ...event, disabled: !isActive } : event)));
+        setAlertMessage(`Evento ${isActive ? "desactivado" : "activado"} con éxito`);
+      } else {
+        console.error(`Error al ${isActive ? "desactivar" : "activar"} el evento`);
+        setAlertMessage(`Error al ${isActive ? "desactivar" : "activar"} el evento`);
+      }
+    } catch (error) {
+      console.error(`Error al ${isActive ? "desactivar" : "activar"} el evento:`, error);
+      setAlertMessage(`Error al ${isActive ? "desactivar" : "activar"} el evento`);
+    }
+  };
+
+  const handleModify = (eventId) => {
+    navigate(`/Eventos/ModificarEvento/${eventId}`);
+  };
+
   const openDeleteDialog = (eventId) => {
     setEventToDelete(eventId);
     setDeleteDialogOpen(true);
@@ -143,9 +172,23 @@ const EventosAdmin = () => {
               <td className="py-2 px-4 border-b">{getSectorName(event.sector)}</td>
               <td className="py-2 px-4 border-b">{event.cupos_totales}</td>
               <td className="py-2 px-4 border-b">{event.cupos_disponibles}</td>
-              <td className="py-2 px-4 border-b">{event.estado}</td>
+              <td className="py-2 px-4 border-b">{event.disabled ? "Desactivado" : "Activo"}</td>
               <td className="py-2 px-4 border-b">
                 <div className="flex space-x-2">
+                  <Button
+                    variant="gradient"
+                    color="green"
+                    onClick={() => handleActivateDeactivate(event.id, !event.disabled)}
+                  >
+                    {event.disabled ? "Activar" : "Desactivar"}
+                  </Button>
+                  <Button
+                    variant="gradient"
+                    color="blue"
+                    onClick={() => handleModify(event.id)}
+                  >
+                    Modificar
+                  </Button>
                   <Button
                     variant="gradient"
                     color="red"

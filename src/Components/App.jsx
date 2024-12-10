@@ -98,7 +98,7 @@ function App() {
               element={<ModificarEvento />}
             />
             <Route
-              path="/verevento/:id"
+              path="/verEvento/:id"
               element={
                 <PrivateRoute>
                   <VerEvento />

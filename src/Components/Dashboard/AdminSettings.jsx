@@ -27,7 +27,7 @@ const AdminSettings = () => {
           axios.get("http://20.51.120.81:8000/api/v1/evento/", { headers }),
           axios.get("http://20.51.120.81:8000/api/v1/sector/", { headers }),
           axios.get("http://20.51.120.81:8000/api/v1/memberships/", { headers }),
-          axios.get("http://20.51.120.81:8000/api/v1/alianza/", { headers }),
+          axios.get("http://20.51.120.81:8000/api/v1/alianzas/", { headers }),
           axios.get("http://20.51.120.81:8000/api/v1/hijo/", { headers })
         ]);
 

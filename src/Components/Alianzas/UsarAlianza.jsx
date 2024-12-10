@@ -16,7 +16,7 @@ const UsarAlianza = () => {
     
     const fetchMembershipData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/memberships/generate-qr`, {
+        const response = await fetch(`http://20.51.120.81:8000/api/v1/memberships/generate-qr`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -42,7 +42,7 @@ const UsarAlianza = () => {
     // Fetch de la información de la alianza para mostrar empresa y promoción
     const fetchAlianza = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/alianzas/${id}/`);
+        const response = await fetch(`http://20.51.120.81:8000/api/v1/alianzas/${id}/`);
         const data = await response.json();
         setAlianza(data);
       } catch (error) {

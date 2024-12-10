@@ -22,7 +22,7 @@ const Contacto = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/v1/contact/', {
+      const response = await fetch('http://20.51.120.81:8000/api/v1/contact/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

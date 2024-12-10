@@ -42,7 +42,7 @@ const Perfil = () => {
 
   const handleSave = async () => {
     try {
-      const response = await axios.put('http://127.0.0.1:8000//api/v1/auth/users/me/', formData,
+      const response = await axios.put('http://20.51.120.81:8000//api/v1/auth/users/me/', formData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -76,7 +76,7 @@ const Perfil = () => {
   const handleSaveChildren = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/v1/hijo/", // URL correcta del endpoint
+        "http://20.51.120.81:8000/api/v1/hijo/", // URL correcta del endpoint
         { hijos: children },
         {
           headers: {

@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 export const checkMembership = createAsyncThunk("membership/checkMembership", async (userId, thunkAPI) => {
   const token = Cookies.get("auth_token");
   try {
-    const response = await axios.get(`http://localhost:8000/api/v1/memberships/${userId}/`, {
+    const response = await axios.get(`http://20.51.120.81:8000/api/v1/memberships/${userId}/`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

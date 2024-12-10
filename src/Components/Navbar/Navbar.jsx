@@ -35,7 +35,7 @@ export default function StickyNavbar() {
     if (token && !user) {
       // Si el token existe pero no hay información de usuario, cargar los datos
       axios
-        .get("http://localhost:8000/api/v1/auth/users/me/", {
+        .get("http://20.51.120.81:8000/api/v1/auth/users/me/", {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {

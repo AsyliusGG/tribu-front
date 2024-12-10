@@ -26,11 +26,11 @@ const AdminSettings = () => {
         };
   
         const [eventosResponse, sectoresResponse, membershipsResponse, alianzasResponse, hijosResponse] = await Promise.all([
-          fetch('http://localhost:8000/api/v1/evento/', { headers }),
-          fetch('http://localhost:8000/api/v1/sector/', { headers }),
-          fetch('http://localhost:8000/api/v1/memberships/', { headers }),
-          fetch('http://localhost:8000/api/v1/alianzas/', { headers }),
-          fetch('http://localhost:8000/api/v1/hijo/', { headers })
+          fetch('http://20.51.120.81:8000/api/v1/evento/', { headers }),
+          fetch('http://20.51.120.81:8000/api/v1/sector/', { headers }),
+          fetch('http://20.51.120.81:8000/api/v1/memberships/', { headers }),
+          fetch('http://20.51.120.81:8000/api/v1/alianzas/', { headers }),
+          fetch('http://20.51.120.81:8000/api/v1/hijo/', { headers })
         ]);
         
         if (!eventosResponse.ok || !sectoresResponse.ok || !membershipsResponse.ok || !alianzasResponse.ok || !hijosResponse.ok) {
@@ -163,7 +163,7 @@ const AdminSettings = () => {
 
   const handleDownloadUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/descargar_usuarios/", {
+      const response = await axios.get("http://20.51.120.81:8000/api/v1/descargar_usuarios/", {
         responseType: 'blob', // Para manejar la descarga de archivos
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));

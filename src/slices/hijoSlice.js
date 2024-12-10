@@ -6,7 +6,7 @@ export const addHijos = createAsyncThunk(
   async ({ userId, hijos }, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/v1/hijos/`,
+        `http://20.51.120.81:8000/api/v1/hijos/`,
         { user: userId, hijos }
       );
       return response.data;

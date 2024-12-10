@@ -12,7 +12,7 @@ const ComprobarMembresia = () => {
   useEffect(() => {
     const fetchMembershipData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/memberships/${uuid}/`, {
+        const response = await fetch(`http://20.51.120.81:8000/api/v1/memberships/${uuid}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -32,7 +32,7 @@ const ComprobarMembresia = () => {
 
     const fetchUserData = async (userId) => {
       try {
-        const response = await fetch(`http://localhost:8000/api/v1/users/${userId}/`, {
+        const response = await fetch(`http://20.51.120.81:8000/api/v1/users/${userId}/`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

@@ -117,7 +117,7 @@ export const getUserInfo = createAsyncThunk(
     }
 
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/auth/users/me", {
+      const response = await axios.get("http://20.51.120.81:8000/api/v1/auth/users/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -137,7 +137,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }, { rejectWithValue }) => {
     try {
       // Solicitud para obtener el token JWT
-      const response = await axios.post('http://localhost:8000/api/v1/auth/jwt/create/', {
+      const response = await axios.post('http://20.51.120.81:8000/api/v1/auth/jwt/create/', {
         email,
         password,
       });
@@ -147,7 +147,7 @@ export const loginUser = createAsyncThunk(
       localStorage.setItem('access', token);
 
       // Segunda solicitud para obtener los datos del usuario con el token
-      const userResponse = await axios.get('http://localhost:8000/api/v1/auth/users/me', {
+      const userResponse = await axios.get('http://20.51.120.81:8000/api/v1/auth/users/me', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',

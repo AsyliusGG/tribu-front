@@ -137,6 +137,16 @@ const EventosAdmin = () => {
       console.error("Error al cambiar el estado del evento:", error);
     }
   };
+
+  const openDeleteDialog = (event) => {
+    setEventToDelete(event);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setEventToDelete(null);
+    setDeleteDialogOpen(false);
+  };
   
 
   // Calcular cupos disponibles (total - vendidos)

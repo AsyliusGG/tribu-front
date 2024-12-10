@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Typography, Card, CardHeader, CardBody, CardFooter, Dialog, DialogHeader, DialogBody, DialogFooter, Alert } from "@material-tailwind/react";
+import { Button, Typography, Card, CardHeader, CardBody, CardFooter } from "@material-tailwind/react";
 import axios from 'axios';
 import Cookies from "js-cookie";
-
-const EVENTOS_API_URL = "http://20.51.120.81:8000/api/v1/evento";
-const SECTOR_API_URL = "http://20.51.120.81:8000/api/v1/sector";
 
 const Eventos = () => {
   const navigate = useNavigate();
@@ -15,9 +12,6 @@ const Eventos = () => {
   const [sectores, setSectores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [eventToDelete, setEventToDelete] = useState(null);
-  const [alertMessage, setAlertMessage] = useState("");
 
   useEffect(() => {
     const fetchEventos = async () => {
@@ -48,6 +42,15 @@ const Eventos = () => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+  const openDeleteDialog = (event) => {
+    setEventToDelete(event);
+    setDeleteDialogOpen(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setEventToDelete(null);
+    setDeleteDialogOpen(false);
+  };
 
   const formatTime = (timeString) => {
     const [hour, minute] = timeString.split(':');
@@ -61,69 +64,6 @@ const Eventos = () => {
 
   const goToAdmin = () => {
     navigate("/Eventos/EventosAdmin");
-  };
-
-  const handleDelete = async (eventId) => {
-    try {
-      const token = Cookies.get("auth_token");
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        setPosts(posts.filter((event) => event.id !== eventId));
-        setAlertMessage("Evento eliminado con éxito");
-      } else {
-        console.error("Error al eliminar el evento");
-        setAlertMessage("Error al eliminar el evento");
-      }
-    } catch (error) {
-      console.error("Error al eliminar el evento:", error);
-      setAlertMessage("Error al eliminar el evento");
-    }
-  };
-
-  const handleActivateDeactivate = async (eventId, isActive) => {
-    try {
-      const token = Cookies.get("auth_token");
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ disabled: !isActive }),
-      });
-
-      if (response.ok) {
-        setPosts(posts.map((event) => (event.id === eventId ? { ...event, disabled: !isActive } : event)));
-        setAlertMessage(`Evento ${isActive ? "desactivado" : "activado"} con éxito`);
-      } else {
-        console.error(`Error al ${isActive ? "desactivar" : "activar"} el evento`);
-        setAlertMessage(`Error al ${isActive ? "desactivar" : "activar"} el evento`);
-      }
-    } catch (error) {
-      console.error(`Error al ${isActive ? "desactivar" : "activar"} el evento:`, error);
-      setAlertMessage(`Error al ${isActive ? "desactivar" : "activar"} el evento`);
-    }
-  };
-
-  const handleModify = (eventId) => {
-    navigate(`/Eventos/ModificarEvento/${eventId}`);
-  };
-
-  const openDeleteDialog = (eventId) => {
-    setEventToDelete(eventId);
-    setDeleteDialogOpen(true);
-  };
-
-  const closeDeleteDialog = () => {
-    setDeleteDialogOpen(false);
-    setEventToDelete(null);
   };
 
   if (loading) return <div>Loading...</div>;
@@ -145,12 +85,6 @@ const Eventos = () => {
           Nuestros Eventos
         </Typography>
         
-        {alertMessage && (
-          <Alert color="red" className="mb-4">
-            {alertMessage}
-          </Alert>
-        )}
-
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {posts.map((post) => (
             <Card key={post.id} className="w-full h-full flex flex-col justify-between cursor-pointer">
@@ -172,37 +106,13 @@ const Eventos = () => {
                 </Typography>
               </CardBody>
               <CardFooter className="flex justify-end">
-                <Button variant="gradient" color="green" onClick={() => handleActivateDeactivate(post.id, !post.disabled)}>
-                  {post.disabled ? "Activar" : "Desactivar"}
-                </Button>
-                <Button variant="gradient" color="blue" onClick={() => handleModify(post.id)}>
-                  Modificar
-                </Button>
-                <Button variant="gradient" color="red" onClick={() => openDeleteDialog(post.id)}>
-                  Eliminar
+                <Button variant="gradient" color="blue" onClick={() => navigate(`/Eventos/VerEvento/${post.id}`)}>
+                  Ver Detalles
                 </Button>
               </CardFooter>
             </Card>
           ))}
         </div>
-
-        {deleteDialogOpen && (
-          <Dialog open={deleteDialogOpen} handler={closeDeleteDialog}>
-            <DialogHeader>Confirmar eliminación</DialogHeader>
-            <DialogBody>¿Desea realmente eliminar este evento?</DialogBody>
-            <DialogFooter>
-              <Button variant="text" color="blue-gray" onClick={closeDeleteDialog}>
-                No
-              </Button>
-              <Button variant="gradient" color="red" onClick={() => {
-                handleDelete(eventToDelete);
-                closeDeleteDialog();
-              }}>
-                Sí
-              </Button>
-            </DialogFooter>
-          </Dialog>
-        )}
       </div>
     </div>
   );

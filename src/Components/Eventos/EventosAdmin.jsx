@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 const token = Cookies.get("auth_token");
 
 const EVENTOS_API_URL = "http://20.51.120.81:8000/api/v1/evento";
-const SECTOR_API_URL = "http://20.51.120.81/api/v1/sector";
+const SECTOR_API_URL = "http://20.51.120.81:8000/api/v1/sector";
 
 const EventosAdmin = () => {
   const [events, setEvents] = useState([]);

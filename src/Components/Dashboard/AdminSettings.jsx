@@ -106,7 +106,7 @@ const AdminSettings = () => {
   }, {});
 
   // Calcular la cantidad de alianzas activas
-  const alianzasActivas = alianzas.filter(alianza => alianza.active).length;
+  const alianzasActivas = alianzas.filter(alianza => alianza.Estado).length;
 
   // Preparar los datos para el gráfico de alianzas
   const alianzasData = [
@@ -180,81 +180,98 @@ const AdminSettings = () => {
   return (
     // Panel lateral
     <div className="flex">
-      <div className="w-1/6 bg-gray-200 p-4">
-      <Button variant="gradient" color="blue" onClick={() => navigate("/Alianzas/AlianzasAdmin")} className="my-2 w-full">
+      <div className="w-1/6 bg-pink-50 p-4">
+      <h1 className="text-2xl font-bold mb-4 text-center mx-auto text-gray-900">Admin Dashboard</h1>
+
+      <Button variant="gradient" color="pink" onClick={() => navigate("/Alianzas/AlianzasAdmin")} className="my-2 w-full">
         Administrador de Alianzas
       </Button>
-      <Button variant="gradient" color="blue" onClick={() => navigate("/Eventos/EventosAdmin")} className="my-2 w-full">
+      <Button variant="gradient" color="pink" onClick={() => navigate("/Eventos/EventosAdmin")} className="my-2 w-full">
         Administrador de Eventos
       </Button>
-      <Button variant="gradient" color="blue" onClick={handleDownloadUsers} className="my-2 w-full">
+      <Button variant="gradient" color="pink" onClick={handleDownloadUsers} className="my-2 w-full">
         Descargar Usuarios
       </Button>
+
+      {/* Datos estadísticos */}
+      <div className="flex flex-col justify-around mb-8 gap-2 mt-6">
+  <div className="bg-white shadow-md rounded-lg p-4 mx-2">
+    <div className="bg-pink-200 rounded-xl border-gray-400 p-2 mb-2">
+      <h2 className="text-xl font-semibold mb-1 text-white">Evento con más cupos</h2>
+    </div>
+    <p className="text-black-800">{eventoConMasCupos.nombre}</p>
+    <p className="text-black-800">Cupos: {eventoConMasCupos.cupos}</p>
+  </div>
+
+  <div className="bg-white shadow-md rounded-lg p-4 mx-2">
+    <div className="bg-pink-200 rounded-xl border-gray-400 p-2 mb-2">
+      <h2 className="text-xl font-semibold mb-1 text-white">Evento con menos cupos</h2>
+    </div>
+    <p className="text-black-800">{eventoConMenosCupos.nombre}</p>
+    <p className="text-black-800">Cupos: {eventoConMenosCupos.cupos}</p>
+  </div>
+
+  <div className="bg-white shadow-md rounded-lg p-4 mx-2">
+    <div className="bg-pink-200 rounded-xl border-gray-400 p-2 mb-2">
+      <h2 className="text-xl font-semibold mb-1 text-white">Eventos con pocos cupos</h2>
+    </div>
+    <div className="bg-white shadow-md rounded-lg p-4">
+      <ul>
+        {eventosConPocosCupos.map(evento => (
+          <li key={evento.id} className="text-black-800">{evento.nombre} - {evento.cupos} cupos restantes</li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <div className="bg-white shadow-md rounded-lg p-4 mx-2">
+    <div className="bg-pink-200 rounded-xl border-gray-400 p-2 mb-2">
+      <h2 className="text-xl font-semibold mb-1 text-white">Membresías Activas</h2>
+    </div>
+    <div className="bg-white shadow-md rounded-lg p-4">
+      <p className="text-black-800">Cantidad de membresías activas: {membresiasActivas}</p>
+    </div>
+  </div>
+
+  <div className="bg-white shadow-md rounded-lg p-4 mx-2">
+    <div className="bg-pink-200 rounded-xl border-gray-400 p-2 mb-2">
+      <h2 className="text-xl font-semibold mb-1 text-white">Cantidad de Hijos</h2>
+    </div>
+    <div className="bg-white shadow-md rounded-lg p-4">
+      <p className="text-black-800">Total de Hijos: {hijos.length}</p>
+    </div>
+  </div>
+</div>
       </div>
 
       {/* Graficos */}
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <div className="flex justify-around mb-8">
-        <div className="bg-white shadow-md rounded-lg p-4 w-1/2 mx-2">
-          <h2 className="text-xl font-semibold mb-2">Evento con más cupos</h2>
-          <p className="text-gray-700">{eventoConMasCupos.nombre}</p>
-          <p className="text-gray-700">Cupos: {eventoConMasCupos.cupos}</p>
-        </div>
-        <div className="bg-white shadow-md rounded-lg p-4 w-1/2 mx-2">
-          <h2 className="text-xl font-semibold mb-2">Evento con menos cupos</h2>
-          <p className="text-gray-700">{eventoConMenosCupos.nombre}</p>
-          <p className="text-gray-700">Cupos: {eventoConMenosCupos.cupos}</p>
-        </div>
-      </div>
       {/* Grafico de Barras "Cantidad de Eventos por Sector" */}
-      <div>
-      <h2 className="text-xl font-semibold mb-4 text-center">Cantidad de Eventos por Sector</h2>
-        <BarChart
-          width={600}
-          height={300}
-          data={data}
-          margin={{
-            top: 5, right: 30, left: 20, bottom: 5,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="value">
-            {data.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Bar>
-        </BarChart>
-      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols- gap-4">
+        <div className="bg-white shadow-md rounded-lg p-4">
+          <h2 className="text-xl font-semibold mb-4 text-center">Cantidad de Eventos por Sector</h2>
+            <BarChart
+              width={600}
+              height={300}
+              data={data}
+              margin={{
+                top: 5, right: 30, left: 20, bottom: 5,
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="value">
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+            </Bar>
+          </BarChart>
+        </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {eventos.map((evento) => (
-          <div className="bg-white shadow-md rounded-lg p-4" key={evento.id}>
-            <h2 className="text-lg font-semibold mb-2">{evento.nombre}</h2>
-            <p className="text-gray-700">Fecha: {new Date(evento.fecha).toLocaleDateString()}</p>
-            <p className="text-gray-700">Hora: {evento.hora}</p>
-            <p className="text-gray-700">Lugar: {evento.lugar}</p>
-            <p className="text-gray-700">Sector: {sectoresMap[evento.sector]}</p>
-            <p className="text-gray-700">Cupos: {evento.cupos}</p>
-          </div>
-        ))}
-      </div>
-      
-      <div className="mt-10">
-      <h2 className="text-2xl font-bold mb-4">Eventos con pocos cupos</h2>
       <div className="bg-white shadow-md rounded-lg p-4">
-        <ul>
-          {eventosConPocosCupos.map(evento => (
-            <li key={evento.id} className="text-gray-700">{evento.nombre} - {evento.cupos} cupos restantes</li>
-          ))}
-        </ul>
-      </div>
-    </div>
-    <div>
         <h2 className="text-xl font-semibold mb-4 text-center">Membresías Activas vs Por Vencer</h2>
         <PieChart width={400} height={400}>
           <Pie
@@ -275,7 +292,29 @@ const AdminSettings = () => {
           <Legend />
         </PieChart>
       </div>
-      <div>
+
+      <div className="bg-white shadow-md rounded-lg p-4">
+        <h2 className="text-xl font-semibold mb-4 text-center">Rango de Edad de Hijos</h2>
+        {rangoEdadesData.length > 0 && (
+          <BarChart
+            width={700}
+            height={400}
+            data={rangoEdadesData}
+            margin={{
+              top: 20, right: 30, left: 20, bottom: 80,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="edad" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="cantidad" fill="#8884d8" />
+          </BarChart>
+        )}
+      </div>
+
+      <div className="bg-white shadow-md rounded-lg p-4">
         <h2 className="text-xl font-semibold mb-4 text-center">Cantidad de Alianzas Activas</h2>
         {alianzasData.length > 0 && (
           <PieChart width={400} height={400}>
@@ -298,43 +337,11 @@ const AdminSettings = () => {
           </PieChart>
         )}
       </div>
-      <div>
-        <h2 className="text-xl font-semibold mb-4 text-center">Rango de Edad de Hijos</h2>
-        {rangoEdadesData.length > 0 && (
-          <BarChart
-            width={700}
-            height={400}
-            data={rangoEdadesData}
-            margin={{
-              top: 20, right: 30, left: 20, bottom: 80,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="edad" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="cantidad" fill="#8884d8" />
-          </BarChart>
-        )}
-      </div>
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4">Membresías Activas</h2>
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <p className="text-gray-700">Cantidad de membresías activas: {membresiasActivas}</p>
-        </div>
-      </div>
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold mb-4">Membresías Próximas a Vencer</h2>
-        <div className="bg-white shadow-md rounded-lg p-4">
-          <p className="text-gray-700">Cantidad de membresías próximas a vencer: {membresiasProximasAVencer}</p>
-        </div>
-      </div>
-      <div className="mt-10">
-      <h2 className="text-2xl font-bold mb-4">Cantidad de Hijos</h2>
-      <div className="bg-white shadow-md rounded-lg p-4">
-        <p className="text-gray-700">Total de Hijos: {hijos.length}</p>
-      </div>
+
+
+
+
+
     </div>
     </div>
     </div>

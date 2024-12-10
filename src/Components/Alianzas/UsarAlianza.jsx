@@ -9,11 +9,11 @@ const UsarAlianza = () => {
   const [timeLeft, setTimeLeft] = useState(300); // 5 minutos en segundos
   const [alianza, setAlianza] = useState(null);
   const [qrCode, setQrCode] = useState(null); // Estado para almacenar el código QR
-   const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [membership, setMembership] = useState(null);
   const token = Cookies.get("auth_token");
+
   useEffect(() => {
-    
     const fetchMembershipData = async () => {
       try {
         const response = await fetch(`http://20.51.120.81:8000/api/v1/memberships/generate-qr`, {
@@ -21,20 +21,19 @@ const UsarAlianza = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
+  
         if (response.ok) {
           const data = await response.json();
-          // setUser(data.user); // Supongamos que la API devuelve los datos del usuario en el campo `user`
           setMembership(data); // Almacena los detalles de la membresía
           setQrCode(data.qr_code); // Almacena el código QR en base64
         } else {
-          console.error("Error al obtener los datos de la membresía");
+          console.error("Error al obtener los datos de la membresía:", response.statusText);
         }
       } catch (error) {
         console.error("Error al conectar con el servidor:", error);
       }
     };
-
+  
     fetchMembershipData();
   }, [id, token]);
 

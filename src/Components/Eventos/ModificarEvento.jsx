@@ -48,6 +48,7 @@ const ModificarEvento = () => {
   useEffect(() => {
     async function fetchEvento() {
       try {
+        const token = Cookies.get("auth_token");
         const response = await fetch(
           `http://20.51.120.81:8000/api/v1/evento/${id}`
         );
@@ -125,7 +126,7 @@ const ModificarEvento = () => {
       const response = await fetch(
         `http://20.51.120.81:8000/api/v1/evento/${id}/`,
         {
-          method: "PUT",
+          method: "PATCH",
           body: formData,
           headers: {
             Authorization: `Bearer ${token}`,

@@ -64,13 +64,13 @@ const VerAlianza = () => {
             </Typography>
 
             <Typography color="blue-gray" className="mt-4">
-              {alianza.Promocion}
+              {alianza.descripcion}
             </Typography>
             <Typography color="blue-gray" className="mt-4">
               <strong>Empresa:</strong> {alianza.alianza_empresa}
             </Typography>
             <Typography color="blue-gray" className="mt-2">
-              <strong>Promoción:</strong> {alianza.descripcion}
+              <strong>Promoción:</strong> {alianza.Promocion}
             </Typography>
 
             <div className="mt-6 flex justify-center items-center">

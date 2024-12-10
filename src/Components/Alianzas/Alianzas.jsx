@@ -68,7 +68,7 @@ const Alianzas = () => {
                 <Typography variant="h5" color="blue-gray" className="mb-2 text-center">
                   {alianza.alianza_nombre}
                 </Typography>
-                <Typography className="text-center">{alianza.descripcion}</Typography>
+                <Typography className="text-center">{alianza.promocion}</Typography>
               </CardBody>
               <CardFooter className="flex flex-col items-center pt-4">
                 <Typography variant="subtitle2" color="blue-gray" className="mb-2 text-center">

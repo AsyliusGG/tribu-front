@@ -189,6 +189,9 @@ const AdminSettings = () => {
       <Button variant="gradient" color="pink" onClick={() => navigate("/Eventos/EventosAdmin")} className="my-2 w-full">
         Administrador de Eventos
       </Button>
+      <Button variant="gradient" color="pink" onClick={() => navigate("/Dashboard/AddSector")} className="my-2 w-full">
+        Administrador de Sectores
+      </Button>
       <Button variant="gradient" color="pink" onClick={handleDownloadUsers} className="my-2 w-full">
         Descargar Usuarios
       </Button>

@@ -33,6 +33,7 @@ import Perfil from "./Perfil/Perfil.jsx";
 import ComprobarMembresia from "./Alianzas/ComprobarUsuario.jsx";
 import Membresia from "./Membresia/Membresia.jsx";
 import ConfirmarCorreoAviso from "./ActivatePage/ConfirmarCorreoAviso.jsx";
+import AddSector from "./Dashboard/AddSector.jsx";
 
 function App() {
   return (
@@ -167,6 +168,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <AdminSettings />
+                </PrivateRoute>
+              }
+            />
+                        <Route
+              path="/Dashboard/AddSector"
+              element={
+                <PrivateRoute>
+                  <AddSector />
                 </PrivateRoute>
               }
             />

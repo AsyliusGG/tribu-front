@@ -14,9 +14,15 @@ const Perfil = () => {
   });
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({
-    first_name: "",
-    last_name: "",
-    email: ""
+    first_name: user?.first_name || '',
+    last_name: user?.last_name || '',
+    email: user?.email || '',
+    phone_number: user?.phone_number || '',
+    run: user?.run || '',
+    birthday: user?.birthday || '',
+    job: user?.job || '',
+    sector: user?.sector || '',
+    know_source: user?.know_source || '',
   });
 
   useEffect(() => {
@@ -24,41 +30,65 @@ const Perfil = () => {
       setFormData({
         first_name: user.first_name,
         last_name: user.last_name,
-        email: user.email
+        email: user.email,
       });
     }
   }, [user]);
   
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setChildData({ 
-      ...childData, 
-      [name]: value });
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleEdit = () => {
     setEditing(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
+    // Verificar que todos los campos requeridos estén presentes
+    if (!formData.first_name || !formData.last_name || !formData.email || 
+        !formData.phone_number || !formData.run || !formData.birthday || 
+        !formData.job || !formData.sector || !formData.know_source) {
+      console.error('Todos los campos son obligatorios');
+      alert('Todos los campos son obligatorios');
+      return;
+    }
+  
     try {
-      const response = await axios.put('http://20.51.120.81:8000//api/v1/auth/users/me/', formData,
+      const response = await axios.put(
+        'http://20.51.120.81:8000/api/v1/auth/users/me/',
+        {
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          email: formData.email,
+          phone_number: formData.phone_number,
+          run: formData.run,
+          birthday: formData.birthday,
+          job: formData.job,
+          sector: formData.sector,
+          know_source: formData.know_source,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         }
       );
       // Actualiza el usuario en el estado de Redux si es necesario
+      console.log('Información actualizada con éxito:', response.data);
       setEditing(false);
-      alert('Información actualizada correctamente.');
     } catch (error) {
-      console.error("Error al actualizar la información:", error.response || error.message);
-      if (error.response?.status === 404) {
-        alert("Ruta no encontrada. Verifica la URL del backend.");
+      console.error('Error al actualizar la información:', error.response || error.message);
+      if (error.response) {
+        // Mostrar mensaje de error específico del servidor
+        alert(`Error: ${error.response.data.detail || 'Ocurrió un error al actualizar la información'}`);
       } else {
-        alert("Ocurrió un error inesperado al actualizar la información.");
+        alert('Ocurrió un error inesperado al actualizar la información');
       }
     }
   };
@@ -137,6 +167,66 @@ const Perfil = () => {
                     className="w-full px-3 py-2 border rounded"
                   />
                 </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Número de teléfono:</label>
+                  <input
+                    type="text"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">RUN:</label>
+                  <input
+                    type="text"
+                    name="run"
+                    value={formData.run}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Fecha de nacimiento:</label>
+                  <input
+                    type="date"
+                    name="birthday"
+                    value={formData.birthday}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Trabajo:</label>
+                  <input
+                    type="text"
+                    name="job"
+                    value={formData.job}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Sector:</label>
+                  <input
+                    type="number"
+                    name="sector"
+                    value={formData.sector}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Fuente de conocimiento:</label>
+                  <input
+                    type="number"
+                    name="know_source"
+                    value={formData.know_source}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border rounded"
+                  />
+                </div>
                 <button
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200"
                   onClick={handleSave}
@@ -153,6 +243,30 @@ const Perfil = () => {
                 <p className="text-gray-700 text-lg mt-2">
                   <span className="font-semibold">Correo electrónico: </span>
                   {user.email}
+                </p>
+                <p className="text-gray-700 text-lg mt-2">
+                  <span className="font-semibold">Número de teléfono: </span>
+                  {user.phone_number}
+                </p>
+                <p className="text-gray-700 text-lg mt-2">
+                  <span className="font-semibold">RUN: </span>
+                  {user.run}
+                </p>
+                <p className="text-gray-700 text-lg mt-2">
+                  <span className="font-semibold">Fecha de nacimiento: </span>
+                  {user.birthday}
+                </p>
+                <p className="text-gray-700 text-lg mt-2">
+                  <span className="font-semibold">Trabajo: </span>
+                  {user.job}
+                </p>
+                <p className="text-gray-700 text-lg mt-2">
+                  <span className="font-semibold">Sector: </span>
+                  {user.sector}
+                </p>
+                <p className="text-gray-700 text-lg mt-2">
+                  <span className="font-semibold">Fuente de conocimiento: </span>
+                  {user.know_source}
                 </p>
                 <button
                   className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 transition duration-200 mt-4"
@@ -180,4 +294,5 @@ const Perfil = () => {
     </div>
   );
 };
+
 export default Perfil;

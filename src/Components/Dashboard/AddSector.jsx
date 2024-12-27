@@ -15,11 +15,13 @@ import {
 import ReactDOM from 'react-dom';
 
 const AddSector = () => {
-  const [nombre, setNombre] = useState('');
   const [sectores, setSectores] = useState([]);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [sectorToEdit, setSectorToEdit] = useState(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [sectorToDelete, setSectorToDelete] = useState(null);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [nombre, setNombre] = useState('');
   const navigate = useNavigate();
 
   // Obtener el token desde el estado de Redux
@@ -65,18 +67,59 @@ const AddSector = () => {
         setAlertMessage("Sector creado exitosamente");
         setNombre(''); // Limpiar el campo de entrada
       } else {
-        const data = await response.json();
-        console.error("Error en la respuesta:", data);
-        alert("Error al crear el sector");
+        console.error("Error al crear el sector:", response.statusText);
       }
     } catch (error) {
-      alert("Hubo un error al enviar los datos");
-      console.error(error);
+      console.error("Error al crear el sector:", error);
     }
   };
 
-  const openDeleteDialog = (sector) => {
-    setSectorToDelete(sector);
+  const handleUpdate = async (updatedSector) => {
+    if (!token) {
+      alert("No se encontró el token de autenticación");
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://20.51.120.81:8000/api/v1/sector/${updatedSector.id}/`, {
+        method: "PUT",
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sector_nombre: updatedSector.sector_nombre }),
+      });
+
+      if (response.ok) {
+        const updatedSectorFromServer = await response.json();
+        setSectores((prevSectores) =>
+          prevSectores.map((sector) =>
+            sector.id === updatedSectorFromServer.id ? updatedSectorFromServer : sector
+          )
+        );
+        setAlertMessage("Sector actualizado exitosamente");
+      } else {
+        console.error("Error al actualizar el sector:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error al actualizar el sector:", error);
+    }
+
+    closeEditDialog();
+  };
+
+  const openEditDialog = (sector) => {
+    setSectorToEdit(sector);
+    setEditDialogOpen(true);
+  };
+
+  const closeEditDialog = () => {
+    setSectorToEdit(null);
+    setEditDialogOpen(false);
+  };
+
+  const openDeleteDialog = (sectorId) => {
+    setSectorToDelete(sectorId);
     setDeleteDialogOpen(true);
   };
 
@@ -86,25 +129,30 @@ const AddSector = () => {
   };
 
   const handleDelete = async (sectorId) => {
+    if (!token) {
+      alert("No se encontró el token de autenticación");
+      return;
+    }
+
     try {
       const response = await fetch(`http://20.51.120.81:8000/api/v1/sector/${sectorId}/`, {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           'Authorization': `Bearer ${token}`,
         },
       });
 
       if (response.ok) {
         setSectores(sectores.filter((sector) => sector.id !== sectorId));
-        setDeleteDialogOpen(false);
-        setAlertMessage("Sector eliminado correctamente.");
+        setAlertMessage("Sector eliminado exitosamente");
       } else {
-        console.error("Error al eliminar el sector");
+        console.error("Error al eliminar el sector:", response.statusText);
       }
     } catch (error) {
       console.error("Error al eliminar el sector:", error);
     }
+
+    closeDeleteDialog();
   };
 
   return (
@@ -197,7 +245,7 @@ const AddSector = () => {
             <tr key={sector.id}>
               <td className="py-2 px-4 border-b">{sector.sector_nombre}</td>
               <td className="py-2 px-4 border-b">
-                <div className="flex justify-between space-x-2">
+                <div className="flex justify-center items-center space-x-5">
                   <Button
                     color="red"
                     className="flex items-center"
@@ -219,6 +267,32 @@ const AddSector = () => {
                     </svg>
                     Eliminar
                   </Button>
+                  <Button
+                    color="blue"
+                    className="flex items-center"
+                    onClick={() => handleModify(sector.id)}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 mr-2"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M16.862 3.487a2.25 2.25 0 0 1 3.182 3.182l-9.193 9.193a4.5 4.5 0 0 1-1.691 1.07l-3.25 1.083a.75.75 0 0 1-.95-.95l1.083-3.25a4.5 4.5 0 0 1 1.07-1.691l9.193-9.193z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 12.75V19.5a2.25 2.25 0 0 1-2.25 2.25h-12A2.25 2.25 0 0 1 3 19.5v-12A2.25 2.25 0 0 1 5.25 5.25h6.75"
+                      />
+                    </svg>
+                    Modificar
+                  </Button>
                 </div>
               </td>
             </tr>
@@ -226,31 +300,61 @@ const AddSector = () => {
         </tbody>
       </table>
 
-      {deleteDialogOpen && ReactDOM.createPortal(
-        <Dialog open={deleteDialogOpen} handler={closeDeleteDialog}>
-          <DialogHeader>Confirmar eliminación</DialogHeader>
-          <DialogBody>¿Desea realmente eliminar este sector?</DialogBody>
+      {editDialogOpen && ReactDOM.createPortal(
+        <Dialog open={editDialogOpen} handler={closeEditDialog}>
+          <DialogHeader>Modificar Sector</DialogHeader>
+          <DialogBody>
+            <input
+              type="text"
+              value={sectorToEdit?.sector_nombre || ''}
+              onChange={(e) => setSectorToEdit({ ...sectorToEdit, sector_nombre: e.target.value })}
+            />
+          </DialogBody>
           <DialogFooter>
             <Button
               variant="text"
               color="blue-gray"
-              onClick={closeDeleteDialog}
+              onClick={closeEditDialog}
             >
-              No
+              Cancelar
             </Button>
             <Button
               variant="gradient"
-              color="red"
-              onClick={() => handleDelete(sectorToDelete)}
+              color="green"
+              onClick={() => handleUpdate(sectorToEdit)}
             >
-              Sí
+              Guardar
             </Button>
           </DialogFooter>
         </Dialog>,
         document.body
       )}
-    </div>
-  );
-};
+
+            {deleteDialogOpen && ReactDOM.createPortal(
+              <Dialog open={deleteDialogOpen} handler={closeDeleteDialog}>
+                <DialogHeader>Confirmar eliminación</DialogHeader>
+                <DialogBody>¿Desea realmente eliminar este sector?</DialogBody>
+                <DialogFooter>
+                  <Button
+                    variant="text"
+                    color="blue-gray"
+                    onClick={closeDeleteDialog}
+                  >
+                    No
+                  </Button>
+                  <Button
+                    variant="gradient"
+                    color="red"
+                    onClick={() => handleDelete(sectorToDelete)}
+                  >
+                    Sí
+                  </Button>
+                </DialogFooter>
+              </Dialog>,
+              document.body
+            )}
+          </div>
+        );
+      };
 
 export default AddSector;

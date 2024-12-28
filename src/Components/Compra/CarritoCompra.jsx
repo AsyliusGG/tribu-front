@@ -4,6 +4,7 @@ import { resetearCarrito } from "../../slices/carritoSlice";
 import { useNavigate } from "react-router-dom";
 import { useCarrito } from "./CarritoContext";
 import Cookies from "js-cookie";
+import { iniciarPago } from "../../api/api";
 const token = Cookies.get("auth_token");
 
 const CarritoCompra = () => {
@@ -16,7 +17,7 @@ const CarritoCompra = () => {
   const { timeLeft, showWarning, handleContinuar, handleCancelar } = useCarrito(); // Usa el contexto
 
   const handlePagarConWebpay = async () => {
-    const eventoId = items[0]?.eventoId; // Asume que todos los items son del mismo evento
+    const eventoId = items[0]?.eventoId;
     const cantidadAdultos = items.reduce((acc, item) => acc + item.cantidadAdulto, 0);
     const cantidadNinos = items.reduce((acc, item) => acc + item.cantidadNino, 0);
   
@@ -31,46 +32,22 @@ const CarritoCompra = () => {
     }
   
     const data = {
-      buy_order: `orden_evento`,
-      session_id: user.id, // Asegúrate de que user.id está definido
+      buy_order: "orden_evento",
+      session_id: user.id,
       cantidad_adultos: cantidadAdultos,
       cantidad_ninos: cantidadNinos,
       evento_id: eventoId,
     };
   
-    console.log("Datos enviados al backend:", data);
-  
     try {
-      const response = await fetch("http://20.51.120.81:8000/api/v1/iniciar_pago/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Incluye el token si es necesario
-        },
-        body: JSON.stringify(data),
-      });
-  
-      console.log("Estado de la respuesta:", response.status);
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error al iniciar el pago:", errorData);
-        alert("Error al iniciar el pago: " + errorData.error);
-        return;
-      }
-  
-      const result = await response.json();
-      console.log("Respuesta de la API:", result);
+      const response = await iniciarPago(data, token);
+      const result = response.data;
   
       if (result.frontend_url) {
-        console.log("Redirigiendo a página de confirmación:", result.frontend_url);
-        window.location.href = result.frontend_url; // Redirige a la URL del frontend
+        window.location.href = result.frontend_url;
       } else if (result.url && result.token) {
-        const redirectUrl = `${result.url}?token_ws=${result.token}`;
-        console.log("Redirigiendo a URL:", redirectUrl);
-        window.location.href = redirectUrl;
+        window.location.href = `${result.url}?token_ws=${result.token}`;
       } else {
-        console.error("Datos de redirección incompletos:", result);
         alert("Error al obtener la URL de redirección.");
       }
     } catch (error) {

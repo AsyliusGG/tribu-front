@@ -1,4 +1,3 @@
-// api.js
 import axios from "axios";
 
 const API_BASE_URL = "http://20.51.120.81:8000/api/v1";
@@ -13,6 +12,7 @@ export const getallMadres = () => {
 
 export const getallHijo = () => {
   return axios.get(`${API_BASE_URL}/hijo/`);
+
 };
 
 export const getallSector = () => {
@@ -76,3 +76,60 @@ export const getUserById = (userId, token) => {
     },
   }).then((response) => response.data);
 };
+
+
+export const iniciarPago = (data, token) => {
+  return axios.post(`${API_BASE_URL}/iniciar_pago/`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const enviarFormularioContacto = (data) => {
+  return axios.post(`${API_BASE_URL}/contact/`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const obtenerSectores = () => {
+  return axios.get(`${API_BASE_URL}/sector/`).then((response) => response.data);
+};
+
+export const crearSector = (data, token) => {
+  return axios.post(`${API_BASE_URL}/sector/`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const actualizarSector = (id, data, token) => {
+  return axios.put(`${API_BASE_URL}/sector/${id}/`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const eliminarSector = (id, token) => {
+  return axios.delete(`${API_BASE_URL}/sector/${id}/`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export const getMembershipQRCode = (token) => {
+  return axios.get(`${API_BASE_URL}/memberships/generate-qr`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((response) => response.data);
+};
+
+

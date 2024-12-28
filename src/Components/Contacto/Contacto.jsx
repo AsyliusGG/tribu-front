@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Typography, Input, Button, Textarea } from "@material-tailwind/react";
 import { FaBuilding, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
+import { enviarFormularioContacto } from "../../api/api";
 
 const Contacto = () => {
   const [formData, setFormData] = useState({
@@ -22,32 +23,18 @@ const Contacto = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://20.51.120.81:8000/api/v1/contact/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      await enviarFormularioContacto(formData);
+      alert("Mensaje enviado con éxito");
+      setFormData({
+        name: "",
+        last_name: "",
+        email: "",
+        phone_number: "",
+        subject: "",
+        message: "",
       });
-
-      if (response.ok) {
-        console.log("Formulario enviado:", formData);
-        alert("Mensaje enviado con éxito");
-        setFormData({
-          name: "",
-          last_name: "",
-          email: "",
-          phone_number: "",
-          subject: "",
-          message: "",
-        });
-      } else {
-        const errorData = await response.json();
-        console.error("Error al enviar el formulario:", errorData);
-        alert("Error al enviar el mensaje");
-      }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error al enviar el formulario:", error);
       alert("Error al enviar el mensaje");
     }
   };

@@ -9,10 +9,10 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { getAlianzas } from "../../api/api";
 import { useSelector } from "react-redux";
 const token = Cookies.get("auth_token");
 
-const ALIANZAS_API_URL = "http://20.51.120.81:8000/api/v1/alianzas"; 
 
 
 const Alianzas = () => {
@@ -24,26 +24,22 @@ const Alianzas = () => {
   useEffect(() => {
     async function fetchAlianzas() {
       try {
-        const response = await fetch(ALIANZAS_API_URL);
-
-        if (response.ok) {
-          const alianzasData = await response.json();
-          // Filtrar alianzas activas y cuya fecha final es mayor o igual a la fecha actual
-          const today = new Date().toISOString().split("T")[0];
-          const filteredAlianzas = alianzasData.filter(
-            (alianza) => alianza.Estado === true && alianza.Fecha_final >= today
-          );
-          setAlianzas(filteredAlianzas);
-        } else {
-          console.error("Error al obtener las alianzas.");
-        }
+        const response = await getAlianzas();
+        const alianzasData = response.data;
+        const today = new Date().toISOString().split("T")[0];
+        const filteredAlianzas = alianzasData.filter(
+          (alianza) => alianza.Estado === true && alianza.Fecha_final >= today
+        );
+        setAlianzas(filteredAlianzas);
       } catch (error) {
         console.error("Error al obtener las alianzas:", error);
       }
     }
-
+  
     fetchAlianzas();
   }, []);
+
+
 
   return (
     <div className="bg-gray-100 py-10">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Typography, Button } from "@material-tailwind/react";
 import Cookies from "js-cookie";
+import { getMembershipQRCode, getAlianzaById } from "../../api/api";
 
 const UsarAlianza = () => {
   const { id } = useParams();
@@ -16,25 +17,25 @@ const UsarAlianza = () => {
   useEffect(() => {
     const fetchMembershipData = async () => {
       try {
-        const response = await fetch(`http://20.51.120.81:8000/api/v1/memberships/generate-qr`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-  
-        if (response.ok) {
-          const data = await response.json();
-          setMembership(data); // Almacena los detalles de la membresía
-          setQrCode(data.qr_code); // Almacena el código QR en base64
-        } else {
-          console.error("Error al obtener los datos de la membresía:", response.statusText);
-        }
+        const membershipData = await getMembershipQRCode(token);
+        setMembership(membershipData);
+        setQrCode(membershipData.qr_code);
       } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
+        console.error("Error al obtener el código QR:", error);
+      }
+    };
+  
+    const fetchAlianza = async () => {
+      try {
+        const alianzaData = await getAlianzaById(id);
+        setAlianza(alianzaData);
+      } catch (error) {
+        console.error("Error al cargar la alianza:", error);
       }
     };
   
     fetchMembershipData();
+    fetchAlianza();
   }, [id, token]);
 
   useEffect(() => {

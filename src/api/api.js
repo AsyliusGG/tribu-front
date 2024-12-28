@@ -1,135 +1,74 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 
 const API_BASE_URL = "http://20.51.120.81:8000/api/v1";
 
-export const getallEventos = () => {
-  return axios.get(`${API_BASE_URL}/evento/`);
-};
+// Crear una instancia de axios
+const axiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+});
 
-export const getallMadres = () => {
-  return axios.get(`${API_BASE_URL}/madre/`);
-};
-
-export const getallHijo = () => {
-  return axios.get(`${API_BASE_URL}/hijo/`);
-
-};
-
-export const getallSector = () => {
-  return axios.get(`${API_BASE_URL}/sector/`);
-};
-
-export const getEventoById = async (id) => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/evento/${id}/`);
-    return response.data;
-  } catch (error) {
-    console.error("Error al obtener el evento por ID", error);
-    throw error;
+// Interceptor para añadir el token a todas las solicitudes
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get("auth_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-};
+);
 
-export const getAlianzas = () => {
-  return axios.get(`${API_BASE_URL}/alianzas/`);
-};
+// Exportar funciones con la nueva instancia
+export const getallEventos = () => axiosInstance.get("/evento/");
+export const getallMadres = () => axiosInstance.get("/madre/");
+export const getallHijo = () => axiosInstance.get("/hijo/");
+export const getallSector = () => axiosInstance.get("/sector/");
+export const getMemberships = () => axiosInstance.get("/memberships/");
+export const getAlianzas = () => axiosInstance.get("/alianzas/");
 
-export const getAlianzaById = (id) => {
-  return axios.get(`${API_BASE_URL}/alianzas/${id}/`);
-};
+export const getEventoById = (id) => axiosInstance.get(`/evento/${id}/`).then((res) => res.data);
 
-export const deleteAlianza = (id, token) => {
-  return axios.delete(`${API_BASE_URL}/alianzas/${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+export const getAlianzaById = (id) => axiosInstance.get(`/alianzas/${id}/`).then((res) => res.data);
+
+export const deleteAlianza = (id) => axiosInstance.delete(`/alianzas/${id}/`);
+
+export const createAlianza = (data) => axiosInstance.post("/alianzas/", data);
+
+export const updateAlianza = (id, data) => axiosInstance.put(`/alianzas/${id}/`, data);
+
+export const getMembershipByUUID = (uuid) =>
+  axiosInstance.get(`/memberships/${uuid}/`).then((res) => res.data);
+
+export const getUserById = (userId) =>
+  axiosInstance.get(`/users/${userId}/`).then((res) => res.data);
+
+export const iniciarPago = (data) =>
+  axiosInstance.post("/iniciar_pago/", data, {
+    headers: { "Content-Type": "application/json" },
   });
-};
 
-export const createAlianza = (data, token) => {
-  return axios.post(`${API_BASE_URL}/alianzas/`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+export const enviarFormularioContacto = (data) =>
+  axiosInstance.post("/contact/", data, {
+    headers: { "Content-Type": "application/json" },
   });
-};
 
-export const updateAlianza = (id, data, token) => {
-  return axios.put(`${API_BASE_URL}/alianzas/${id}/`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+export const obtenerSectores = () =>
+  axiosInstance.get("/sector/").then((response) => response.data);
+
+export const crearSector = (data) => axiosInstance.post("/sector/", data);
+
+export const actualizarSector = (id, data) =>
+  axiosInstance.put(`/sector/${id}/`, data, {
+    headers: { "Content-Type": "application/json" },
   });
-};
 
-export const getMembershipByUUID = (uuid, token) => {
-  return axios.get(`${API_BASE_URL}/memberships/${uuid}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.data);
-};
+export const eliminarSector = (id) => axiosInstance.delete(`/sector/${id}/`);
 
-export const getUserById = (userId, token) => {
-  return axios.get(`${API_BASE_URL}/users/${userId}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.data);
-};
+export const getMembershipQRCode = () =>
+  axiosInstance.get("/memberships/generate-qr").then((response) => response.data);
 
-
-export const iniciarPago = (data, token) => {
-  return axios.post(`${API_BASE_URL}/iniciar_pago/`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-export const enviarFormularioContacto = (data) => {
-  return axios.post(`${API_BASE_URL}/contact/`, data, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-export const obtenerSectores = () => {
-  return axios.get(`${API_BASE_URL}/sector/`).then((response) => response.data);
-};
-
-export const crearSector = (data, token) => {
-  return axios.post(`${API_BASE_URL}/sector/`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
-export const actualizarSector = (id, data, token) => {
-  return axios.put(`${API_BASE_URL}/sector/${id}/`, data, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-};
-
-export const eliminarSector = (id, token) => {
-  return axios.delete(`${API_BASE_URL}/sector/${id}/`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-};
-
-export const getMembershipQRCode = (token) => {
-  return axios.get(`${API_BASE_URL}/memberships/generate-qr`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }).then((response) => response.data);
-};
-
-
+export default axiosInstance;

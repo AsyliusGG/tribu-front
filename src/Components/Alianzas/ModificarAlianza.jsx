@@ -9,8 +9,6 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { updateAlianza, getAlianzaById } from "../../api/api";
-const token = Cookies.get("auth_token");
-
 
 const ModificarAlianza = () => {
   const { id } = useParams(); // Obtener el id de la alianza desde la URL
@@ -24,13 +22,13 @@ const ModificarAlianza = () => {
   const [descripcionLength, setDescripcionLength] = useState(0); // Estado para el contador de caracteres
   const [foto, setFoto] = useState(null);
   const navigate = useNavigate();
+  const token = Cookies.get("auth_token"); // Token obtenido de las cookies
 
   // Cargar los datos de la alianza desde la API
   useEffect(() => {
     const fetchAlianza = async () => {
       try {
-        const response = await getAlianzaById(id);
-        const alianza = response.data;
+        const alianza = await getAlianzaById(id); // Obtener datos de la alianza por ID
         setEmpresa(alianza.alianza_empresa);
         setNombrePromo(alianza.alianza_nombre);
         setPromocion(alianza.Promocion);
@@ -71,7 +69,7 @@ const ModificarAlianza = () => {
     if (foto instanceof File) {
       formData.append("foto", foto);
     }
-  
+
     try {
       await updateAlianza(id, formData, token);
       navigate("/Alianzas/AlianzasAdmin", { state: { success: true } });
@@ -79,7 +77,6 @@ const ModificarAlianza = () => {
       console.error("Error al modificar la alianza:", error);
     }
   };
-  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -99,6 +96,7 @@ const ModificarAlianza = () => {
                 label="Nombre de la Empresa"
                 value={empresa}
                 onChange={(e) => setEmpresa(e.target.value)}
+                required
               />
             </div>
 
@@ -112,6 +110,7 @@ const ModificarAlianza = () => {
                 label="Nombre de la Promoción"
                 value={nombrePromo}
                 onChange={(e) => setNombrePromo(e.target.value)}
+                required
               />
             </div>
 
@@ -125,6 +124,7 @@ const ModificarAlianza = () => {
                 label="Detalle de la Promoción"
                 value={promocion}
                 onChange={(e) => setPromocion(e.target.value)}
+                required
               />
             </div>
 
@@ -137,6 +137,7 @@ const ModificarAlianza = () => {
                 size="lg"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
+                required
               />
             </div>
 
@@ -150,6 +151,7 @@ const ModificarAlianza = () => {
                 min={fechaInicio}
                 value={fechaFinal}
                 onChange={(e) => setFechaFinal(e.target.value)}
+                required
               />
             </div>
 
@@ -170,6 +172,7 @@ const ModificarAlianza = () => {
                 value={descripcion}
                 onChange={handleDescripcionChange}
                 maxLength={500}
+                required
               />
             </div>
           </div>

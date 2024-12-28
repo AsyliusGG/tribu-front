@@ -18,18 +18,21 @@ const VerAlianza = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadAlianza = async () => {
+    const fetchAlianza = async () => {
       try {
-        const response = await getAlianzaById(id);
-        setAlianza(response.data);
-        setLoading(false);
+        const data = await getAlianzaById(id);
+        setAlianza(data);
       } catch (error) {
-        setError("Error al cargar la alianza.");
+        console.error("Error al cargar la alianza:", error);
+        setError("Error al cargar la información de la alianza.");
+      } finally {
         setLoading(false);
       }
     };
-    loadAlianza();
+
+    fetchAlianza();
   }, [id]);
+
 
   const handleDescuentoClick = () => {
     navigate(`/Alianzas/UsarAlianza/${id}`);

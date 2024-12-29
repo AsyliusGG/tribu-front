@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Card, Typography } from "@material-tailwind/react";
 import Cookies from "js-cookie";
+import { getMembershipByUUID, getUserById } from "../../api/api";
 
 const ComprobarMembresia = () => {
   const { uuid } = useParams(); // Obtener la UUID de la URL
@@ -12,43 +13,15 @@ const ComprobarMembresia = () => {
   useEffect(() => {
     const fetchMembershipData = async () => {
       try {
-        const response = await fetch(`http://20.51.120.81:8000/api/v1/memberships/${uuid}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setMembership(data); // Almacena los detalles de la membresía
-          fetchUserData(data.user); // Obtener la información del usuario utilizando la ID del usuario
-        } else {
-          console.error("Error al obtener los datos de la membresía");
-        }
+        const membershipData = await getMembershipByUUID(uuid, token);
+        setMembership(membershipData);
+        const userData = await getUserById(membershipData.user, token);
+        setUser(userData);
       } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
+        console.error("Error al obtener los datos de membresía o usuario:", error);
       }
     };
-
-    const fetchUserData = async (userId) => {
-      try {
-        const response = await fetch(`http://20.51.120.81:8000/api/v1/users/${userId}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data); // Almacena los datos del usuario
-        } else {
-          console.error("Error al obtener los datos del usuario");
-        }
-      } catch (error) {
-        console.error("Error al conectar con el servidor:", error);
-      }
-    };
-
+  
     fetchMembershipData();
   }, [uuid, token]);
 

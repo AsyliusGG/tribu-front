@@ -10,6 +10,7 @@ import {
   Alert,
 } from "@material-tailwind/react";
 import Cookies from "js-cookie";
+import { getAlianzas, deleteAlianza } from "../../api/api";
 const token = Cookies.get("auth_token");
 
 const ALIANZAS_API_URL = "http://20.51.120.81:8000/api/v1/alianzas"; // Actualizar con la API correcta
@@ -25,40 +26,23 @@ const AlianzasAdmin = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(ALIANZAS_API_URL);
-
-        if (response.ok) {
-          const alianzasData = await response.json();
-          setAlianzas(alianzasData);
-        } else {
-          console.error("Error al obtener las alianzas.");
-        }
+        const response = await getAlianzas();
+        setAlianzas(response.data);
       } catch (error) {
         console.error("Error al obtener las alianzas:", error);
       }
     }
-
     fetchData();
   }, []);
+  
 
   // Eliminar alianza
   const handleDelete = async (alianzaId) => {
     try {
-      const response = await fetch(`${ALIANZAS_API_URL}/${alianzaId}/`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        setAlianzas(alianzas.filter((alianza) => alianza.id !== alianzaId)); // Eliminar la alianza de la tabla
-        setDeleteDialogOpen(false);
-        setAlertMessage("Alianza eliminada correctamente.");
-      } else {
-        console.error("Error al eliminar la alianza");
-      }
+      await deleteAlianza(alianzaId, token);
+      setAlianzas(alianzas.filter((alianza) => alianza.id !== alianzaId));
+      setDeleteDialogOpen(false);
+      setAlertMessage("Alianza eliminada correctamente.");
     } catch (error) {
       console.error("Error al eliminar la alianza:", error);
     }

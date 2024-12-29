@@ -7,8 +7,8 @@ import {
   Typography,
   Button,
 } from "@material-tailwind/react";
+import { getAlianzaById } from "../../api/api";
 
-const ALIANZA_API_URL = "http://20.51.120.81:8000/api/v1/alianzas";
 
 const VerAlianza = () => {
   const { id } = useParams();
@@ -18,21 +18,21 @@ const VerAlianza = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const loadAlianza = async () => {
+    const fetchAlianza = async () => {
       try {
-        const response = await fetch(`${ALIANZA_API_URL}/${id}/`);
-        const data = await response.json();
-        console.log(data);  // <-- Para verificar la estructura de respuesta
+        const data = await getAlianzaById(id);
         setAlianza(data);
-        setLoading(false);
       } catch (error) {
-        setError("Error al cargar la alianza.");
+        console.error("Error al cargar la alianza:", error);
+        setError("Error al cargar la información de la alianza.");
+      } finally {
         setLoading(false);
       }
     };
 
-    loadAlianza();
+    fetchAlianza();
   }, [id]);
+
 
   const handleDescuentoClick = () => {
     navigate(`/Alianzas/UsarAlianza/${id}`);

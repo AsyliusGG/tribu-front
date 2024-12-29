@@ -13,6 +13,8 @@ import {
   Alert,
 } from "@material-tailwind/react";
 import ReactDOM from 'react-dom';
+import { obtenerSectores, crearSector, actualizarSector, eliminarSector } from "../../api/api";
+
 
 const AddSector = () => {
   const [sectores, setSectores] = useState([]);
@@ -30,81 +32,46 @@ const AddSector = () => {
   useEffect(() => {
     const fetchSectores = async () => {
       try {
-        const response = await fetch("http://20.51.120.81:8000/api/v1/sector/");
-        const data = await response.json();
+        const data = await obtenerSectores();
         setSectores(data);
       } catch (error) {
         console.error("Error al obtener los sectores:", error);
       }
     };
-
+  
     fetchSectores();
   }, []);
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("sector_nombre", nombre);
-
-    if (!token) {
-      alert("No se encontró el token de autenticación");
-      return;
-    }
-
+    const formData = { sector_nombre: nombre };
+  
     try {
-      const response = await fetch("http://20.51.120.81:8000/api/v1/sector/", {
-        method: "POST",
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        const newSector = await response.json();
-        setSectores([...sectores, newSector]);
-        setAlertMessage("Sector creado exitosamente");
-        setNombre(''); // Limpiar el campo de entrada
-      } else {
-        console.error("Error al crear el sector:", response.statusText);
-      }
+      const newSector = await crearSector(formData, token);
+      setSectores([...sectores, newSector.data]);
+      setAlertMessage("Sector creado exitosamente");
+      setNombre("");
     } catch (error) {
       console.error("Error al crear el sector:", error);
     }
   };
-
+  
   const handleUpdate = async (updatedSector) => {
-    if (!token) {
-      alert("No se encontró el token de autenticación");
-      return;
-    }
-
     try {
-      const response = await fetch(`http://20.51.120.81:8000/api/v1/sector/${updatedSector.id}/`, {
-        method: "PUT",
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ sector_nombre: updatedSector.sector_nombre }),
-      });
-
-      if (response.ok) {
-        const updatedSectorFromServer = await response.json();
-        setSectores((prevSectores) =>
-          prevSectores.map((sector) =>
-            sector.id === updatedSectorFromServer.id ? updatedSectorFromServer : sector
-          )
-        );
-        setAlertMessage("Sector actualizado exitosamente");
-      } else {
-        console.error("Error al actualizar el sector:", response.statusText);
-      }
+      const updatedSectorFromServer = await actualizarSector(
+        updatedSector.id,
+        { sector_nombre: updatedSector.sector_nombre },
+        token
+      );
+      setSectores((prevSectores) =>
+        prevSectores.map((sector) =>
+          sector.id === updatedSectorFromServer.data.id ? updatedSectorFromServer.data : sector
+        )
+      );
+      setAlertMessage("Sector actualizado exitosamente");
     } catch (error) {
       console.error("Error al actualizar el sector:", error);
     }
-
     closeEditDialog();
   };
 
@@ -129,29 +96,13 @@ const AddSector = () => {
   };
 
   const handleDelete = async (sectorId) => {
-    if (!token) {
-      alert("No se encontró el token de autenticación");
-      return;
-    }
-
     try {
-      const response = await fetch(`http://20.51.120.81:8000/api/v1/sector/${sectorId}/`, {
-        method: "DELETE",
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        setSectores(sectores.filter((sector) => sector.id !== sectorId));
-        setAlertMessage("Sector eliminado exitosamente");
-      } else {
-        console.error("Error al eliminar el sector:", response.statusText);
-      }
+      await eliminarSector(sectorId, token);
+      setSectores(sectores.filter((sector) => sector.id !== sectorId));
+      setAlertMessage("Sector eliminado exitosamente");
     } catch (error) {
       console.error("Error al eliminar el sector:", error);
     }
-
     closeDeleteDialog();
   };
 

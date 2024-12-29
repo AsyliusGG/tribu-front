@@ -8,6 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import { createAlianza } from "../../api/api";
 const token = Cookies.get("auth_token");
 
 const CrearAlianza = () => {
@@ -42,42 +43,21 @@ const CrearAlianza = () => {
       return;
     }
 
-    // Crear el FormData para enviar archivos junto con los datos
     const formData = new FormData();
     formData.append("alianza_empresa", empresa);
     formData.append("alianza_nombre", nombrePromo);
     formData.append("Promocion", promocion);
-    formData.append("Estado", estado); 
+    formData.append("Estado", estado);
     formData.append("Fecha_inicio", fechaInicio);
     formData.append("Fecha_final", fechaFinal);
     formData.append("descripcion", descripcion);
-    formData.append("foto", foto); // Añadir la foto
-
+    formData.append("foto", foto);
+  
     try {
-      // Enviar datos a tu API
-      const response = await fetch("http://20.51.120.81:8000/api/v1/alianzas/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`, // Encabezado de autorización
-        },
-        body: formData,
-      });
-
-      console.log("Encabezados enviados:", {
-        Authorization: `Bearer ${token}`,
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        // Redirigir a AlianzasAdmin después de crear la alianza
-        navigate("/Alianzas/AlianzasAdmin", { state: { success: true } });
-      } else {
-        console.error("Error en la respuesta:", data);
-        alert("Error al crear la alianza");
-      }
+      await createAlianza(formData, token);
+      navigate("/Alianzas/AlianzasAdmin", { state: { success: true } });
     } catch (error) {
-      alert("Hubo un error al enviar los datos");
-      console.error(error);
+      console.error("Error al crear la alianza:", error);
     }
   };
 

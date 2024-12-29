@@ -8,9 +8,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
 import Cookies from "js-cookie";
-const token = Cookies.get("auth_token");
-
-const ALIANZAS_API_URL = "http://20.51.120.81:8000/api/v1/alianzas"; // Actualizar con la API correcta
+import { updateAlianza, getAlianzaById } from "../../api/api";
 
 const ModificarAlianza = () => {
   const { id } = useParams(); // Obtener el id de la alianza desde la URL
@@ -24,32 +22,25 @@ const ModificarAlianza = () => {
   const [descripcionLength, setDescripcionLength] = useState(0); // Estado para el contador de caracteres
   const [foto, setFoto] = useState(null);
   const navigate = useNavigate();
+  const token = Cookies.get("auth_token"); // Token obtenido de las cookies
 
   // Cargar los datos de la alianza desde la API
   useEffect(() => {
     const fetchAlianza = async () => {
       try {
-        const response = await fetch(`${ALIANZAS_API_URL}/${id}/`);
-        if (response.ok) {
-          const alianza = await response.json();
-          // Precargar los valores
-          setEmpresa(alianza.alianza_empresa);
-          setNombrePromo(alianza.alianza_nombre);
-          setPromocion(alianza.Promocion);
-          setEstado(alianza.Estado);
-          setFechaInicio(alianza.Fecha_inicio);
-          setFechaFinal(alianza.Fecha_final);
-          setDescripcion(alianza.descripcion);
-          setDescripcionLength(alianza.descripcion.length);
-          setFoto(alianza.foto); // Si quieres mostrar la foto previamente cargada
-        } else {
-          console.error("Error al cargar los datos de la alianza.");
-        }
+        const alianza = await getAlianzaById(id); // Obtener datos de la alianza por ID
+        setEmpresa(alianza.alianza_empresa);
+        setNombrePromo(alianza.alianza_nombre);
+        setPromocion(alianza.Promocion);
+        setEstado(alianza.Estado);
+        setFechaInicio(alianza.Fecha_inicio);
+        setFechaFinal(alianza.Fecha_final);
+        setDescripcion(alianza.descripcion);
+        setDescripcionLength(alianza.descripcion.length);
       } catch (error) {
         console.error("Error al cargar los datos de la alianza:", error);
       }
     };
-
     fetchAlianza();
   }, [id]);
 
@@ -67,52 +58,25 @@ const ModificarAlianza = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    // Validar los campos del formulario
-    if (!empresa || !nombrePromo || !promocion || !descripcion || !fechaInicio || !fechaFinal) {
-      alert("Por favor, rellena todos los campos.");
-      return;
-    }
-  
-    // Crear el FormData para enviar archivos junto con los datos
     const formData = new FormData();
     formData.append("alianza_empresa", empresa);
     formData.append("alianza_nombre", nombrePromo);
     formData.append("Promocion", promocion);
-    formData.append("Estado", estado); // Estado de la alianza (true o false)
+    formData.append("Estado", estado);
     formData.append("Fecha_inicio", fechaInicio);
     formData.append("Fecha_final", fechaFinal);
     formData.append("descripcion", descripcion);
-  
     if (foto instanceof File) {
-      formData.append("foto", foto); // Añadir la foto si es un archivo nuevo
+      formData.append("foto", foto);
     }
-  
+
     try {
-      // Enviar los datos actualizados a tu API
-      const response = await fetch(`${ALIANZAS_API_URL}/${id}/`, {
-        method: "PUT", // Usamos PUT para actualizar
-        headers: {
-          Authorization: `Bearer ${token}`, // Solo el token, sin Content-Type
-        },
-        body: formData,
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        // Redirigir a AlianzasAdmin después de guardar la alianza
-        navigate("/Alianzas/AlianzasAdmin", { state: { success: true } });
-        alert("Se guardaron los datos exitosamente");
-      } else {
-        console.error("Error en la respuesta:", data);
-        alert("Error al modificar la alianza");
-      }
+      await updateAlianza(id, formData, token);
+      navigate("/Alianzas/AlianzasAdmin", { state: { success: true } });
     } catch (error) {
-      alert("Hubo un error al enviar los datos");
-      console.error(error);
+      console.error("Error al modificar la alianza:", error);
     }
   };
-  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -132,6 +96,7 @@ const ModificarAlianza = () => {
                 label="Nombre de la Empresa"
                 value={empresa}
                 onChange={(e) => setEmpresa(e.target.value)}
+                required
               />
             </div>
 
@@ -145,6 +110,7 @@ const ModificarAlianza = () => {
                 label="Nombre de la Promoción"
                 value={nombrePromo}
                 onChange={(e) => setNombrePromo(e.target.value)}
+                required
               />
             </div>
 
@@ -158,6 +124,7 @@ const ModificarAlianza = () => {
                 label="Detalle de la Promoción"
                 value={promocion}
                 onChange={(e) => setPromocion(e.target.value)}
+                required
               />
             </div>
 
@@ -170,6 +137,7 @@ const ModificarAlianza = () => {
                 size="lg"
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
+                required
               />
             </div>
 
@@ -183,6 +151,7 @@ const ModificarAlianza = () => {
                 min={fechaInicio}
                 value={fechaFinal}
                 onChange={(e) => setFechaFinal(e.target.value)}
+                required
               />
             </div>
 
@@ -203,6 +172,7 @@ const ModificarAlianza = () => {
                 value={descripcion}
                 onChange={handleDescripcionChange}
                 maxLength={500}
+                required
               />
             </div>
           </div>

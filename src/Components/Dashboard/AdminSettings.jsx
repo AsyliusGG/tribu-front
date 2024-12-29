@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@material-tailwind/react";
 import axios from 'axios';
 import Cookies from "js-cookie";
+import { getallEventos, getallSector, getallHijo, getMemberships, getAlianzas } from "../../api/api";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell, PieChart, Pie } from 'recharts';
 
 
@@ -20,48 +21,27 @@ const AdminSettings = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = Cookies.get("auth_token");
-        const headers = {
-          'Authorization': `Bearer ${token}`
-        };
-  
-        const [eventosResponse, sectoresResponse, membershipsResponse, alianzasResponse, hijosResponse] = await Promise.all([
-          fetch('http://20.51.120.81:8000/api/v1/evento/', { headers }),
-          fetch('http://20.51.120.81:8000/api/v1/sector/', { headers }),
-          fetch('http://20.51.120.81:8000/api/v1/memberships/', { headers }),
-          fetch('http://20.51.120.81:8000/api/v1/alianzas/', { headers }),
-          fetch('http://20.51.120.81:8000/api/v1/hijo/', { headers })
+        const [eventosData, sectoresData, hijosData, membershipsData, alianzasData] = await Promise.all([
+          getallEventos(),
+          getallSector(),
+          getallHijo(),
+          getMemberships(),
+          getAlianzas(),
         ]);
-        
-        if (!eventosResponse.ok || !sectoresResponse.ok || !membershipsResponse.ok || !alianzasResponse.ok || !hijosResponse.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const eventosData = await eventosResponse.json();
-        const sectoresData = await sectoresResponse.json();
-        const membershipsData = await membershipsResponse.json();
-        const alianzasData = await alianzasResponse.json();
-        const hijosData = await hijosResponse.json();
-
-        setEventos(eventosData);
-        setSectores(sectoresData);
-        setMemberships(membershipsData);
-        setAlianzas(alianzasData); // Aquí se actualiza el estado de las alianzas
-        setHijos(hijosData); // Aquí se actualiza el estado de los hijos
-
-        // Imprimir los datos obtenidos en la consola
-        console.log("Eventos Data:", eventosData);
-        console.log("Sectores Data:", sectoresData);
-        console.log("Memberships Data:", membershipsData);
-        console.log("Alianzas Data:", alianzasData);
-        console.log("Hijos Data:", hijosData);
+  
+        setEventos(eventosData.data);
+        setSectores(sectoresData.data);
+        setHijos(hijosData.data);
+        setMemberships(membershipsData.data);
+        setAlianzas(alianzasData.data);
       } catch (error) {
         setError(error);
+        console.error("Error al obtener los datos:", error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
   }, []);
 

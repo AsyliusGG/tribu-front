@@ -34,7 +34,7 @@ import ComprobarMembresia from "./Alianzas/ComprobarUsuario.jsx";
 import Membresia from "./Membresia/Membresia.jsx";
 import ConfirmarCorreoAviso from "./ActivatePage/ConfirmarCorreoAviso.jsx";
 import AddSector from "./Dashboard/AddSector.jsx";
-import {ConfirmarCompraEvento} from "./Compra/ConfirmarCompraEvento.jsx";
+import ConfirmarCompraEvento from "./Compra/ConfirmarCompraEvento.jsx";
 
 function App() {
   return (

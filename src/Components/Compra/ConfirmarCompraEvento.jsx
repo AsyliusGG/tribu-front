@@ -83,4 +83,4 @@ const ConfirmacionCompra = () => {
   );
 };
 
-export default ConfirmacionCompra;
+export default ConfirmarCompraEvento;

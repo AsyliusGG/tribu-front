@@ -34,6 +34,7 @@ import ComprobarMembresia from "./Alianzas/ComprobarUsuario.jsx";
 import Membresia from "./Membresia/Membresia.jsx";
 import ConfirmarCorreoAviso from "./ActivatePage/ConfirmarCorreoAviso.jsx";
 import AddSector from "./Dashboard/AddSector.jsx";
+import {ConfirmarCompraEvento} from "./Compra/ConfirmarCompraEvento.jsx";
 
 function App() {
   return (
@@ -180,6 +181,7 @@ function App() {
               }
             />
             <Route path="/confirmar_pago" element={<ConfirmacionCompra />} />
+            <Route path="/confirmar_pago_evento" element={<ConfirmarCompraEvento />} />
             <Route path="/error_pago" element={<ErrorPago />} />
             <Route path="/membership/:uuid" element ={<ComprobarMembresia />} />
             <Route path="/Membresia" element={<Membresia />} />

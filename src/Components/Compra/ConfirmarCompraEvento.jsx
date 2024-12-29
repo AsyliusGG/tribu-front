@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 
-const ConfirmacionCompra = () => {
+const ConfirmarCompraEvento = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [ticket, setTicket] = useState(null);

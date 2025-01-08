@@ -9,8 +9,7 @@ import {
   Option,
 } from "@material-tailwind/react";
 import { useNavigate, useParams } from "react-router-dom";
-import Cookies from "js-cookie";
-const token = Cookies.get("auth_token");
+import { getallSector, getEventoById, updateEvento } from "../../api/api.js";
 
 const ModificarEvento = () => {
   const { id } = useParams(); // Obtener el id del evento de los parámetros de la URL
@@ -28,50 +27,38 @@ const ModificarEvento = () => {
   const [sectores, setSectores] = useState([]);
   const navigate = useNavigate();
 
-  // Cargar los sectores desde la API
+  // Cargar sectores desde la API
   useEffect(() => {
-    async function fetchSectores() {
+    const fetchSectores = async () => {
       try {
-        const response = await fetch(
-          "http://20.51.120.81:8000/api/v1/sector"
-        );
-        const data = await response.json();
-        setSectores(data);
+        const sectoresData = await getallSector();
+        setSectores(sectoresData.data);
       } catch (error) {
         console.error("Error al cargar sectores:", error);
       }
-    }
+    };
     fetchSectores();
   }, []);
 
-  // Cargar los datos del evento actual para precargar el formulario
+  // Cargar datos del evento actual
   useEffect(() => {
-    async function fetchEvento() {
+    const fetchEvento = async () => {
       try {
-        const token = Cookies.get("auth_token");
-        const response = await fetch(
-          `http://20.51.120.81:8000/api/v1/evento/${id}`
-        );
-        const data = await response.json();
-
-        setNombre(data.nombre || "");
-        setDescripcion(data.descripcion || "");
-        setCupo(data.cupos || "");
-        setValorAdulto(
-          data.valor_adulto ? formatCurrency(String(data.valor_adulto)) : ""
-        );
-        setValorNino(
-          data.valor_nino ? formatCurrency(String(data.valor_nino)) : ""
-        );
-        setLugar(data.lugar || "");
-        setFecha(data.fecha || "");
-        setHora(data.hora || "");
-        setHoraTermino(data.hora_termino || "");
-        setSectorSeleccionado(String(data.sector) || "");
+        const eventoData = await getEventoById(id);
+        setNombre(eventoData.nombre || "");
+        setDescripcion(eventoData.descripcion || "");
+        setCupo(eventoData.cupos || "");
+        setValorAdulto(eventoData.valor_adulto || "");
+        setValorNino(eventoData.valor_nino || "");
+        setLugar(eventoData.lugar || "");
+        setFecha(eventoData.fecha || "");
+        setHora(eventoData.hora || "");
+        setHoraTermino(eventoData.hora_termino || "");
+        setSectorSeleccionado(String(eventoData.sector) || "");
       } catch (error) {
         console.error("Error al cargar el evento:", error);
       }
-    }
+    };
     fetchEvento();
   }, [id]);
 
@@ -79,71 +66,34 @@ const ModificarEvento = () => {
     setFoto(e.target.files[0]);
   };
 
-  // Formatear los valores a pesos chilenos en la vista
-  const formatCurrency = (value) => {
-    const numberValue = value.replace(/\D/g, ""); // Quitar todo lo que no sea número
-    return new Intl.NumberFormat("es-CL", {
-      style: "currency",
-      currency: "CLP",
-    }).format(numberValue);
-  };
-
-  // Funciones para manejar los cambios y formatear los valores en la vista
-  const handleValorAdultoChange = (e) => {
-    setValorAdulto(formatCurrency(e.target.value));
-  };
-
-  const handleValorNinoChange = (e) => {
-    setValorNino(formatCurrency(e.target.value));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Eliminar el formato de pesos chilenos y convertir a número antes de enviar al backend
-    const valorAdultoNumber = parseInt(valorAdulto.replace(/\D/g, ""), 10);
-    const valorNinoNumber = parseInt(valorNino.replace(/\D/g, ""), 10);
-
-    // Crear el FormData para enviar archivos junto con los datos
+    // Crear FormData para enviar datos junto con la imagen
     const formData = new FormData();
     formData.append("nombre", nombre);
     formData.append("descripcion", descripcion);
     formData.append("cupos", cupo);
-    formData.append("valor_adulto", valorAdultoNumber);
-    formData.append("valor_nino", valorNinoNumber);
+    formData.append("valor_adulto", valorAdulto);
+    formData.append("valor_nino", valorNino);
     formData.append("fecha", fecha);
     formData.append("hora", hora);
     formData.append("hora_termino", horaTermino);
     formData.append("lugar", lugar);
     formData.append("sector", sectorSeleccionado);
-
-    // Si se ha seleccionado una nueva imagen, la añadimos al FormData
     if (foto) {
       formData.append("foto", foto);
     }
 
     try {
-      const response = await fetch(
-        `http://20.51.120.81:8000/api/v1/evento/${id}/`,
-        {
-          method: "PATCH",
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      const data = await response.json();
-      if (response.ok) {
-        navigate("/Eventos/EventosAdmin", { state: { success: true } });
-      } else {
-        console.error("Error en la respuesta:", data);
-        alert("Error al modificar el evento");
-      }
+      await updateEvento(id, formData);
+      navigate("/Eventos/EventosAdmin", { state: { success: true } });
     } catch (error) {
-      alert("Hubo un error al enviar los datos");
-      console.error(error);
+      console.error("Error al modificar el evento:", error.response || error);
+      alert(
+        error.response?.data?.detail ||
+          "Hubo un error inesperado al modificar el evento."
+      );
     }
   };
 
@@ -186,11 +136,11 @@ const ModificarEvento = () => {
                 Valor Adulto
               </Typography>
               <Input
-                type="text"
+                type="number"
                 size="lg"
                 label="Valor Adulto"
                 value={valorAdulto}
-                onChange={handleValorAdultoChange}
+                onChange={(e) => setValorAdulto(e.target.value)}
               />
             </div>
 
@@ -199,11 +149,11 @@ const ModificarEvento = () => {
                 Valor Niño
               </Typography>
               <Input
-                type="text"
+                type="number"
                 size="lg"
                 label="Valor Niño"
                 value={valorNino}
-                onChange={handleValorNinoChange}
+                onChange={(e) => setValorNino(e.target.value)}
               />
             </div>
 
@@ -252,7 +202,7 @@ const ModificarEvento = () => {
 
             <div className="mb-4">
               <Typography variant="h6" color="blue-gray" className="mb-2">
-                Lugar del Evento (Dirección)
+                Lugar del Evento
               </Typography>
               <Input
                 type="text"
@@ -271,13 +221,10 @@ const ModificarEvento = () => {
                 size="lg"
                 label="Selecciona el Sector"
                 value={sectorSeleccionado}
-                onChange={(e) => setSectorSeleccionado(String(e))}
+                onChange={(value) => setSectorSeleccionado(value)}
               >
                 {sectores.map((sector) => (
-                  <Option
-                    key={sector.id}
-                    value={String(sector.id)}
-                  >
+                  <Option key={sector.id} value={String(sector.id)}>
                     {sector.sector_nombre}
                   </Option>
                 ))}

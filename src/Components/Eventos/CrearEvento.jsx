@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getallSector } from '../../api/api.js';
+import { getallSector } from "../../api/api.js";
 import {
   Button,
   Input,
@@ -11,6 +11,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import axiosInstance from "../../api/api.js";
 
 const CrearEvento = () => {
   const [nombre, setNombre] = useState("");
@@ -29,6 +30,7 @@ const CrearEvento = () => {
 
   const token = Cookies.get("auth_token");
 
+  // Cargar sectores desde la API
   useEffect(() => {
     if (!token) {
       alert("Debes iniciar sesión para acceder a esta página.");
@@ -37,12 +39,8 @@ const CrearEvento = () => {
 
     const fetchSectores = async () => {
       try {
-        const response = await getallSector();
-        if (response.status === 200) {
-          setSectores(response.data);
-        } else {
-          throw new Error("No se pudieron cargar los sectores");
-        }
+        const sectoresData = await getallSector();
+        setSectores(sectoresData.data);
       } catch (error) {
         console.error("Error al cargar sectores:", error);
       }
@@ -63,7 +61,9 @@ const CrearEvento = () => {
     formData.append("cupo", cupo);
     formData.append("valor_adulto", valorAdulto);
     formData.append("valor_nino", valorNino);
-    formData.append("foto", foto);
+    if (foto) {
+      formData.append("foto", foto);
+    }
     formData.append("fecha", fecha);
     formData.append("hora", hora);
     formData.append("hora_termino", horaTermino);
@@ -71,24 +71,14 @@ const CrearEvento = () => {
     formData.append("sector", sectorSeleccionado);
 
     try {
-      const response = await fetch("http://20.51.120.81:8000/api/v1/evento/", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (response.ok) {
-        navigate("/Eventos/EventosAdmin", { state: { success: true } });
-      } else {
-        const data = await response.json();
-        console.error("Error en la respuesta:", data);
-        alert("Error al crear el evento");
-      }
+      await axiosInstance.post("/evento/", formData);
+      navigate("/Eventos/EventosAdmin", { state: { success: true } });
     } catch (error) {
-      alert("Hubo un error al enviar los datos");
-      console.error(error);
+      console.error("Error al crear el evento:", error.response || error);
+      alert(
+        error.response?.data?.detail ||
+          "Hubo un error inesperado al enviar los datos."
+      );
     }
   };
 
@@ -232,7 +222,7 @@ const CrearEvento = () => {
                 size="lg"
                 label="Selecciona el Sector"
                 value={sectorSeleccionado}
-                onChange={(e) => setSectorSeleccionado(e)}
+                onChange={(value) => setSectorSeleccionado(value)}
                 required
               >
                 {sectores.map((sector) => (

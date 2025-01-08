@@ -40,6 +40,11 @@ export const createAlianza = (data) => axiosInstance.post("/alianzas/", data);
 
 export const updateAlianza = (id, data) => axiosInstance.put(`/alianzas/${id}/`, data);
 
+export const updateEvento = (id, data) => axiosInstance.patch(`/evento/${id}/`, data);
+
+export const deleteEvento = (id) => axiosInstance.delete(`/evento/${id}/`);
+
+
 export const getMembershipByUUID = (uuid) =>
   axiosInstance.get(`/memberships/${uuid}/`).then((res) => res.data);
 

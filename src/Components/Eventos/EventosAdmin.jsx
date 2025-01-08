@@ -10,10 +10,11 @@ import {
   Alert,
 } from "@material-tailwind/react";
 import Cookies from "js-cookie";
+import { getallEventos, getallSector, updateEvento, deleteEvento } from "../../api/api";
+import axiosInstance from "../../api/api";
+
 const token = Cookies.get("auth_token");
 
-const EVENTOS_API_URL = "http://20.51.120.81:8000/api/v1/evento";
-const SECTOR_API_URL = "http://20.51.120.81:8000/api/v1/sector";
 
 const EventosAdmin = () => {
   const [events, setEvents] = useState([]);
@@ -25,37 +26,18 @@ const EventosAdmin = () => {
 
   // Cargar eventos y sectores desde la API
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         const [eventsResponse, sectorsResponse] = await Promise.all([
-          fetch(EVENTOS_API_URL),
-          fetch(SECTOR_API_URL),
+          getallEventos(),
+          getallSector(),
         ]);
-
-        if (eventsResponse.ok && sectorsResponse.ok) {
-          let eventsData = await eventsResponse.json();
-          const sectorsData = await sectorsResponse.json();
-
-          // Verificar si el evento fue ayer y desactivarlo si es necesario
-          const currentDate = new Date();
-          currentDate.setDate(currentDate.getDate() - 1); // Restar un día a la fecha actual
-          eventsData.forEach(async (event) => {
-            const eventDate = new Date(event.fecha);
-            if (eventDate < currentDate && !event.disabled) {
-              await desactivarEvento(event.id);
-              event.disabled = true; // Marcar como desactivado
-            }
-          });
-
-          setEvents(eventsData);
-          setSectors(sectorsData);
-        } else {
-          console.error("Error al obtener los eventos o sectores.");
-        }
+        setEvents(eventsResponse.data);
+        setSectors(sectorsResponse.data);
       } catch (error) {
         console.error("Error al obtener los eventos o sectores:", error);
       }
-    }
+    };
 
     fetchData();
   }, []);
@@ -65,44 +47,11 @@ const EventosAdmin = () => {
     return sector ? sector.sector_nombre : "Desconocido";
   };
 
-  const desactivarEvento = async (eventId) => {
-    try {
-    
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Agregar token de autenticación
-        },
-        body: JSON.stringify({ disabled: true }), // Desactivar el evento
-      });
-  
-      if (!response.ok) {
-        console.error("Error al desactivar el evento");
-      }
-    } catch (error) {
-      console.error("Error al desactivar el evento:", error);
-    }
-  };
   
   const handleDelete = async (eventId) => {
     try {
-      
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Agregar token de autenticación
-        },
-      });
-  
-      if (response.ok) {
-        setEvents(events.filter((event) => event.id !== eventId)); // Eliminar el evento de la tabla
-        setDeleteDialogOpen(false);
-        setAlertMessage("Evento eliminado correctamente.");
-      } else {
-        console.error("Error al eliminar el evento");
-      }
+      await axiosInstance.delete(`/evento/${eventId}/`);
+      setEvents(events.filter((event) => event.id !== eventId));
     } catch (error) {
       console.error("Error al eliminar el evento:", error);
     }
@@ -110,28 +59,15 @@ const EventosAdmin = () => {
   
   const toggleEvento = async (eventId, estadoActual) => {
     try {
-      
-      const response = await fetch(`${EVENTOS_API_URL}/${eventId}/`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          'Authorization': `Bearer ${token}`, // Agregar token de autenticación
-        },
-        body: JSON.stringify({ disabled: !estadoActual }), // Cambia el estado 'disabled'
-      });
-  
-      if (response.ok) {
-        setEvents(
-          events.map((event) =>
-            event.id === eventId ? { ...event, disabled: !estadoActual } : event
-          )
-        );
-        setAlertMessage(
-          `Evento ${!estadoActual ? "activado" : "desactivado"} correctamente.`
-        );
-      } else {
-        console.error("Error al cambiar el estado del evento");
-      }
+      await updateEvento(eventId, { disabled: !estadoActual });
+      setEvents(
+        events.map((event) =>
+          event.id === eventId ? { ...event, disabled: !estadoActual } : event
+        )
+      );
+      setAlertMessage(
+        `Evento ${!estadoActual ? "activado" : "desactivado"} correctamente.`
+      );
     } catch (error) {
       console.error("Error al cambiar el estado del evento:", error);
     }
